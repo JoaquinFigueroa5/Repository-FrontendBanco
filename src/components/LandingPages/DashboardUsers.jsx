@@ -60,6 +60,7 @@ import {
 } from 'lucide-react';
 import NavBar from '../commons/NavBar';
 import { useNavigate } from 'react-router-dom';
+import useUserStore from '../../context/UserStore';
 
 const DashboardUsers = () => {
 
@@ -105,6 +106,8 @@ const DashboardUsers = () => {
 
   const cardBg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.800', 'white');
+
+  const { user } = useUserStore();
 
   const handleTransfer = () => {
     if (!transferAmount || !transferTo || !transferConcept) {
@@ -178,6 +181,9 @@ const DashboardUsers = () => {
     });
   };
 
+  console.log(user);
+  
+
   return (
     <>
       <NavBar />
@@ -187,7 +193,7 @@ const DashboardUsers = () => {
           <Flex justify="space-between" align="center" mb={8} pt={4}>
             <VStack align="start" spacing={1}>
               <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-                ¡Hola, Ana! 👋
+                ¡Hola, {user?.username}! 👋
               </Text>
               <Text color="gray.600" fontSize="sm">
                 Bienvenida de vuelta a tu banco digital

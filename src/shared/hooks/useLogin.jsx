@@ -1,54 +1,59 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as loginRequest } from "../../services"
 import toast from "react-hot-toast";
-import { UserContext } from "../../context/UserContext";
+import useUserStore from "../../context/UserStore";
 
 export const useLogin = () => {
-
     const [isLoading, setIsLoading] = useState(false);
-
-    const navigate = useNavigate()
-
-    const { refreshUser } = useContext(UserContext)
+    const navigate = useNavigate();
+    const setUser = useUserStore(state => state.setUser);
 
     const login = async (email, password) => {
+        setIsLoading(true);
+        try {
+            const response = await loginRequest({ email, password });
 
-        setIsLoading(true)
+            if (response.error) {
+                toast.error(response.error?.response?.data || 'Ocurrió un error al iniciar sesión, usuario no encontrado', {
+                    style: {
+                        background: 'red',
+                        color: 'white'
+                    }
+                });
+                setIsLoading(false);
+                return;
+            }
 
-        const response = await loginRequest({
-            email,
-            password
-        })
+            const { userDetails } = response.data;
 
-        setIsLoading(false)
+            localStorage.setItem('user', JSON.stringify(userDetails));
 
-        if(response.error){
-            return toast.error(response.error?.response?.data || 'Ocurrio un error al iniciar sesión, usuario no encontrado', {
+            setUser(userDetails);
+
+            toast.success('Sesión iniciada correctamente', {
+                style: {
+                    background: 'green',
+                    color: 'white'
+                }
+            });
+
+            navigate('/dashboard');
+
+        } catch (error) {
+            toast.error('Error al iniciar sesión', {
                 style: {
                     background: 'red',
                     color: 'white'
                 }
-            })
+            });
+        } finally {
+            setIsLoading(false);
         }
-
-        const { userDetails } = response.data
-
-        localStorage.setItem('user', JSON.stringify(userDetails));
-        refreshUser();
-        
-
-        toast.success('Sesion iniciada correctamente', {
-            style: {
-                background: 'green',
-                color: 'white'
-            }
-        })
-
-        navigate('/dashboard')
     }
+
     return {
         login,
         isLoading
-    }
-}
+    };
+};

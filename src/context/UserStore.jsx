@@ -1,9 +1,11 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-const useUserStore = create((set, get) => ({
+const useUserStore = create((set) => ({
     user: null,
     showTokenModal: false,
+
+    setUser: (user) => set({ user }),
 
     fetchUser: () => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
