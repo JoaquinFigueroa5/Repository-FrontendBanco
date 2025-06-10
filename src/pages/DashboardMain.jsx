@@ -8,7 +8,8 @@ const DashboardMain = () => {
 
     return (
         <>
-            {user?.role === "ADMIN_ROLE" ? <DashboardAdmin /> : <DashboardUsers /> }
+            {/* {user?.role === "ADMIN_ROLE" ? <DashboardAdmin /> : <DashboardUsers /> } */}
+            <DashboardUsers />
         </>
     )
 }
