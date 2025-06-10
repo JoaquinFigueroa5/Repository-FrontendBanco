@@ -262,6 +262,7 @@ const NavBar = () => {
         { name: 'Servicios', href: '#' },
         { name: 'Sobre Nosotros', href: '#' },
         { name: 'Contacto', href: '#' },
+        { name: 'Transacciones', href: '/transactions' },
     ];
 
     useEffect(() => {
