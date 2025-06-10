@@ -1,11 +1,11 @@
 import { useContext } from "react"
-import DashboardAdmin from "../LandingPages/DashboardAdmin"
-import DashboardUsers from "../LandingPages/DashboardUsers"
-import { UserContext } from "../context/UseContext"
+import DashboardAdmin from "../components/LandingPages/DashboardAdmin";
+import DashboardUsers from "../components/LandingPages/DashboardUsers";
+import useUserStore from "../context/UserStore"
 
 const DashboardMain = () => {
-    const { user, refreshUser } = useContext(UserContext);
-
+    const { user, fetchUser } = useUserStore;
+    
     return (
         <>
             {/* {user?.role === "ADMIN_ROLE" ? <DashboardAdmin /> : <DashboardUsers /> } */}

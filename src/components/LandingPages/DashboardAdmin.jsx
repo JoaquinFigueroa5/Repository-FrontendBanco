@@ -81,7 +81,7 @@ import {
   ArrowDownIcon,
   SettingsIcon,
 } from '@chakra-ui/icons';
-import NavBar from '../components/commons/NavBar';
+import NavBar from '../commons/NavBar';
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);

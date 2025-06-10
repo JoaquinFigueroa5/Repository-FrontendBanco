@@ -58,10 +58,10 @@ import {
   History,
   Settings
 } from 'lucide-react';
-import NavBar from '../components/commons/NavBar';
+import NavBar from '../commons/NavBar';
 import { useNavigate } from 'react-router-dom';
 
-const BankingDashboard = () => {
+const DashboardUsers = () => {
 
   const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
@@ -567,4 +567,4 @@ const BankingDashboard = () => {
   );
 };
 
-export default BankingDashboard;
+export default DashboardUsers;
