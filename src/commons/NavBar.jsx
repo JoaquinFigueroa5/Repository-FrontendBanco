@@ -389,30 +389,9 @@ const NavBar = () => {
                 setActiveItem={setActiveItem}
             />
 
-            {/* Spacer to prevent content from being hidden behind fixed navbar */}
             <Box h="80px" />
 
-            {/* Demo content */}
-            {/* <Box p={8}>
-                <Stack spacing={8}>
-                    {[1, 2, 3, 4, 5].map((i) => (
-                        <Box
-                            key={i}
-                            p={8}
-                            bg={useColorModeValue('gray.50', 'gray.700')}
-                            rounded="lg"
-                            h="200px"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                        >
-                            <Text fontSize="xl" color={useColorModeValue('gray.600', 'gray.300')}>
-                                Contenido de ejemplo {i}
-                            </Text>
-                        </Box>
-                    ))}
-                </Stack>
-            </Box> */}
+
         </>
     );
 };

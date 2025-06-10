@@ -30,7 +30,7 @@ export const UserProvider = ({ children }) => {
         }
 
         axios
-            .get('http://127.0.0.1:3000/BancaOnline/v1/users/profile', {
+            .get('http://127.0.0.1:3000/BancaOnline/v1/user/profile', {
                 headers: { 'x-token': token }
             })
             .then((res) => {
