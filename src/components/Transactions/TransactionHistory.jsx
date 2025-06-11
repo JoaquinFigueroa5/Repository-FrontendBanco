@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   VStack,
   HStack,
@@ -17,14 +17,27 @@ import {
 import { Search, Calendar, Filter, ArrowUpRight, ArrowDownLeft, CreditCard, Banknote } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import useGetTransaction from '../../shared/hooks/useGetTransaction'; // Asegúrate de ajustar la ruta si es necesario
 
-const TransactionHistory = ({ transactions }) => {
+const TransactionHistory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
+
+  // Usamos el hook personalizado para obtener las transacciones
+  const { transactions, total, loading, error } = useGetTransaction({ limit: 20 });
+
+  // Imprimir mensaje en consola dependiendo de las transacciones
+  useEffect(() => {
+    if (transactions.length > 0) {
+      console.log('Transacciones obtenidas:', transactions);
+    } else {
+      console.log('No hay datos en la base de datos');
+    }
+  }, [transactions]);
 
   const getTransactionIcon = (type, amount) => {
     switch (type) {
@@ -126,8 +139,16 @@ const TransactionHistory = ({ transactions }) => {
 
       {/* Transaction List */}
       <VStack spacing={3} align="stretch">
-        {filteredTransactions.length === 0 ? (
-          <Box textAlign="center\" py={8}>
+        {loading ? (
+          <Box textAlign="center" py={8}>
+            <Text color="gray.500">Cargando transacciones...</Text>
+          </Box>
+        ) : error ? (
+          <Box textAlign="center" py={8}>
+            <Text color="gray.500">Error: {error}</Text>
+          </Box>
+        ) : filteredTransactions.length === 0 ? (
+          <Box textAlign="center" py={8}>
             <Text color="gray.500">No se encontraron transacciones</Text>
           </Box>
         ) : (
@@ -137,7 +158,7 @@ const TransactionHistory = ({ transactions }) => {
             
             return (
               <Box
-                key={transaction.id}
+                key={transaction._id}
                 p={4}
                 bg={bgColor}
                 borderRadius="lg"
@@ -156,7 +177,6 @@ const TransactionHistory = ({ transactions }) => {
                     color={`${color}.600`}
                     icon={<Icon size={20} />}
                   />
-                  
                   <Box flex="1">
                     <HStack justify="space-between" align="start" mb={1}>
                       <VStack spacing={0} align="start">
@@ -174,7 +194,7 @@ const TransactionHistory = ({ transactions }) => {
                           </Text>
                         )}
                       </VStack>
-                      
+
                       <VStack spacing={1} align="end">
                         <Text
                           fontWeight="bold"
@@ -192,7 +212,7 @@ const TransactionHistory = ({ transactions }) => {
                         </Badge>
                       </VStack>
                     </HStack>
-                    
+
                     <HStack justify="space-between" align="center">
                       <Text fontSize="xs" color="gray.500">
                         {format(transaction.date, "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })}
