@@ -10,14 +10,19 @@ import {
   Select,
   InputGroup,
   InputLeftElement,
-  Divider,
   Button,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { Search, Calendar, Filter, ArrowUpRight, ArrowDownLeft, CreditCard, Banknote } from 'lucide-react';
+import {
+  Search,
+  ArrowUpRight,
+  ArrowDownLeft,
+  CreditCard,
+  Banknote,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import useGetTransaction from '../../shared/hooks/useGetTransaction'; // Asegúrate de ajustar la ruta si es necesario
+import useGetTransaction from '../../shared/hooks/useGetTransaction';
 
 const TransactionHistory = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,10 +32,8 @@ const TransactionHistory = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
-  // Usamos el hook personalizado para obtener las transacciones
   const { transactions, total, loading, error } = useGetTransaction({ limit: 20 });
 
-  // Imprimir mensaje en consola dependiendo de las transacciones
   useEffect(() => {
     if (transactions.length > 0) {
       console.log('Transacciones obtenidas:', transactions);
@@ -39,9 +42,16 @@ const TransactionHistory = () => {
     }
   }, [transactions]);
 
+  // Normalizamos los campos type y status para evitar errores con toLowerCase
+  const normalizedTransactions = transactions.map(t => ({
+    ...t,
+    type: typeof t.type === 'string' ? t.type.toLowerCase() : '',
+    status: typeof t.status === 'string' ? t.status.toLowerCase() : '',
+  }));
+
   const getTransactionIcon = (type, amount) => {
     switch (type) {
-      case 'transfer':
+      case 'Transferencia':
         return amount > 0 ? ArrowDownLeft : ArrowUpRight;
       case 'payment':
         return CreditCard;
@@ -56,7 +66,7 @@ const TransactionHistory = () => {
 
   const getTransactionColor = (type, amount) => {
     if (type === 'deposit' || amount > 0) return 'green';
-    if (type === 'transfer') return 'blue';
+    if (type === 'Transferencia') return 'blue';
     if (type === 'payment') return 'orange';
     return 'red';
   };
@@ -82,62 +92,61 @@ const TransactionHistory = () => {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('es-MX', {
       style: 'currency',
-      currency: 'MXN'
+      currency: 'MXN',
     }).format(Math.abs(amount));
   };
 
-  const filteredTransactions = transactions.filter(transaction => {
-    const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (transaction.recipient && transaction.recipient.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredTransactions = normalizedTransactions.filter(transaction => {
+    const matchesSearch =
+      (transaction.details?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+
     const matchesType = filterType === 'all' || transaction.type === filterType;
     const matchesStatus = filterStatus === 'all' || transaction.status === filterStatus;
-    
+
     return matchesSearch && matchesType && matchesStatus;
   });
 
   return (
     <VStack spacing={6} align="stretch">
-      {/* Filters */}
-      <VStack spacing={4} align="stretch">
-        <HStack spacing={4}>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <Search color="gray.400" size={18} />
-            </InputLeftElement>
-            <Input
-              placeholder="Buscar transacciones..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              bg={bgColor}
-            />
-          </InputGroup>
-          <Select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
+      {/* Filtros */}
+      <HStack spacing={4}>
+        <InputGroup>
+          <InputLeftElement pointerEvents="none">
+            <Search color="gray.400" size={18} />
+          </InputLeftElement>
+          <Input
+            placeholder="Buscar transacciones..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             bg={bgColor}
-            minW="150px"
-          >
-            <option value="all">Todos los tipos</option>
-            <option value="transfer">Transferencias</option>
-            <option value="payment">Pagos</option>
-            <option value="deposit">Depósitos</option>
-            <option value="withdrawal">Retiros</option>
-          </Select>
-          <Select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            bg={bgColor}
-            minW="130px"
-          >
-            <option value="all">Todos</option>
-            <option value="completed">Completadas</option>
-            <option value="pending">Pendientes</option>
-            <option value="failed">Fallidas</option>
-          </Select>
-        </HStack>
-      </VStack>
+          />
+        </InputGroup>
+        <Select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          bg={bgColor}
+          minW="150px"
+        >
+          <option value="all">Todos los tipos</option>
+          <option value="transfer">Transferencia</option>
+          <option value="payment">Pagos</option>
+          <option value="deposit">Depósitos</option>
+          <option value="withdrawal">Retiros</option>
+        </Select>
+        <Select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          bg={bgColor}
+          minW="150px"
+        >
+          <option value="all">Todos los estados</option>
+          <option value="completed">Completada</option>
+          <option value="pending">Pendiente</option>
+          <option value="failed">Fallida</option>
+        </Select>
+      </HStack>
 
-      {/* Transaction List */}
+      {/* Lista de transacciones */}
       <VStack spacing={3} align="stretch">
         {loading ? (
           <Box textAlign="center" py={8}>
@@ -152,73 +161,75 @@ const TransactionHistory = () => {
             <Text color="gray.500">No se encontraron transacciones</Text>
           </Box>
         ) : (
-          filteredTransactions.map((transaction, index) => {
+          filteredTransactions.map((transaction) => {
             const Icon = getTransactionIcon(transaction.type, transaction.amount);
             const color = getTransactionColor(transaction.type, transaction.amount);
-            
+
             return (
               <Box
                 key={transaction._id}
                 p={4}
                 bg={bgColor}
-                borderRadius="lg"
-                border="1px"
+                borderRadius="2xl"
+                border="1px solid"
                 borderColor={borderColor}
                 _hover={{
-                  boxShadow: 'md',
-                  borderColor: `${color}.200`,
+                  shadow: 'md',
+                  borderColor: `${color}.300`,
                 }}
                 transition="all 0.2s"
               >
-                <HStack spacing={4} align="center">
+                <HStack spacing={4} align="start">
                   <Avatar
                     size="md"
                     bg={`${color}.100`}
                     color={`${color}.600`}
-                    icon={<Icon size={20} />}
+                    icon={<Icon size={22} />}
                   />
                   <Box flex="1">
-                    <HStack justify="space-between" align="start" mb={1}>
-                      <VStack spacing={0} align="start">
-                        <Text fontWeight="semibold" fontSize="sm" color="gray.800">
-                          {transaction.description}
+                    <HStack justify="space-between" align="start">
+                      <VStack align="start" spacing={0}>
+                        <Text fontWeight="medium" fontSize="sm" color="gray.800">
+                          {transaction.details || 'Sin detalles'}
                         </Text>
-                        {transaction.recipient && (
-                          <Text fontSize="xs" color="gray.600">
-                            Para: {transaction.recipient}
+                        {transaction.accountId && (
+                          <Text fontSize="xs" color="gray.500">
+                            Cuenta origen: {transaction.accountId}
                           </Text>
                         )}
-                        {transaction.account && (
+                        {transaction.destinationAccountId && (
                           <Text fontSize="xs" color="gray.500">
-                            Cuenta: {transaction.account}
+                            Cuenta destino: {transaction.destinationAccountId}
                           </Text>
                         )}
                       </VStack>
-
-                      <VStack spacing={1} align="end">
+                      <VStack spacing={0} align="end">
                         <Text
+                          fontSize="md"
                           fontWeight="bold"
                           color={transaction.amount > 0 ? 'green.600' : 'red.600'}
-                          fontSize="md"
                         >
-                          {transaction.amount > 0 ? '+' : '-'}{formatCurrency(transaction.amount)}
+                          {transaction.amount > 0 ? '+' : '-'}
+                          {formatCurrency(transaction.amount)}
                         </Text>
                         <Badge
                           colorScheme={getStatusColor(transaction.status)}
-                          size="sm"
-                          variant="subtle"
+                          variant="solid"
+                          fontSize="0.7em"
+                          px={2}
                         >
                           {getStatusText(transaction.status)}
                         </Badge>
                       </VStack>
                     </HStack>
-
-                    <HStack justify="space-between" align="center">
+                    <HStack justify="space-between" align="center" mt={2}>
                       <Text fontSize="xs" color="gray.500">
-                        {format(transaction.date, "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })}
+                        {transaction.createdAt && !isNaN(new Date(transaction.createdAt))
+                          ? format(new Date(transaction.createdAt), "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })
+                          : 'Fecha inválida'}
                       </Text>
-                      <Badge variant="outline" colorScheme={color} size="sm">
-                        {transaction.category}
+                      <Badge variant="subtle" colorScheme={color} fontSize="0.7em">
+                        {transaction.type}
                       </Badge>
                     </HStack>
                   </Box>
@@ -229,6 +240,7 @@ const TransactionHistory = () => {
         )}
       </VStack>
 
+      {/* Botón cargar más */}
       {filteredTransactions.length > 0 && (
         <Box textAlign="center" pt={4}>
           <Button variant="outline" size="sm">
