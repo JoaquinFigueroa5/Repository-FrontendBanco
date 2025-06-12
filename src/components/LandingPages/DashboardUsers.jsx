@@ -412,7 +412,7 @@ const DashboardUsers = () => {
                               color={transaction.type === 'income' ? 'green.500' : 'red.500'}
                             >
                               {transaction.type === 'income' ? '+' : '-'}$
-                              {transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              {transaction.amount.toLocaleString()}
                             </Text>
                           </VStack>
                         </Flex>
@@ -420,9 +420,57 @@ const DashboardUsers = () => {
                     ))}
                   </VStack>
                 </TabPanel>
+
+                {/* Cuentas Favoritas Tab */}
+                <TabPanel>
+                  <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4}>
+                    {favoriteAccounts.map((account) => (
+                      <Box
+                        key={account.id}
+                        p={4}
+                        bg={useColorModeValue('gray.50', 'gray.700')}
+                        borderRadius="xl"
+                        _hover={{ bg: useColorModeValue('gray.100', 'gray.600'), transform: 'translateY(-2px)' }}
+                        transition="all 0.2s"
+                        cursor="pointer"
+                      >
+                        <HStack spacing={4}>
+                          <Avatar name={account.avatar} size="md" bg="blue.500" />
+                          <VStack align="start" spacing={1} flex="1">
+                            <HStack>
+                              <Text fontWeight="bold" color={textColor}>{account.name}</Text>
+                              <IconButton
+                                icon={<Star size={16} />}
+                                variant="ghost"
+                                size="sm"
+                                color="yellow.500"
+                              />
+                            </HStack>
+                            <Text fontSize="sm" color="gray.500">
+                              {account.account} • {account.bank}
+                            </Text>
+                          </VStack>
+                          <Button
+                            size="sm"
+                            colorScheme="blue"
+                            variant="outline"
+                            borderRadius="lg"
+                            onClick={() => {
+                              setSelectedFavorite(account.id.toString());
+                              onQuickPayOpen();
+                            }}
+                          >
+                            Enviar
+                          </Button>
+                        </HStack>
+                      </Box>
+                    ))}
+                  </Grid>
+                </TabPanel>
               </TabPanels>
             </Tabs>
           </Card>
+
           {/* Modal de Transferencia */}
           <Modal isOpen={isTransferOpen} onClose={onTransferClose} size="md">
             <ModalOverlay backdropFilter="blur(10px)" />

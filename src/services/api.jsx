@@ -76,3 +76,21 @@ export const getTransaction = async (data) => {
         }
     }
 }
+
+export const getTransactionUser = async ( data ) => {
+    try{
+        const res = await apiClient.get('/transactions/user', data);
+        return {
+            success: true,
+            status: res.status,
+            data: res.data
+        };
+    }catch(e){
+        const msg = e.response?.data?.msg || 'Error general'
+        return {
+            error: true,
+            msg,
+            e
+        }
+    }
+}

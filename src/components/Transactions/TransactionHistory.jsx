@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import useGetTransaction from '../../shared/hooks/useGetTransaction';
+import { useGetUserTransactions } from '../../shared/hooks/useGetUserTransactions'; // Cambia la ruta según corresponda
 
 const TransactionHistory = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,26 +32,31 @@ const TransactionHistory = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
-  const { transactions, total, loading, error } = useGetTransaction({ limit: 20 });
+  // Aquí usamos el hook que trae las transacciones del usuario logueado
+  const { transactions, loading, error, refetch } = useGetUserTransactions();
 
-  useEffect(() => {
-    if (transactions.length > 0) {
-      console.log('Transacciones obtenidas:', transactions);
-    } else {
-      console.log('No hay datos en la base de datos');
+  // Convierte Decimal128 a número float para facilitar comparaciones y formateo
+  const normalizeAmount = (amount) => {
+    if (!amount) return 0;
+    if (typeof amount === 'object' && '$numberDecimal' in amount) {
+      return parseFloat(amount.$numberDecimal);
     }
-  }, [transactions]);
+    return Number(amount);
+  };
 
-  // Normalizamos los campos type y status para evitar errores con toLowerCase
+  // Normalizamos type y status para filtros, y amount para uso interno
   const normalizedTransactions = transactions.map(t => ({
     ...t,
+    amount: normalizeAmount(t.amount),
     type: typeof t.type === 'string' ? t.type.toLowerCase() : '',
-    status: typeof t.status === 'string' ? t.status.toLowerCase() : '',
+    // tu status es booleano true/false, lo convertimos a texto para filtros
+    status: t.status === true ? 'completed' : 'failed',
   }));
 
   const getTransactionIcon = (type, amount) => {
     switch (type) {
-      case 'Transferencia':
+      case 'transferencia':
+      case 'transfer':
         return amount > 0 ? ArrowDownLeft : ArrowUpRight;
       case 'payment':
         return CreditCard;
@@ -66,7 +71,7 @@ const TransactionHistory = () => {
 
   const getTransactionColor = (type, amount) => {
     if (type === 'deposit' || amount > 0) return 'green';
-    if (type === 'Transferencia') return 'blue';
+    if (type === 'transfer' || type === 'transferencia') return 'blue';
     if (type === 'payment') return 'orange';
     return 'red';
   };
@@ -97,12 +102,10 @@ const TransactionHistory = () => {
   };
 
   const filteredTransactions = normalizedTransactions.filter(transaction => {
-    const matchesSearch =
-      (transaction.details?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-
+    const details = typeof transaction.details === 'string' ? transaction.details : JSON.stringify(transaction.details);
+    const matchesSearch = details.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || transaction.type === filterType;
     const matchesStatus = filterStatus === 'all' || transaction.status === filterStatus;
-
     return matchesSearch && matchesType && matchesStatus;
   });
 
@@ -190,16 +193,16 @@ const TransactionHistory = () => {
                     <HStack justify="space-between" align="start">
                       <VStack align="start" spacing={0}>
                         <Text fontWeight="medium" fontSize="sm" color="gray.800">
-                          {transaction.details || 'Sin detalles'}
+                          {typeof transaction.details === 'string' ? transaction.details : JSON.stringify(transaction.details) || 'Sin detalles'}
                         </Text>
                         {transaction.accountId && (
                           <Text fontSize="xs" color="gray.500">
-                            Cuenta origen: {transaction.accountId}
+                            Cuenta origen: {transaction.accountId.accountNumber || 'N/A'} - {transaction.accountId.userId?.name} {transaction.accountId.userId?.surname}
                           </Text>
                         )}
                         {transaction.destinationAccountId && (
                           <Text fontSize="xs" color="gray.500">
-                            Cuenta destino: {transaction.destinationAccountId}
+                            Cuenta destino: {transaction.destinationAccountId.accountNumber || 'N/A'} - {transaction.destinationAccountId.userId?.name} {transaction.destinationAccountId.userId?.surname}
                           </Text>
                         )}
                       </VStack>
@@ -228,8 +231,8 @@ const TransactionHistory = () => {
                           ? format(new Date(transaction.createdAt), "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })
                           : 'Fecha inválida'}
                       </Text>
-                      <Badge variant="subtle" colorScheme={color} fontSize="0.7em">
-                        {transaction.type}
+                      <Badge variant="subtle" colorScheme={color} fontSize="0.7em" textTransform="capitalize">
+                        {transaction.type || 'desconocido'}
                       </Badge>
                     </HStack>
                   </Box>
@@ -243,8 +246,8 @@ const TransactionHistory = () => {
       {/* Botón cargar más */}
       {filteredTransactions.length > 0 && (
         <Box textAlign="center" pt={4}>
-          <Button variant="outline" size="sm">
-            Cargar más transacciones
+          <Button variant="outline" size="sm" onClick={refetch}>
+            Recargar transacciones
           </Button>
         </Box>
       )}
