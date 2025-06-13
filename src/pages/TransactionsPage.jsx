@@ -15,7 +15,7 @@ import {
   TabPanel,
   useDisclosure,
   useToast,
-
+  useColorModeValue
 } from '@chakra-ui/react';
 import NavBar from '../components/commons/NavBar';
 import AccountOverview from '../components/Transactions/AccountOverview';
@@ -26,7 +26,12 @@ import TransactionAnalytics from '../components/Transactions/TransactionAnalytic
 
 const TransactionsPage = () => {
   const [transactions, setTransactions] = useState([]);
-
+  const bgGradient = useColorModeValue(
+    'linear(to-br, blue.50, purple.50, pink.50)',
+    'linear(to-br, blue.900, purple.900, pink.900)'
+  );
+  const textColor = useColorModeValue('gray.800', 'white');
+  
   const [accountBalance, setAccountBalance] = useState(12485.50);
   const toast = useToast();
 
@@ -54,16 +59,16 @@ const TransactionsPage = () => {
   };
 
   return (
-    <Box bg="gray.50" minH="100vh">
+    <Box bg={bgGradient} minH="100vh">
       <NavBar/>
       <Container maxW="container.xl" py={8}>
         <VStack spacing={8} align="stretch">
           {/* Header */}
           <Box textAlign="center">
-            <Text fontSize="4xl" fontWeight="bold" color="gray.800" mb={2}>
+            <Text fontSize="4xl" fontWeight="bold" color={textColor} mb={2}>
               Panel de Transacciones
             </Text>
-            <Text fontSize="lg" color="gray.600">
+            <Text fontSize="lg" color={textColor}>
               Gestiona tus transferencias, pagos y consulta tu historial bancario
             </Text>
           </Box>
@@ -85,7 +90,7 @@ const TransactionsPage = () => {
             <GridItem>
               <Card>
                 <CardBody>
-                  <Tabs variant="enclosed" colorScheme="brand">
+                  <Tabs variant="enclosed" color={textColor}>
                     <TabList>
                       <Tab>Historial de Transacciones</Tab>
                       <Tab>Análisis Financiero</Tab>

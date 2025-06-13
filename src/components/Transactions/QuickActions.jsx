@@ -7,6 +7,7 @@ import {
   Grid,
   Box,
   Icon,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { Send, CreditCard } from 'lucide-react';
 import TransferModal from './TransferModa';
@@ -14,7 +15,13 @@ import useTransfer from '../../shared/hooks/UseTransfer';
 
 const QuickActions = () => {
   const [isTransferOpen, setIsTransferOpen] = useState(false);
+  const bgGradient = useColorModeValue(
+    'linear(to-br, blue.50, purple.50, pink.50)',
+    'linear(to-br, blue.900, purple.900, pink.900)'
+  );
+  const cardBg = useColorModeValue('white', 'gray.800');
 
+  const textColor = useColorModeValue('gray.800', 'white');
   const onTransferOpen = () => setIsTransferOpen(true);
   const onTransferClose = () => setIsTransferOpen(false);
 
@@ -28,6 +35,8 @@ const QuickActions = () => {
     handleTransfer,
     loading,
     error,
+    fromAccountId,
+    setFromAccountId
   } = useTransfer(() => {
     // Esto se ejecuta cuando la transferencia se hace con éxito
     onTransferClose();
@@ -38,6 +47,7 @@ const QuickActions = () => {
     {
       title: 'Transferir',
       description: 'Envía dinero a otra cuenta',
+      textColor: textColor,
       icon: Send,
       color: 'brand',
       onClick: onTransferOpen,
@@ -57,10 +67,10 @@ const QuickActions = () => {
         <CardBody>
           <VStack spacing={6} align="stretch">
             <Box>
-              <Text fontSize="xl" fontWeight="bold" color="gray.800" mb={2}>
+              <Text fontSize="xl" fontWeight="bold" mb={2} color={textColor}>
                 Acciones Rápidas
               </Text>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize="sm" color={textColor}>
                 Realiza operaciones bancarias fácilmente
               </Text>
             </Box>
@@ -75,7 +85,6 @@ const QuickActions = () => {
                   borderRadius="xl"
                   border="1px"
                   borderColor="gray.200"
-                  bg="white"
                   _hover={{
                     borderColor: `${action.color}.300`,
                     boxShadow: 'md',
@@ -94,10 +103,10 @@ const QuickActions = () => {
                       <Icon as={action.icon} boxSize={6} />
                     </Box>
                     <VStack spacing={1}>
-                      <Text fontSize="sm" fontWeight="semibold" color="gray.800">
+                      <Text fontSize="sm" fontWeight="semibold" color={action.textColor}>
                         {action.title}
                       </Text>
-                      <Text fontSize="xs" color="gray.600" textAlign="center">
+                      <Text fontSize="xs" color={action.textColor} textAlign="center">
                         {action.description}
                       </Text>
                     </VStack>
@@ -105,13 +114,14 @@ const QuickActions = () => {
                 </Box>
               ))}
             </Grid>
+
           </VStack>
         </CardBody>
       </Card>
 
       <TransferModal
         isOpen={isTransferOpen}
-        onClose={onTransferClose}
+        onClose={() => setIsTransferOpen(false)}
         transferTo={transferTo}
         setTransferTo={setTransferTo}
         transferAmount={transferAmount}
@@ -119,6 +129,8 @@ const QuickActions = () => {
         transferConcept={transferConcept}
         setTransferConcept={setTransferConcept}
         handleTransfer={handleTransfer}
+        fromAccountId={fromAccountId}
+        setFromAccountId={setFromAccountId}
       />
     </>
   );

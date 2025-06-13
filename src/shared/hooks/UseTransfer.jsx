@@ -7,6 +7,7 @@ const useTransfer = (onSuccess) => {
   const [transferConcept, setTransferConcept] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [fromAccountId, setFromAccountId] = useState('');
 
   const handleTransfer = async () => {
     setLoading(true);
@@ -14,9 +15,11 @@ const useTransfer = (onSuccess) => {
 
     try {
       await createTransaction({
-        to: transferTo,
+        accountId: fromAccountId,
+        type: 'Transferencia',
         amount: parseFloat(transferAmount),
-        concept: transferConcept,
+        details: transferConcept,
+        destinationNumberAccount: transferTo,
       });
 
       // Limpiar campos después de enviar
@@ -40,6 +43,8 @@ const useTransfer = (onSuccess) => {
     transferConcept,
     setTransferConcept,
     handleTransfer,
+    fromAccountId,
+    setFromAccountId,
     loading,
     error,
   };

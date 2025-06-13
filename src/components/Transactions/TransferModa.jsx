@@ -1,8 +1,9 @@
-// components/TransferModal.jsx
+import { useState,useEffect } from "react";
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton,
-  ModalBody, VStack, FormControl, FormLabel, Input, Textarea, Button,
+  ModalBody, VStack, FormControl, FormLabel, Input, Textarea, Button, Select
 } from "@chakra-ui/react";
+import { useAccount } from "../../shared/hooks/useAccount";
 
 const TransferModal = ({
   isOpen,
@@ -13,8 +14,17 @@ const TransferModal = ({
   setTransferAmount,
   transferConcept,
   setTransferConcept,
-  handleTransfer
+  handleTransfer,
+  fromAccountId,
+  setFromAccountId,
+
 }) => {
+  const { account, loading, error, fetchAccount } = useAccount();
+
+  useEffect(() => {
+    fetchAccount();
+  }, []);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md">
       <ModalOverlay backdropFilter="blur(10px)" />
@@ -23,6 +33,22 @@ const TransferModal = ({
         <ModalCloseButton />
         <ModalBody pb={6}>
           <VStack spacing={4}>
+            <FormControl>
+              <FormLabel>Selecciona tu Cuenta</FormLabel>
+              <Select
+                placeholder="Selecciona tu cuenta"
+                value={fromAccountId}
+                onChange={(e) => setFromAccountId(e.target.value)}
+                borderRadius="lg"
+              >
+                {account && (
+                  <option key={account._id} value={account._id}>
+                    {account.accountNumber} - Q{parseFloat(account?.balance).toFixed(2)}
+                  </option>
+                )}
+              </Select>
+
+            </FormControl>
             <FormControl>
               <FormLabel>Destinatario</FormLabel>
               <Input

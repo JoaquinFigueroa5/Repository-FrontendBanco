@@ -62,6 +62,7 @@ import NavBar from '../commons/NavBar';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../../context/UserStore';
 import TransferModal from '../Transactions/TransferModa';
+import useTransfer from '../../shared/hooks/UseTransfer';
 const DashboardUsers = () => {
 
   const navigate = useNavigate();
@@ -72,9 +73,7 @@ const DashboardUsers = () => {
   const toast = useToast();
 
   // Estados para transacciones
-  const [transferAmount, setTransferAmount] = useState('');
-  const [transferTo, setTransferTo] = useState('');
-  const [transferConcept, setTransferConcept] = useState('');
+
   const [quickPayAmount, setQuickPayAmount] = useState('');
   const [selectedFavorite, setSelectedFavorite] = useState('');
 
@@ -109,41 +108,22 @@ const DashboardUsers = () => {
 
   const { user } = useUserStore();
 
-  const handleTransfer = () => {
-    if (!transferAmount || !transferTo || !transferConcept) {
-      toast({
-        title: 'Error',
-        description: 'Por favor completa todos los campos',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+  const {
+  transferTo, setTransferTo,
+  transferAmount, setTransferAmount,
+  transferConcept, setTransferConcept,
+  handleTransfer,
+  fromAccountId, setFromAccountId,
+  loading, error
+} = useTransfer(() => {
+  onTransferClose();
+  fetchTransactions(); // refresca la lista en UI
+});
 
-    const newTransaction = {
-      id: transactions.length + 1,
-      type: 'expense',
-      amount: parseFloat(transferAmount),
-      description: `Transferencia a ${transferTo} - ${transferConcept}`,
-      date: new Date().toISOString().split('T')[0],
-      category: 'Transferencia'
-    };
-
-    setTransactions([newTransaction, ...transactions]);
-    setTransferAmount('');
-    setTransferTo('');
-    setTransferConcept('');
-    onTransferClose();
-
-    toast({
-      title: 'Transferencia exitosa',
-      description: `Se transfirieron $${transferAmount} correctamente`,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
+const fetchTransactions = async () => {
+  // Llamá a tu API para traer las transacciones y guardalas en estado
+  setTransactions(await api.getTransactions());
+};
 
   const handleQuickPay = () => {
     if (!quickPayAmount || !selectedFavorite) {
@@ -481,6 +461,8 @@ const DashboardUsers = () => {
             setTransferAmount={setTransferAmount}
             transferConcept={transferConcept}
             setTransferConcept={setTransferConcept}
+            fromAccountId={fromAccountId}        
+            setFromAccountId={setFromAccountId}
             handleTransfer={handleTransfer} />
 
           {/* Modal de Pago Rápido */}
