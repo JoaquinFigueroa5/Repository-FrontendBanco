@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardBody,
@@ -15,8 +15,20 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import { Eye, EyeOff, CreditCard, TrendingUp } from 'lucide-react';
+import { useColorModeValue } from '@chakra-ui/react';
+import useUserStore from '../../context/UserStore';
+import { useAccount } from '../../shared/hooks/useAccount';
 
-const AccountOverview = ({ balance }) => {
+const AccountOverview = ({ }) => {
+
+  const { account, loading, error, fetchAccount } = useAccount();
+
+  const { user } = useUserStore()
+
+  useEffect(() => {
+    fetchAccount();
+  }, []);
+  const textColor = useColorModeValue('gray.800', 'white');
   const [showBalance, setShowBalance] = useState(true);
 
   const formatCurrency = (amount) => {
@@ -33,25 +45,25 @@ const AccountOverview = ({ balance }) => {
           <HStack justify="space-between" align="center">
             <HStack spacing={3}>
               <Box p={2} bg="whiteAlpha.200" borderRadius="lg">
-                <CreditCard size={24} />
+                <CreditCard size={24} color='black' />
               </Box>
               <VStack spacing={0} align="start">
-                <Text fontSize="sm" opacity={0.9}>
-                  Cuenta Principal
+                <Text fontSize="sm" opacity={0.9} color={textColor}>
+                  Cuenta Principal - {user?.username}
                 </Text>
-                <Text fontSize="xs" opacity={0.7}>
-                  **** **** **** 1234
+                <Text fontSize="xs" opacity={0.7} color={textColor}>
+                  {account?.accountNumber}
                 </Text>
               </VStack>
             </HStack>
-            <Badge colorScheme="green" variant="solid" px={3} py={1}>
+            <Badge colorScheme="green" variant="solid" px={3} py={1} color={textColor}>
               Activa
             </Badge>
           </HStack>
 
           <Box>
             <HStack justify="space-between" align="center" mb={3}>
-              <Text fontSize="sm" opacity={0.8}>
+              <Text fontSize="sm" opacity={0.8} color={textColor}>
                 Saldo Disponible
               </Text>
               <IconButton
@@ -59,44 +71,18 @@ const AccountOverview = ({ balance }) => {
                 onClick={() => setShowBalance(!showBalance)}
                 size="sm"
                 variant="ghost"
-                color="white"
+                color={textColor}
                 _hover={{ bg: 'whiteAlpha.200' }}
                 aria-label="Toggle balance visibility"
               />
             </HStack>
-            <Text fontSize="3xl" fontWeight="bold" mb={2}>
-              {showBalance ? formatCurrency(balance) : '••••••'}
+            <Text fontSize="3xl" fontWeight="bold" mb={2} color={textColor}>
+              {showBalance ? `Q ${account?.balance?.$numberDecimal}` : '••••'}
             </Text>
-            <HStack>
-              <TrendingUp size={16} />
-              <Text fontSize="sm" opacity={0.9}>
-                +2.5% vs mes anterior
-              </Text>
-            </HStack>
+
           </Box>
 
-          <HStack spacing={6}>
-            <Stat size="sm">
-              <StatLabel color="whiteAlpha.800">Ingresos</StatLabel>
-              <StatNumber fontSize="lg" color="white">
-                {showBalance ? formatCurrency(3500) : '••••'}
-              </StatNumber>
-              <StatHelpText color="whiteAlpha.700" mb={0}>
-                <StatArrow type="increase" />
-                12.5%
-              </StatHelpText>
-            </Stat>
-            <Stat size="sm">
-              <StatLabel color="whiteAlpha.800">Gastos</StatLabel>
-              <StatNumber fontSize="lg" color="white">
-                {showBalance ? formatCurrency(1250) : '••••'}
-              </StatNumber>
-              <StatHelpText color="whiteAlpha.700" mb={0}>
-                <StatArrow type="decrease" />
-                8.2%
-              </StatHelpText>
-            </Stat>
-          </HStack>
+
         </VStack>
       </CardBody>
     </Card>

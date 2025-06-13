@@ -88,3 +88,40 @@ export const getTransactionUser = async ( data ) => {
         }
     }
 }
+
+export const getUserAccount = async () => {
+    try {
+        const res = await apiClient.get(`/accounts/my-account`)
+        return {
+            success: true,
+            status: res.status,
+            data: res.data
+        };
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error'
+        return{
+            error: true,
+            msg,
+            e
+        }
+    }
+}
+
+
+export const createTransaction = async (data) => {
+  try {
+    const res = await apiClient.post('/transactions', data);
+    return {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error al crear la transacción';
+    return {
+      error: true,
+      msg,
+      e,
+    };
+  }
+};

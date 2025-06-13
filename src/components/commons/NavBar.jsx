@@ -261,7 +261,7 @@ const NavBar = () => {
     const { colorMode, toggleColorMode } = useColorMode();
 
     const navItems = [
-        { name: 'Inicio', href: '#' },
+        { name: 'Inicio', href: '/dashboard' },
         { name: 'Productos', href: '#' },
         { name: 'Servicios', href: '#' },
         { name: 'Register', href: '/register' },

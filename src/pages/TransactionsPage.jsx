@@ -15,98 +15,17 @@ import {
   TabPanel,
   useDisclosure,
   useToast,
-} from '@chakra-ui/react';
 
+} from '@chakra-ui/react';
+import NavBar from '../components/commons/NavBar';
 import AccountOverview from '../components/Transactions/AccountOverview';
 import QuickActions from '../components/Transactions/QuickActions';
 import TransactionHistory from '../components/Transactions/TransactionHistory';
-import TransferModal from '../components/Transactions/TransferModal';
 import PaymentModal from '../components/Transactions/PaymentModal';
 import TransactionAnalytics from '../components/Transactions/TransactionAnalytics';
 
 const TransactionsPage = () => {
-  const [transactions, setTransactions] = useState([
-    {
-      id: '1',
-      type: 'transfer',
-      amount: -450.00,
-      description: 'Transferencia a Juan Pérez',
-      date: new Date('2024-01-15T10:30:00'),
-      status: 'completed',
-      category: 'transfer',
-      recipient: 'Juan Pérez',
-      account: '****1234'
-    },
-    {
-      id: '2',
-      type: 'payment',
-      amount: -189.99,
-      description: 'Pago Electricidad - CFE',
-      date: new Date('2024-01-14T15:45:00'),
-      status: 'completed',
-      category: 'utilities',
-      recipient: 'CFE'
-    },
-    {
-      id: '3',
-      type: 'deposit',
-      amount: 3500.00,
-      description: 'Depósito de nómina',
-      date: new Date('2024-01-13T09:00:00'),
-      status: 'completed',
-      category: 'income'
-    },
-    {
-      id: '4',
-      type: 'transfer',
-      amount: -125.50,
-      description: 'Transferencia a María González',
-      date: new Date('2024-01-12T14:20:00'),
-      status: 'completed',
-      category: 'transfer',
-      recipient: 'María González',
-      account: '****5678'
-    },
-    {
-      id: '5',
-      type: 'payment',
-      amount: -85.00,
-      description: 'Pago Teléfono - Telcel',
-      date: new Date('2024-01-11T11:10:00'),
-      status: 'completed',
-      category: 'utilities',
-      recipient: 'Telcel'
-    },
-    {
-      id: '6',
-      type: 'withdrawal',
-      amount: -200.00,
-      description: 'Retiro en cajero automático',
-      date: new Date('2024-01-10T16:30:00'),
-      status: 'completed',
-      category: 'other'
-    },
-    {
-      id: '7',
-      type: 'payment',
-      amount: -45.99,
-      description: 'Suscripción Netflix',
-      date: new Date('2024-01-09T08:15:00'),
-      status: 'completed',
-      category: 'entertainment'
-    },
-    {
-      id: '8',
-      type: 'transfer',
-      amount: -300.00,
-      description: 'Transferencia a Carlos Mendoza',
-      date: new Date('2024-01-08T12:45:00'),
-      status: 'pending',
-      category: 'transfer',
-      recipient: 'Carlos Mendoza',
-      account: '****9012'
-    }
-  ]);
+  const [transactions, setTransactions] = useState([]);
 
   const [accountBalance, setAccountBalance] = useState(12485.50);
   const toast = useToast();
@@ -136,6 +55,7 @@ const TransactionsPage = () => {
 
   return (
     <Box bg="gray.50" minH="100vh">
+      <NavBar/>
       <Container maxW="container.xl" py={8}>
         <VStack spacing={8} align="stretch">
           {/* Header */}
@@ -187,11 +107,7 @@ const TransactionsPage = () => {
       </Container>
 
       {/* Modals */}
-      <TransferModal 
-        isOpen={isTransferOpen} 
-        onClose={onTransferClose}
-        onSubmit={handleNewTransaction}
-      />
+
       <PaymentModal 
         isOpen={isPaymentOpen} 
         onClose={onPaymentClose}
