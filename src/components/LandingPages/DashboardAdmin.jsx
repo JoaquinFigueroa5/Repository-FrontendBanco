@@ -77,11 +77,17 @@ import {
   PhoneIcon,
   EmailIcon,
   CalendarIcon,
+  RepeatClockIcon,
   ArrowUpIcon,
   ArrowDownIcon,
   SettingsIcon,
 } from '@chakra-ui/icons';
 import NavBar from '../commons/NavBar';
+import useGetTransaction from '../../shared/hooks/useGetTransaction'
+import { CreditCard, Banknote, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
@@ -109,14 +115,6 @@ const accountTypeData = [
   { name: 'Ahorro', value: 35, color: '#38A169' },
   { name: 'Empresarial', value: 15, color: '#D69E2E' },
   { name: 'Premium', value: 5, color: '#9F7AEA' },
-];
-
-const recentTransactions = [
-  { id: '001', usuario: 'María García', tipo: 'Transferencia', monto: 2500.00, estado: 'Completada', fecha: '2025-06-10 14:30' },
-  { id: '002', usuario: 'Carlos López', tipo: 'Depósito', monto: 1200.00, estado: 'Pendiente', fecha: '2025-06-10 13:45' },
-  { id: '003', usuario: 'Ana Rodríguez', tipo: 'Retiro', monto: 800.00, estado: 'Completada', fecha: '2025-06-10 12:20' },
-  { id: '004', usuario: 'Luis Martín', tipo: 'Pago', monto: 350.00, estado: 'Fallida', fecha: '2025-06-10 11:15' },
-  { id: '005', usuario: 'Sofia Chen', tipo: 'Transferencia', monto: 5000.00, estado: 'En revisión', fecha: '2025-06-10 10:00' },
 ];
 
 const alertsData = [
@@ -179,18 +177,71 @@ const StatCard = ({ title, value, change, changeType, icon, color = "blue" }) =>
   );
 };
 
-const TransactionTable = () => {
+const TransactionTable = ({ accountId = '' }) => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
+  const { transactions, loading, error } = useGetTransaction({ accountId, limit: 10, skip: 0 });
+
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'Completada': return 'green';
-      case 'Pendiente': return 'yellow';
-      case 'Fallida': return 'red';
-      case 'En revisión': return 'blue';
-      default: return 'gray';
+  if (typeof status !== 'string') return 'gray';
+
+  switch (status.toLowerCase()) {
+    case 'completada':
+    case 'completed':
+      return 'green';
+    case 'pendiente':
+    case 'pending':
+      return 'yellow';
+    case 'fallida':
+    case 'failed':
+      return 'red';
+    case 'en revisión':
+      return 'blue';
+    default:
+      return 'gray';
+  }
+};
+
+  const getTransactionColor = (type) => {
+    switch (type?.toLowerCase()) {
+      case 'deposito':
+        return 'green';
+      case 'transferencia':
+        return 'blue';
+      case 'pago':
+      case 'compra':
+        return 'purple';
+      case 'retiro':
+        return 'red';
+      default:
+        return 'gray';
     }
+  };
+
+  const getTransactionIcon = (transaction) => {
+    const type = transaction?.type?.toLowerCase();
+    switch (type) {
+      case 'transferencia':
+        return <RepeatClockIcon boxSize={5} color="blue.500" />;
+      case 'deposito':
+        return <ArrowDownIcon boxSize={5} color="green.500" />;
+      case 'retiro':
+        return <ArrowUpIcon boxSize={5} color="red.500" />;
+      case 'compra':
+      case 'pago':
+        return <CreditCardIcon boxSize={5} color="purple.500" />;
+      default:
+        return <QuestionOutlineIcon boxSize={5} color="gray.500" />;
+    }
+  };
+
+  const formatCurrency = (amount) => {
+    const value = Number(amount);
+    return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+    }).format(Math.abs(value));
   };
 
   return (
@@ -198,11 +249,13 @@ const TransactionTable = () => {
       bg={bgColor}
       borderColor={borderColor}
       borderWidth="1px"
+      borderRadius="2xl"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
+      p={6}
     >
-      <CardHeader>
+      <CardHeader mb={4} px={0}>
         <Flex justify="space-between" align="center">
           <Text fontSize="lg" fontWeight="bold">
             Transacciones Recientes
@@ -220,74 +273,85 @@ const TransactionTable = () => {
           </HStack>
         </Flex>
       </CardHeader>
-      <CardBody pt={0}>
-        <Table variant="simple" size="sm">
-          <Thead>
-            <Tr>
-              <Th>ID</Th>
-              <Th>Usuario</Th>
-              <Th>Tipo</Th>
-              <Th isNumeric>Monto</Th>
-              <Th>Estado</Th>
-              <Th>Fecha</Th>
-              <Th>Acciones</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {recentTransactions.map((transaction) => (
-              <Tr key={transaction.id}>
-                <Td fontFamily="mono" fontSize="sm">
-                  #{transaction.id}
-                </Td>
-                <Td>
-                  <HStack spacing={2}>
-                    <Avatar size="sm" name={transaction.usuario} />
-                    <Text fontSize="sm">{transaction.usuario}</Text>
+
+      <CardBody px={0} pt={0}>
+        {loading ? (
+          <Text textAlign="center" py={4}>
+            Cargando transacciones...
+          </Text>
+        ) : error ? (
+          <Alert status="error" borderRadius="md">
+            <AlertIcon />
+            <AlertTitle>Error:</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : transactions.length === 0 ? (
+          <Text textAlign="center" py={4}>
+            No hay transacciones recientes
+          </Text>
+        ) : (
+          <VStack spacing={4} align="stretch">
+            {transactions.map((transaction) => {
+              const icon = getTransactionIcon(transaction);
+              const color = getTransactionColor(transaction.type);
+              const statusColor = getStatusColor(transaction.status);
+              const isPositive = Number(transaction.amount) > 0;
+              const amountColor = isPositive ? 'green.600' : 'red.600';
+
+              const userName = transaction.accountId?.userId
+                ? `${transaction.accountId.userId.name} ${transaction.accountId.userId.surname}`
+                : 'N/A';
+
+              return (
+                <Box
+                  key={transaction._id}
+                  p={4}
+                  bg={bgColor}
+                  borderRadius="xl"
+                  border="1px solid"
+                  borderColor={borderColor}
+                  _hover={{ shadow: 'md', borderColor: `${color}.300` }}
+                  transition="all 0.2s"
+                >
+                  <HStack spacing={4} align="start">
+                    <Avatar size="md" bg={`${color}.100`} color={`${color}.600`} icon={icon} />
+                    <Box flex="1">
+                      <HStack justify="space-between" align="start">
+                        <VStack align="start" spacing={0}>
+                          <Text fontWeight="medium" fontSize="sm">
+                            {transaction.details || 'Sin detalles'}
+                          </Text>
+                          <Text fontSize="xs" color="gray.500">
+                            Usuario: {userName}
+                          </Text>
+                        </VStack>
+                        <VStack spacing={0} align="end">
+                          <Text fontSize="md" fontWeight="bold" color={amountColor}>
+                            {isPositive ? '+' : '-'}
+                            {formatCurrency(transaction.amount)}
+                          </Text>
+                          <Badge colorScheme={statusColor} variant="solid" fontSize="0.7em" px={2}>
+                            {transaction.status}
+                          </Badge>
+                        </VStack>
+                      </HStack>
+                      <HStack justify="space-between" mt={2}>
+                        <Text fontSize="xs" color="gray.500">
+                          {transaction.createdAt
+                            ? format(new Date(transaction.createdAt), "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })
+                            : 'Fecha desconocida'}
+                        </Text>
+                        <Badge variant="subtle" colorScheme={color} fontSize="0.7em">
+                          {transaction.type}
+                        </Badge>
+                      </HStack>
+                    </Box>
                   </HStack>
-                </Td>
-                <Td>
-                  <Text fontSize="sm">{transaction.tipo}</Text>
-                </Td>
-                <Td isNumeric>
-                  <Text fontSize="sm" fontWeight="semibold">
-                    ${transaction.monto.toLocaleString()}
-                  </Text>
-                </Td>
-                <Td>
-                  <Badge
-                    colorScheme={getStatusColor(transaction.estado)}
-                    variant="subtle"
-                    borderRadius="full"
-                    px={2}
-                  >
-                    {transaction.estado}
-                  </Badge>
-                </Td>
-                <Td>
-                  <Text fontSize="xs" color="gray.500">
-                    {transaction.fecha}
-                  </Text>
-                </Td>
-                <Td>
-                  <HStack spacing={1}>
-                    <IconButton
-                      size="xs"
-                      variant="ghost"
-                      icon={<ViewIcon />}
-                      aria-label="Ver"
-                    />
-                    <IconButton
-                      size="xs"
-                      variant="ghost"
-                      icon={<EditIcon />}
-                      aria-label="Editar"
-                    />
-                  </HStack>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+                </Box>
+              );
+            })}
+          </VStack>
+        )}
       </CardBody>
     </MotionCard>
   );
@@ -402,9 +466,23 @@ const QuickActions = () => {
 };
 
 const DashboardAdmin = () => {
+  const { transactions, loading, error } = useGetTransaction({ accountId: '', limit: 100, skip: 0 });
+
   const [selectedPeriod, setSelectedPeriod] = useState('30d');
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
+
+
+  const transaccionesHoy = transactions.filter(t => esDeHoy(t.fecha)).length;
+  const volumenTotal = transactions.reduce((acc, t) => acc + Number(t.monto || 0), 0);
+
+  // Función auxiliar ejemplo para fecha (puedes mejorar según formato)
+  function esDeHoy(fechaStr) {
+    const hoy = new Date();
+    const fecha = new Date(fechaStr);
+    return fecha.toDateString() === hoy.toDateString();
+  }
+
 
   return (
     <>
@@ -600,7 +678,7 @@ const DashboardAdmin = () => {
 
         {/* Bottom Section */}
         <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
-          <TransactionTable />
+          <TransactionTable transactions={transactions} loading={loading} error={error} />
           <VStack spacing={4} align="stretch">
             <AlertsPanel />
             <QuickActions />
