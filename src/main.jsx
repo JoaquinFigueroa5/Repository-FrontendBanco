@@ -1,10 +1,11 @@
-import React from 'react'
-import App from './App.jsx'
-import { BrowserRouter } from 'react-router-dom'
-import { ChakraProvider } from '@chakra-ui/react'
-import { UserProvider } from './context/UseContext.jsx'
+import React from 'react';
+import App from './App.jsx';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { ChakraProvider } from '@chakra-ui/react';
+import UserProvider from './context/UserProvider.jsx';
 
-createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <ChakraProvider>
       <UserProvider>
@@ -12,4 +13,4 @@ createRoot(document.getElementById('root')).render(
       </UserProvider>
     </ChakraProvider>
   </BrowserRouter>
-)
+);

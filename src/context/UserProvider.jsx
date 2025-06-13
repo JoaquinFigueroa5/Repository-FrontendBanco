@@ -1,3 +1,4 @@
+// src/context/UserProvider.jsx
 import {
     Modal,
     ModalOverlay,
@@ -8,45 +9,20 @@ import {
     Button,
     useDisclosure
 } from '@chakra-ui/react';
-import { createContext, useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useUserStore from './UserStore';
 
-export const UserContext = createContext();
-
-export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [showTokenModal, setShowTokenModal] = useState(false);
+const UserProvider = ({ children }) => {
     const navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure();
-
-    const fetchUser = useCallback(() => {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        const token = storedUser?.token;
-
-        if (!token) {
-            setUser(null);
-            return;
-        }
-
-        axios
-            .get('http://127.0.0.1:3000/BancaOnline/v1/users/profile', {
-                headers: { 'x-token': token }
-            })
-            .then((res) => {
-                setUser(res.data.user);
-            })
-            .catch(() => {
-                setUser(null);
-            });
-    }, []);
-
-    const handleTokenExpired = useCallback(() => {
-        setShowTokenModal(true);
-        onOpen();
-        localStorage.removeItem('user');
-        setUser(null);
-    }, [onOpen]);
+    const {
+        user,
+        fetchUser,
+        handleTokenExpired,
+        showTokenModal,
+        closeTokenModal
+    } = useUserStore();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -57,7 +33,6 @@ export const UserProvider = ({ children }) => {
             try {
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 const exp = payload.exp * 1000;
-
                 if (Date.now() > exp) {
                     handleTokenExpired();
                 }
@@ -71,21 +46,22 @@ export const UserProvider = ({ children }) => {
     }, [handleTokenExpired]);
 
     useEffect(() => {
-        window.addEventListener('token-expired', handleTokenExpired);
-        return () => window.removeEventListener('token-expired', handleTokenExpired);
-    }, [handleTokenExpired]);
-
-    const handleModalClose = () => {
-        onClose();
-        navigate('/');
-    };
+        window.addEventListener('token-expired', onOpen);
+        return () => window.removeEventListener('token-expired', onOpen);
+    }, [onOpen]);
 
     useEffect(() => {
         fetchUser();
     }, [fetchUser]);
 
+    const handleModalClose = () => {
+        closeTokenModal();
+        onClose();
+        navigate('/');
+    };
+
     return (
-        <UserContext.Provider value={{ user, refreshUser: fetchUser }}>
+        <>
             {children}
 
             <Modal isOpen={isOpen && showTokenModal} onClose={handleModalClose} isCentered>
@@ -100,6 +76,8 @@ export const UserProvider = ({ children }) => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </UserContext.Provider>
+        </>
     );
 };
+
+export default UserProvider;
