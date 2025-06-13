@@ -2,6 +2,7 @@ import { useRoutes } from 'react-router-dom'
 import { Suspense } from 'react'
 import Loading from './Loading'
 import routes from './routes'
+import { Toaster } from 'react-hot-toast'
 
 function App() {
 
@@ -9,6 +10,7 @@ function App() {
 
   return (
     <>
+    <Toaster />
       <Suspense fallback={ <Loading/> } >
         {element}
       </Suspense>
