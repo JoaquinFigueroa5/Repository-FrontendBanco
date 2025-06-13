@@ -29,6 +29,7 @@ import {
     Divider,
     useColorMode,
 } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     HamburgerIcon,
@@ -65,7 +66,8 @@ const NavLink = ({ children, href = '#', isActive = false, ...props }) => {
                     textDecoration: 'none',
                     color: hoverColor,
                 }}
-                href={href}
+                as={RouterLink}
+                to={href}
                 {...props}
             >
                 {children}
@@ -222,6 +224,8 @@ const MobileNav = ({ isOpen, onClose, navItems, activeItem, setActiveItem }) => 
                                 whileTap={{ scale: 0.95 }}
                             >
                                 <Link
+                                    as={RouterLink}
+                                    to={item.href}
                                     p={3}
                                     rounded="lg"
                                     bg={activeItem === item.name ? 'blue.50' : 'transparent'}
@@ -260,7 +264,7 @@ const NavBar = () => {
         { name: 'Inicio', href: '#' },
         { name: 'Productos', href: '#' },
         { name: 'Servicios', href: '#' },
-        { name: 'Sobre Nosotros', href: '#' },
+        { name: 'Register', href: '/register' },
         { name: 'Contacto', href: '#' },
         { name: 'Transacciones', href: '/transactions' },
     ];

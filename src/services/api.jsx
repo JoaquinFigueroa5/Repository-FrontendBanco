@@ -42,13 +42,7 @@ export const login = async (data) => {
 
 export const register = async (data) => {
     try {
-        const res = await apiClient.post('/auth/register', data);
-
-        return {
-            success: true,
-            status: res.status,
-            data: res.data
-        };
+        return await apiClient.post('/auth/register', data);
     } catch (e) {
         const msg = e.response?.data?.msg || 'Uknow error'
         return {
