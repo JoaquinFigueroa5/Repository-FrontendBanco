@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardBody,
@@ -15,8 +15,20 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import { Eye, EyeOff, CreditCard, TrendingUp } from 'lucide-react';
+import { useColorModeValue } from '@chakra-ui/react';
+import useUserStore from '../../context/UserStore';
+import { useAccount } from '../../shared/hooks/useAccount';
 
-const AccountOverview = ({ balance }) => {
+const AccountOverview = ({ }) => {
+
+  const { account, loading, error, fetchAccount } = useAccount();
+
+  const { user } = useUserStore()
+
+  useEffect(() => {
+    fetchAccount();
+  }, []);
+  const textColor = useColorModeValue('gray.800', 'white');
   const [showBalance, setShowBalance] = useState(true);
 
   const formatCurrency = (amount) => {
@@ -57,14 +69,14 @@ const AccountOverview = ({ balance }) => {
                 boxShadow="0 4px 20px rgba(255, 215, 0, 0.4)"
                 border="1px solid rgba(255, 215, 0, 0.2)"
               >
-                <CreditCard size={24} color="black" />
+                <CreditCard size={24} color='black' />
               </Box>
               <VStack spacing={0} align="start">
                 <Text fontSize="sm" color="gray.300" fontWeight="medium">
-                  Cuenta Principal
+                  Cuenta Principal - {user?.username}
                 </Text>
                 <Text fontSize="xs" color="gray.500">
-                  **** **** **** 1234
+                  {account?.accountNumber}
                 </Text>
               </VStack>
             </HStack>
@@ -117,7 +129,7 @@ const AccountOverview = ({ balance }) => {
               bgClip="text"
               textShadow="0 0 30px rgba(255, 215, 0, 0.3)"
             >
-              {showBalance ? formatCurrency(balance) : '••••••'}
+              {showBalance ? `Q ${account?.balance?.$numberDecimal}` : '••••'}
             </Text>
             <HStack spacing={2}>
               <Box
@@ -136,42 +148,23 @@ const AccountOverview = ({ balance }) => {
 
           <HStack spacing={6}>
             <Stat size="sm">
-              <StatLabel color="gray.400" fontSize="xs" fontWeight="medium">
-                Ingresos
-              </StatLabel>
-              <StatNumber
-                fontSize="lg"
-                color="white"
-                fontWeight="bold"
-              >
+              <StatLabel color="whiteAlpha.800">Ingresos</StatLabel>
+              <StatNumber fontSize="lg" color="white">
                 {showBalance ? formatCurrency(3500) : '••••'}
               </StatNumber>
-              <StatHelpText color="gray.500" mb={0}>
-                <StatArrow type="increase" color="#00FF64" />
-                <Text as="span" color="#00FF64" fontWeight="medium">
-                  12.5%
-                </Text>
+              <StatHelpText color="whiteAlpha.700" mb={0}>
+                <StatArrow type="increase" />
+                12.5%
               </StatHelpText>
             </Stat>
-
-            <Box width="1px" height="60px" bg="rgba(255, 215, 0, 0.2)" />
-
             <Stat size="sm">
-              <StatLabel color="gray.400" fontSize="xs" fontWeight="medium">
-                Gastos
-              </StatLabel>
-              <StatNumber
-                fontSize="lg"
-                color="white"
-                fontWeight="bold"
-              >
+              <StatLabel color="whiteAlpha.800">Gastos</StatLabel>
+              <StatNumber fontSize="lg" color="white">
                 {showBalance ? formatCurrency(1250) : '••••'}
               </StatNumber>
-              <StatHelpText color="gray.500" mb={0}>
-                <StatArrow type="decrease" color="#FF6B6B" />
-                <Text as="span" color="#FF6B6B" fontWeight="medium">
-                  8.2%
-                </Text>
+              <StatHelpText color="whiteAlpha.700" mb={0}>
+                <StatArrow type="decrease" />
+                8.2%
               </StatHelpText>
             </Stat>
           </HStack>

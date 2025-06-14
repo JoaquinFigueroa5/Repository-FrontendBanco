@@ -22,12 +22,13 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useGetUserTransactions } from '../../shared/hooks/useGetUserTransactions'; // Cambia la ruta según corresponda
+import { useGetUserTransactions } from '../../shared/hooks/useGetUserTransactions'; 
 
 const TransactionHistory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
+  const textColor = useColorModeValue('gray.800', 'white');
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -153,15 +154,15 @@ const TransactionHistory = () => {
       <VStack spacing={3} align="stretch">
         {loading ? (
           <Box textAlign="center" py={8}>
-            <Text color="gray.500">Cargando transacciones...</Text>
+            <Text color={textColor}>Cargando transacciones...</Text>
           </Box>
         ) : error ? (
           <Box textAlign="center" py={8}>
-            <Text color="gray.500">Error: {error}</Text>
+            <Text color={textColor}>Error: {error}</Text>
           </Box>
         ) : filteredTransactions.length === 0 ? (
           <Box textAlign="center" py={8}>
-            <Text color="gray.500">No se encontraron transacciones</Text>
+            <Text color={textColor}>No se encontraron transacciones</Text>
           </Box>
         ) : (
           filteredTransactions.map((transaction) => {
@@ -200,9 +201,9 @@ const TransactionHistory = () => {
                             Cuenta origen: {transaction.accountId.accountNumber || 'N/A'} - {transaction.accountId.userId?.name} {transaction.accountId.userId?.surname}
                           </Text>
                         )}
-                        {transaction.destinationAccountId && (
+                        {transaction.destinationAccount  && (
                           <Text fontSize="xs" color="gray.500">
-                            Cuenta destino: {transaction.destinationAccountId.accountNumber || 'N/A'} - {transaction.destinationAccountId.userId?.name} {transaction.destinationAccountId.userId?.surname}
+                            Cuenta destino: {transaction.destinationAccount.accountNumber || 'N/A'} 
                           </Text>
                         )}
                       </VStack>

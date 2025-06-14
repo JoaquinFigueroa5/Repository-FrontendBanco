@@ -29,6 +29,7 @@ import {
     Divider,
     useColorMode,
 } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     HamburgerIcon,
@@ -71,7 +72,8 @@ const NavLink = ({ children, href = '#', ...props }) => {
                     color: '#FFD700',
                     bg: 'rgba(255, 215, 0, 0.1)',
                 }}
-                href={href}
+                as={RouterLink}
+                to={href}
                 {...props}
             >
                 {children}
@@ -291,6 +293,8 @@ const MobileNav = ({ isOpen, onClose, navItems, activeItem, setActiveItem }) => 
                                 whileTap={{ scale: 0.95 }}
                             >
                                 <Link
+                                    as={RouterLink}
+                                    to={item.href}
                                     p={3}
                                     rounded="lg"
                                     bg={activeItem === item.name ? 'rgba(255, 215, 0, 0.1)' : 'transparent'}
@@ -332,7 +336,7 @@ const NavBar = () => {
         { name: 'Inicio', href: '/dashboard' },
         { name: 'Productos', href: '#' },
         { name: 'Servicios', href: '#' },
-        { name: 'Sobre Nosotros', href: '#' },
+        { name: 'Register', href: '/register' },
         { name: 'Contacto', href: '#' },
         { name: 'Transacciones', href: '/transactions' },
     ];
@@ -421,7 +425,7 @@ const NavBar = () => {
                         />
                     </MotionBox>
 
-                    {/* Color mode toggle */}
+                    {/* Color mode toggle
                     <MotionBox whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                         <IconButton
                             size="md"
@@ -435,7 +439,7 @@ const NavBar = () => {
                                 color: '#FFD700',
                             }}
                         />
-                    </MotionBox>
+                    </MotionBox> */}
 
                     {/* Notifications */}
                     <NotificationBell />

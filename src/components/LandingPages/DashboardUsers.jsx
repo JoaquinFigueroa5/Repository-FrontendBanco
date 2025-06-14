@@ -61,7 +61,8 @@ import {
 import NavBar from '../commons/NavBar';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../../context/UserStore';
-
+import TransferModal from '../Transactions/TransferModa';
+import useTransfer from '../../shared/hooks/UseTransfer';
 const DashboardUsers = () => {
   const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
@@ -71,9 +72,7 @@ const DashboardUsers = () => {
   const toast = useToast();
 
   // Estados para transacciones
-  const [transferAmount, setTransferAmount] = useState('');
-  const [transferTo, setTransferTo] = useState('');
-  const [transferConcept, setTransferConcept] = useState('');
+
   const [quickPayAmount, setQuickPayAmount] = useState('');
   const [selectedFavorite, setSelectedFavorite] = useState('');
 
@@ -100,40 +99,24 @@ const DashboardUsers = () => {
 
   const { user } = useUserStore();
 
-  const handleTransfer = () => {
-    if (!transferAmount || !transferTo || !transferConcept) {
-      toast({
-        title: 'Error',
-        description: 'Por favor completa todos los campos',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+  const cardBg = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'white');
 
-    const newTransaction = {
-      id: transactions.length + 1,
-      type: 'expense',
-      amount: parseFloat(transferAmount),
-      description: `Transferencia a ${transferTo} - ${transferConcept}`,
-      date: new Date().toISOString().split('T')[0],
-      category: 'Transferencia'
-    };
-
-    setTransactions([newTransaction, ...transactions]);
-    setTransferAmount('');
-    setTransferTo('');
-    setTransferConcept('');
+  const {
+    transferTo, setTransferTo,
+    transferAmount, setTransferAmount,
+    transferConcept, setTransferConcept,
+    handleTransfer,
+    fromAccountId, setFromAccountId,
+    loading, error
+  } = useTransfer(() => {
     onTransferClose();
+    fetchTransactions(); // refresca la lista en UI
+  });
 
-    toast({
-      title: 'Transferencia exitosa',
-      description: `Se transfirieron $${transferAmount} correctamente`,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
+  const fetchTransactions = async () => {
+    // Llamá a tu API para traer las transacciones y guardalas en estado
+    setTransactions(await api.getTransactions());
   };
 
   const handleQuickPay = () => {
@@ -172,12 +155,15 @@ const DashboardUsers = () => {
     });
   };
 
+  console.log(user);
+
+
   return (
     <>
       <NavBar />
       {/* Fondo con gradiente sofisticado */}
-      <Box 
-        minH="100vh" 
+      <Box
+        minH="100vh"
         bg="linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #2d2d2d 50%, #1a1a1a 75%, #000000 100%)"
         position="relative"
         overflow="hidden"
@@ -218,16 +204,16 @@ const DashboardUsers = () => {
                   borderRadius="full"
                 />
                 <VStack align="start" spacing={1}>
-                  <Text 
-                    fontSize="3xl" 
-                    fontWeight="800" 
+                  <Text
+                    fontSize="3xl"
+                    fontWeight="800"
                     color="white"
                     letterSpacing="tight"
                   >
                     Bienvenido, {user?.username}
                   </Text>
-                  <Text 
-                    color="gray.400" 
+                  <Text
+                    color="gray.400"
                     fontSize="md"
                     fontWeight="500"
                   >
@@ -243,7 +229,7 @@ const DashboardUsers = () => {
                 borderRadius="xl"
                 border="1px solid rgba(255, 215, 0, 0.2)"
               >
-                <Text fontSize="sm" color="gold" fontWeight="bold">PREMIUM</Text>
+                <Text fontSize="sm" color="gold" fontWeight="bold">INICIO</Text>
               </Box>
             </HStack>
           </Flex>
@@ -259,7 +245,7 @@ const DashboardUsers = () => {
                 border="1px solid rgba(255, 215, 0, 0.2)"
                 position="relative"
                 overflow="hidden"
-                _hover={{ 
+                _hover={{
                   transform: 'translateY(-8px)',
                   boxShadow: '0 25px 50px rgba(255, 215, 0, 0.25)'
                 }}
@@ -274,7 +260,7 @@ const DashboardUsers = () => {
                   height="1px"
                   bg="linear-gradient(90deg, transparent, #FFD700, transparent)"
                 />
-                
+
                 <HStack justify="space-between" mb={6}>
                   <HStack spacing={4}>
                     <Box
@@ -302,11 +288,11 @@ const DashboardUsers = () => {
                     onClick={() => setShowBalance(!showBalance)}
                   />
                 </HStack>
-                
+
                 <VStack align="start" spacing={2}>
-                  <Text 
-                    fontSize="4xl" 
-                    fontWeight="900" 
+                  <Text
+                    fontSize="4xl"
+                    fontWeight="900"
                     color="white"
                     letterSpacing="tight"
                   >
@@ -330,7 +316,7 @@ const DashboardUsers = () => {
                 border="1px solid rgba(255, 215, 0, 0.1)"
                 position="relative"
                 overflow="hidden"
-                _hover={{ 
+                _hover={{
                   transform: 'translateY(-8px)',
                   boxShadow: '0 25px 50px rgba(0, 255, 136, 0.15)'
                 }}
@@ -354,11 +340,11 @@ const DashboardUsers = () => {
                     </Text>
                   </VStack>
                 </HStack>
-                
+
                 <VStack align="start" spacing={3}>
-                  <Text 
-                    fontSize="3xl" 
-                    fontWeight="900" 
+                  <Text
+                    fontSize="3xl"
+                    fontWeight="900"
                     color="white"
                     letterSpacing="tight"
                   >
@@ -383,7 +369,7 @@ const DashboardUsers = () => {
                 border="1px solid rgba(255, 215, 0, 0.1)"
                 position="relative"
                 overflow="hidden"
-                _hover={{ 
+                _hover={{
                   transform: 'translateY(-8px)',
                   boxShadow: '0 25px 50px rgba(138, 43, 226, 0.15)'
                 }}
@@ -407,17 +393,17 @@ const DashboardUsers = () => {
                     </Text>
                   </VStack>
                 </HStack>
-                
+
                 <VStack align="start" spacing={4}>
-                  <Text 
-                    fontSize="3xl" 
-                    fontWeight="900" 
+                  <Text
+                    fontSize="3xl"
+                    fontWeight="900"
                     color="white"
                     letterSpacing="tight"
                   >
                     ${(creditLimit - creditUsed).toLocaleString()}
                   </Text>
-                  
+
                   <Box width="100%">
                     <Progress
                       value={(creditUsed / creditLimit) * 100}
@@ -444,7 +430,7 @@ const DashboardUsers = () => {
             </GridItem>
           </Grid>
 
-          {/* Quick Actions Premium */}
+          {/* Quick Actions */}
           <Box
             bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
             borderRadius="3xl"
@@ -462,7 +448,7 @@ const DashboardUsers = () => {
               height="1px"
               bg="linear-gradient(90deg, transparent, #FFD700, transparent)"
             />
-            
+
             <HStack spacing={4} mb={8}>
               <Box
                 width="6px"
@@ -486,7 +472,7 @@ const DashboardUsers = () => {
                 fontWeight="700"
                 fontSize="lg"
                 onClick={onTransferOpen}
-                _hover={{ 
+                _hover={{
                   transform: 'translateY(-4px)',
                   boxShadow: '0 20px 40px rgba(255, 215, 0, 0.4)'
                 }}
@@ -495,7 +481,7 @@ const DashboardUsers = () => {
               >
                 Transferir
               </Button>
-              
+
               <Button
                 leftIcon={<Users size={22} />}
                 bg="linear-gradient(135deg, #00FF88 0%, #00CC6A 100%)"
@@ -506,7 +492,7 @@ const DashboardUsers = () => {
                 fontWeight="700"
                 fontSize="lg"
                 onClick={onQuickPayOpen}
-                _hover={{ 
+                _hover={{
                   transform: 'translateY(-4px)',
                   boxShadow: '0 20px 40px rgba(0, 255, 136, 0.4)'
                 }}
@@ -515,7 +501,7 @@ const DashboardUsers = () => {
               >
                 Pago Rápido
               </Button>
-              
+
               <Button
                 leftIcon={<DollarSign size={22} />}
                 bg="linear-gradient(135deg, #8A2BE2 0%, #6A1B9A 100%)"
@@ -525,7 +511,7 @@ const DashboardUsers = () => {
                 borderRadius="2xl"
                 fontWeight="700"
                 fontSize="lg"
-                _hover={{ 
+                _hover={{
                   transform: 'translateY(-4px)',
                   boxShadow: '0 20px 40px rgba(138, 43, 226, 0.4)'
                 }}
@@ -534,7 +520,7 @@ const DashboardUsers = () => {
               >
                 Recargar
               </Button>
-              
+
               <Button
                 onClick={() => navigate('/transactions')}
                 leftIcon={<History size={22} />}
@@ -545,7 +531,7 @@ const DashboardUsers = () => {
                 borderRadius="2xl"
                 fontWeight="700"
                 fontSize="lg"
-                _hover={{ 
+                _hover={{
                   transform: 'translateY(-4px)',
                   boxShadow: '0 20px 40px rgba(255, 107, 53, 0.4)'
                 }}
@@ -571,7 +557,7 @@ const DashboardUsers = () => {
                     color="gray.400"
                     fontWeight="600"
                     fontSize="lg"
-                    _selected={{ 
+                    _selected={{
                       color: 'gold',
                       borderColor: 'gold',
                       borderWidth: '3px'
@@ -587,7 +573,7 @@ const DashboardUsers = () => {
                     color="gray.400"
                     fontWeight="600"
                     fontSize="lg"
-                    _selected={{ 
+                    _selected={{
                       color: 'gold',
                       borderColor: 'gold',
                       borderWidth: '3px'
@@ -613,7 +599,7 @@ const DashboardUsers = () => {
                         bg="linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)"
                         borderRadius="2xl"
                         border="1px solid rgba(255, 255, 255, 0.05)"
-                        _hover={{ 
+                        _hover={{
                           bg: 'rgba(255, 215, 0, 0.05)',
                           border: '1px solid rgba(255, 215, 0, 0.2)',
                           transform: 'translateY(-2px)'
@@ -624,8 +610,8 @@ const DashboardUsers = () => {
                           <HStack spacing={4}>
                             <Box
                               p={3}
-                              bg={transaction.type === 'income' 
-                                ? 'linear-gradient(135deg, #00FF88, #00CC6A)' 
+                              bg={transaction.type === 'income'
+                                ? 'linear-gradient(135deg, #00FF88, #00CC6A)'
                                 : 'linear-gradient(135deg, #FF4757, #FF3742)'
                               }
                               borderRadius="xl"
@@ -686,7 +672,7 @@ const DashboardUsers = () => {
                         bg="linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)"
                         borderRadius="2xl"
                         border="1px solid rgba(255, 255, 255, 0.05)"
-                        _hover={{ 
+                        _hover={{
                           bg: 'rgba(255, 215, 0, 0.05)',
                           border: '1px solid rgba(255, 215, 0, 0.2)',
                           transform: 'translateY(-2px)'
@@ -695,9 +681,9 @@ const DashboardUsers = () => {
                         cursor="pointer"
                       >
                         <HStack spacing={4}>
-                          <Avatar 
-                            name={account.avatar} 
-                            size="lg" 
+                          <Avatar
+                            name={account.avatar}
+                            size="lg"
                             bg="linear-gradient(135deg, #FFD700, #FFA500)"
                             color="black"
                             fontWeight="bold"
@@ -725,7 +711,7 @@ const DashboardUsers = () => {
                             color="black"
                             borderRadius="xl"
                             fontWeight="700"
-                            _hover={{ 
+                            _hover={{
                               transform: 'translateY(-2px)',
                               boxShadow: '0 10px 25px rgba(255, 215, 0, 0.4)'
                             }}
@@ -746,85 +732,50 @@ const DashboardUsers = () => {
             </Tabs>
           </Box>
 
-          {/* Modal de Transferencia Premium */}
+          {/* Modal de Transferencia */}
           <Modal isOpen={isTransferOpen} onClose={onTransferClose} size="md">
-            <ModalOverlay backdropFilter="blur(20px)" bg="rgba(0, 0, 0, 0.8)" />
-            <ModalContent 
-              bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
-              borderRadius="3xl"
-              border="1px solid rgba(255, 215, 0, 0.2)"
-            >
-              <ModalHeader color="white" fontSize="2xl" fontWeight="800">
-                Nueva Transferencia
-              </ModalHeader>
-              <ModalCloseButton color="gold" />
-              <ModalBody pb={8}>
-                <VStack spacing={6}>
+            <ModalOverlay backdropFilter="blur(10px)" />
+            <ModalContent borderRadius="2xl">
+              <ModalHeader>Nueva Transferencia</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <VStack spacing={4}>
                   <FormControl>
-                    <FormLabel color="gray.300" fontWeight="600">Destinatario</FormLabel>
+                    <FormLabel>Destinatario</FormLabel>
                     <Input
                       placeholder="Nombre o número de cuenta"
                       value={transferTo}
                       onChange={(e) => setTransferTo(e.target.value)}
-                      borderRadius="xl"
-                      bg="rgba(255, 255, 255, 0.05)"
-                      border="1px solid rgba(255, 255, 255, 0.1)"
-                      color="white"
-                      _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
-                      _focus={{ border: '2px solid #FFD700', boxShadow: '0 0 0 3px rgba(255, 215, 0, 0.1)' }}
-                      p={4}
+                      borderRadius="lg"
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel color="gray.300" fontWeight="600">Monto</FormLabel>
+                    <FormLabel>Monto</FormLabel>
                     <Input
                       type="number"
                       placeholder="0.00"
                       value={transferAmount}
                       onChange={(e) => setTransferAmount(e.target.value)}
-                      borderRadius="xl"
-                      bg="rgba(255, 255, 255, 0.05)"
-                      border="1px solid rgba(255, 255, 255, 0.1)"
-                      color="white"
-                      _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
-                      _focus={{ border: '2px solid #FFD700', boxShadow: '0 0 0 3px rgba(255, 215, 0, 0.1)' }}
-                      p={4}
+                      borderRadius="lg"
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel color="gray.300" fontWeight="600">Concepto</FormLabel>
+                    <FormLabel>Concepto</FormLabel>
                     <Textarea
                       placeholder="Descripción de la transferencia"
                       value={transferConcept}
                       onChange={(e) => setTransferConcept(e.target.value)}
-                      borderRadius="xl"
-                      bg="rgba(255, 255, 255, 0.05)"
-                      border="1px solid rgba(255, 255, 255, 0.1)"
-                      color="white"
-                      _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
-                      _focus={{ border: '2px solid #FFD700', boxShadow: '0 0 0 3px rgba(255, 215, 0, 0.1)' }}
-                      p={4}
-                      resize="none"
-                      rows={3}
+                      borderRadius="lg"
                     />
                   </FormControl>
                   <Button
-                    bg="linear-gradient(135deg, #FFD700 0%, #FFA500 100%)"
-                    color="black"
+                    colorScheme="blue"
                     size="lg"
                     width="full"
-                    borderRadius="xl"
-                    fontWeight="700"
-                    fontSize="lg"
-                    height="60px"
+                    borderRadius="lg"
                     onClick={handleTransfer}
-                    _hover={{ 
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 15px 35px rgba(255, 215, 0, 0.4)'
-                    }}
-                    transition="all 0.3s ease"
                   >
-                    Confirmar Transferencia
+                    Transferir
                   </Button>
                 </VStack>
               </ModalBody>
@@ -834,7 +785,7 @@ const DashboardUsers = () => {
           {/* Modal de Pago Rápido Premium */}
           <Modal isOpen={isQuickPayOpen} onClose={onQuickPayClose} size="md">
             <ModalOverlay backdropFilter="blur(20px)" bg="rgba(0, 0, 0, 0.8)" />
-            <ModalContent 
+            <ModalContent
               bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
               borderRadius="3xl"
               border="1px solid rgba(255, 215, 0, 0.2)"
@@ -898,7 +849,7 @@ const DashboardUsers = () => {
                     fontSize="lg"
                     height="60px"
                     onClick={handleQuickPay}
-                    _hover={{ 
+                    _hover={{
                       transform: 'translateY(-2px)',
                       boxShadow: '0 15px 35px rgba(0, 255, 136, 0.4)'
                     }}
