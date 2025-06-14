@@ -63,7 +63,6 @@ import { useNavigate } from 'react-router-dom';
 import useUserStore from '../../context/UserStore';
 
 const DashboardUsers = () => {
-
   const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
@@ -98,14 +97,6 @@ const DashboardUsers = () => {
     { id: 3, name: 'Ana López', account: '****9012', bank: 'Banco Popular', avatar: 'AL' },
     { id: 4, name: 'Carlos Ruiz', account: '****3456', bank: 'Banco Internacional', avatar: 'CR' },
   ]);
-
-  const bgGradient = useColorModeValue(
-    'linear(to-br, blue.50, purple.50, pink.50)',
-    'linear(to-br, blue.900, purple.900, pink.900)'
-  );
-
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const textColor = useColorModeValue('gray.800', 'white');
 
   const { user } = useUserStore();
 
@@ -181,225 +172,489 @@ const DashboardUsers = () => {
     });
   };
 
-  console.log(user);
-  
-
   return (
     <>
       <NavBar />
-      <Box minH="100vh" bg={bgGradient} p={4}>
-        <Container maxW="7xl">
-          {/* Header */}
-          <Flex justify="space-between" align="center" mb={8} pt={4}>
-            <VStack align="start" spacing={1}>
-              <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-                ¡Hola, {user?.username}! 👋
-              </Text>
-              <Text color="gray.600" fontSize="sm">
-                Bienvenida de vuelta a tu banco digital
-              </Text>
+      {/* Fondo con gradiente sofisticado */}
+      <Box 
+        minH="100vh" 
+        bg="linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #2d2d2d 50%, #1a1a1a 75%, #000000 100%)"
+        position="relative"
+        overflow="hidden"
+      >
+        {/* Efectos de fondo decorativos */}
+        <Box
+          position="absolute"
+          top="0"
+          right="0"
+          width="600px"
+          height="600px"
+          background="radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%)"
+          borderRadius="full"
+          transform="translate(30%, -30%)"
+          zIndex="0"
+        />
+        <Box
+          position="absolute"
+          bottom="0"
+          left="0"
+          width="400px"
+          height="400px"
+          background="radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 70%)"
+          borderRadius="full"
+          transform="translate(-30%, 30%)"
+          zIndex="0"
+        />
+
+        <Container maxW="7xl" position="relative" zIndex="1" p={4}>
+          {/* Header Premium */}
+          <Flex justify="space-between" align="center" mb={8} pt={6}>
+            <VStack align="start" spacing={2}>
+              <HStack spacing={3}>
+                <Box
+                  width="4px"
+                  height="40px"
+                  bg="linear-gradient(to bottom, #FFD700, #FFA500)"
+                  borderRadius="full"
+                />
+                <VStack align="start" spacing={1}>
+                  <Text 
+                    fontSize="3xl" 
+                    fontWeight="800" 
+                    color="white"
+                    letterSpacing="tight"
+                  >
+                    Bienvenido, {user?.username}
+                  </Text>
+                  <Text 
+                    color="gray.400" 
+                    fontSize="md"
+                    fontWeight="500"
+                  >
+                    Tu centro financiero personal
+                  </Text>
+                </VStack>
+              </HStack>
             </VStack>
-            <HStack spacing={3}>
-              <IconButton
-                icon={<Settings size={20} />}
-                variant="ghost"
-                borderRadius="full"
-                size="lg"
-              />
-              <Avatar size="md" name="Ana López" bg="purple.500" />
+            <HStack spacing={4}>
+              <Box
+                p={3}
+                bg="rgba(255, 215, 0, 0.1)"
+                borderRadius="xl"
+                border="1px solid rgba(255, 215, 0, 0.2)"
+              >
+                <Text fontSize="sm" color="gold" fontWeight="bold">PREMIUM</Text>
+              </Box>
             </HStack>
           </Flex>
 
-          {/* Balance Cards */}
-          <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6} mb={8}>
+          {/* Balance Cards Premium */}
+          <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={8} mb={10}>
+            {/* Cuenta Principal */}
             <GridItem>
-              <Card bg={cardBg} shadow="xl" borderRadius="2xl" overflow="hidden">
-                <CardBody p={6}>
-                  <HStack justify="space-between" mb={4}>
-                    <HStack spacing={3}>
-                      <Box p={2} bg="blue.100" borderRadius="lg">
-                        <Wallet size={20} color="#3182CE" />
-                      </Box>
-                      <Text fontWeight="semibold" color={textColor}>Cuenta Principal</Text>
-                    </HStack>
-                    <IconButton
-                      icon={showBalance ? <EyeOff size={16} /> : <Eye size={16} />}
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowBalance(!showBalance)}
-                    />
+              <Box
+                bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
+                borderRadius="3xl"
+                p={8}
+                border="1px solid rgba(255, 215, 0, 0.2)"
+                position="relative"
+                overflow="hidden"
+                _hover={{ 
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 25px 50px rgba(255, 215, 0, 0.25)'
+                }}
+                transition="all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+              >
+                {/* Efecto de brillo */}
+                <Box
+                  position="absolute"
+                  top="0"
+                  left="0"
+                  right="0"
+                  height="1px"
+                  bg="linear-gradient(90deg, transparent, #FFD700, transparent)"
+                />
+                
+                <HStack justify="space-between" mb={6}>
+                  <HStack spacing={4}>
+                    <Box
+                      p={4}
+                      bg="linear-gradient(135deg, #FFD700 0%, #FFA500 100%)"
+                      borderRadius="2xl"
+                      boxShadow="0 8px 25px rgba(255, 215, 0, 0.3)"
+                    >
+                      <Wallet size={24} color="#000" />
+                    </Box>
+                    <VStack align="start" spacing={1}>
+                      <Text fontWeight="700" color="white" fontSize="lg">
+                        Cuenta Principal
+                      </Text>
+                      <Text color="gray.400" fontSize="sm">
+                        Disponible
+                      </Text>
+                    </VStack>
                   </HStack>
-                  <Text fontSize="3xl" fontWeight="bold" color={textColor}>
-                    {showBalance ? `$${balance.toLocaleString()}` : '••••••'}
+                  <IconButton
+                    icon={showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
+                    variant="ghost"
+                    color="gold"
+                    _hover={{ bg: 'rgba(255, 215, 0, 0.1)' }}
+                    onClick={() => setShowBalance(!showBalance)}
+                  />
+                </HStack>
+                
+                <VStack align="start" spacing={2}>
+                  <Text 
+                    fontSize="4xl" 
+                    fontWeight="900" 
+                    color="white"
+                    letterSpacing="tight"
+                  >
+                    {showBalance ? `$${balance.toLocaleString()}` : '••••••••'}
                   </Text>
-                  <Text fontSize="sm" color="gray.500">GTQ • Disponible</Text>
-                </CardBody>
-              </Card>
+                  <HStack spacing={2}>
+                    <Text fontSize="sm" color="gold" fontWeight="600">GTQ</Text>
+                    <Box width="4px" height="4px" bg="gray.600" borderRadius="full" />
+                    <Text fontSize="sm" color="gray.400">Cuenta Premium</Text>
+                  </HStack>
+                </VStack>
+              </Box>
             </GridItem>
 
+            {/* Ahorros */}
             <GridItem>
-              <Card bg={cardBg} shadow="xl" borderRadius="2xl">
-                <CardBody p={6}>
-                  <HStack spacing={3} mb={4}>
-                    <Box p={2} bg="green.100" borderRadius="lg">
-                      <TrendingUp size={20} color="#38A169" />
-                    </Box>
-                    <Text fontWeight="semibold" color={textColor}>Ahorros</Text>
-                  </HStack>
-                  <Text fontSize="3xl" fontWeight="bold" color={textColor}>
+              <Box
+                bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
+                borderRadius="3xl"
+                p={8}
+                border="1px solid rgba(255, 215, 0, 0.1)"
+                position="relative"
+                overflow="hidden"
+                _hover={{ 
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 25px 50px rgba(0, 255, 136, 0.15)'
+                }}
+                transition="all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+              >
+                <HStack spacing={4} mb={6}>
+                  <Box
+                    p={4}
+                    bg="linear-gradient(135deg, #00FF88 0%, #00CC6A 100%)"
+                    borderRadius="2xl"
+                    boxShadow="0 8px 25px rgba(0, 255, 136, 0.2)"
+                  >
+                    <TrendingUp size={24} color="#000" />
+                  </Box>
+                  <VStack align="start" spacing={1}>
+                    <Text fontWeight="700" color="white" fontSize="lg">
+                      Ahorros
+                    </Text>
+                    <Text color="gray.400" fontSize="sm">
+                      Rendimiento activo
+                    </Text>
+                  </VStack>
+                </HStack>
+                
+                <VStack align="start" spacing={3}>
+                  <Text 
+                    fontSize="3xl" 
+                    fontWeight="900" 
+                    color="white"
+                    letterSpacing="tight"
+                  >
                     ${savingsBalance.toLocaleString()}
                   </Text>
-                  <HStack spacing={1}>
-                    <Text fontSize="sm" color="green.500">+2.1%</Text>
-                    <Text fontSize="sm" color="gray.500">este mes</Text>
+                  <HStack spacing={3}>
+                    <HStack spacing={1}>
+                      <Text fontSize="sm" color="#00FF88" fontWeight="bold">+2.1%</Text>
+                      <Text fontSize="sm" color="gray.400">este mes</Text>
+                    </HStack>
                   </HStack>
-                </CardBody>
-              </Card>
+                </VStack>
+              </Box>
             </GridItem>
 
+            {/* Crédito */}
             <GridItem>
-              <Card bg={cardBg} shadow="xl" borderRadius="2xl">
-                <CardBody p={6}>
-                  <HStack spacing={3} mb={4}>
-                    <Box p={2} bg="purple.100" borderRadius="lg">
-                      <CreditCard size={20} color="#805AD5" />
-                    </Box>
-                    <Text fontWeight="semibold" color={textColor}>Crédito</Text>
-                  </HStack>
-                  <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+              <Box
+                bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
+                borderRadius="3xl"
+                p={8}
+                border="1px solid rgba(255, 215, 0, 0.1)"
+                position="relative"
+                overflow="hidden"
+                _hover={{ 
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 25px 50px rgba(138, 43, 226, 0.15)'
+                }}
+                transition="all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+              >
+                <HStack spacing={4} mb={6}>
+                  <Box
+                    p={4}
+                    bg="linear-gradient(135deg, #8A2BE2 0%, #6A1B9A 100%)"
+                    borderRadius="2xl"
+                    boxShadow="0 8px 25px rgba(138, 43, 226, 0.2)"
+                  >
+                    <CreditCard size={24} color="#FFF" />
+                  </Box>
+                  <VStack align="start" spacing={1}>
+                    <Text fontWeight="700" color="white" fontSize="lg">
+                      Línea de Crédito
+                    </Text>
+                    <Text color="gray.400" fontSize="sm">
+                      Disponible
+                    </Text>
+                  </VStack>
+                </HStack>
+                
+                <VStack align="start" spacing={4}>
+                  <Text 
+                    fontSize="3xl" 
+                    fontWeight="900" 
+                    color="white"
+                    letterSpacing="tight"
+                  >
                     ${(creditLimit - creditUsed).toLocaleString()}
                   </Text>
-                  <Progress
-                    value={(creditUsed / creditLimit) * 100}
-                    colorScheme="purple"
-                    size="sm"
-                    borderRadius="full"
-                    mt={2}
-                  />
-                  <Text fontSize="sm" color="gray.500" mt={1}>
-                    ${creditUsed.toLocaleString()} de ${creditLimit.toLocaleString()}
-                  </Text>
-                </CardBody>
-              </Card>
+                  
+                  <Box width="100%">
+                    <Progress
+                      value={(creditUsed / creditLimit) * 100}
+                      bg="rgba(138, 43, 226, 0.1)"
+                      borderRadius="full"
+                      size="md"
+                      sx={{
+                        '& > div': {
+                          background: 'linear-gradient(90deg, #8A2BE2, #6A1B9A)',
+                        }
+                      }}
+                    />
+                    <HStack justify="space-between" mt={2}>
+                      <Text fontSize="sm" color="gray.400">
+                        Usado: ${creditUsed.toLocaleString()}
+                      </Text>
+                      <Text fontSize="sm" color="gray.400">
+                        Límite: ${creditLimit.toLocaleString()}
+                      </Text>
+                    </HStack>
+                  </Box>
+                </VStack>
+              </Box>
             </GridItem>
           </Grid>
 
-          {/* Quick Actions */}
-          <Card bg={cardBg} shadow="xl" borderRadius="2xl" mb={8}>
-            <CardHeader>
-              <Text fontSize="xl" fontWeight="bold" color={textColor}>Acciones Rápidas</Text>
-            </CardHeader>
-            <CardBody pt={0}>
-              <Grid templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }} gap={4}>
-                <Button
-                  leftIcon={<Send size={20} />}
-                  colorScheme="blue"
-                  variant="outline"
-                  size="lg"
-                  borderRadius="xl"
-                  p={6}
-                  onClick={onTransferOpen}
-                  _hover={{ transform: 'translateY(-2px)', shadow: 'lg' }}
-                  transition="all 0.2s"
-                >
-                  Transferir
-                </Button>
-                <Button
-                  leftIcon={<Users size={20} />}
-                  colorScheme="green"
-                  variant="outline"
-                  size="lg"
-                  borderRadius="xl"
-                  p={6}
-                  onClick={onQuickPayOpen}
-                  _hover={{ transform: 'translateY(-2px)', shadow: 'lg' }}
-                  transition="all 0.2s"
-                >
-                  Pago Rápido
-                </Button>
-                <Button
-                  leftIcon={<DollarSign size={20} />}
-                  colorScheme="purple"
-                  variant="outline"
-                  size="lg"
-                  borderRadius="xl"
-                  p={6}
-                  _hover={{ transform: 'translateY(-2px)', shadow: 'lg' }}
-                  transition="all 0.2s"
-                >
-                  Recargar
-                </Button>
-                <Button
-                  onClick={() => navigate('/transactions')}
-                  leftIcon={<History size={20} />}
-                  colorScheme="orange"
-                  variant="outline"
-                  size="lg"
-                  borderRadius="xl"
-                  p={6}
-                  _hover={{ transform: 'translateY(-2px)', shadow: 'lg' }}
-                  transition="all 0.2s"
-                  
-                >
-                  Historial
-                </Button>
-              </Grid>
-            </CardBody>
-          </Card>
+          {/* Quick Actions Premium */}
+          <Box
+            bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
+            borderRadius="3xl"
+            p={8}
+            border="1px solid rgba(255, 215, 0, 0.1)"
+            mb={10}
+            position="relative"
+            overflow="hidden"
+          >
+            <Box
+              position="absolute"
+              top="0"
+              left="0"
+              right="0"
+              height="1px"
+              bg="linear-gradient(90deg, transparent, #FFD700, transparent)"
+            />
+            
+            <HStack spacing={4} mb={8}>
+              <Box
+                width="6px"
+                height="30px"
+                bg="linear-gradient(to bottom, #FFD700, #FFA500)"
+                borderRadius="full"
+              />
+              <Text fontSize="2xl" fontWeight="800" color="white">
+                Acciones Rápidas
+              </Text>
+            </HStack>
 
-          {/* Main Content Tabs */}
-          <Card bg={cardBg} shadow="xl" borderRadius="2xl">
+            <Grid templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }} gap={6}>
+              <Button
+                leftIcon={<Send size={22} />}
+                bg="linear-gradient(135deg, #FFD700 0%, #FFA500 100%)"
+                color="black"
+                size="xl"
+                height="80px"
+                borderRadius="2xl"
+                fontWeight="700"
+                fontSize="lg"
+                onClick={onTransferOpen}
+                _hover={{ 
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 20px 40px rgba(255, 215, 0, 0.4)'
+                }}
+                _active={{ transform: 'translateY(-2px)' }}
+                transition="all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+              >
+                Transferir
+              </Button>
+              
+              <Button
+                leftIcon={<Users size={22} />}
+                bg="linear-gradient(135deg, #00FF88 0%, #00CC6A 100%)"
+                color="black"
+                size="xl"
+                height="80px"
+                borderRadius="2xl"
+                fontWeight="700"
+                fontSize="lg"
+                onClick={onQuickPayOpen}
+                _hover={{ 
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 20px 40px rgba(0, 255, 136, 0.4)'
+                }}
+                _active={{ transform: 'translateY(-2px)' }}
+                transition="all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+              >
+                Pago Rápido
+              </Button>
+              
+              <Button
+                leftIcon={<DollarSign size={22} />}
+                bg="linear-gradient(135deg, #8A2BE2 0%, #6A1B9A 100%)"
+                color="white"
+                size="xl"
+                height="80px"
+                borderRadius="2xl"
+                fontWeight="700"
+                fontSize="lg"
+                _hover={{ 
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 20px 40px rgba(138, 43, 226, 0.4)'
+                }}
+                _active={{ transform: 'translateY(-2px)' }}
+                transition="all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+              >
+                Recargar
+              </Button>
+              
+              <Button
+                onClick={() => navigate('/transactions')}
+                leftIcon={<History size={22} />}
+                bg="linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)"
+                color="white"
+                size="xl"
+                height="80px"
+                borderRadius="2xl"
+                fontWeight="700"
+                fontSize="lg"
+                _hover={{ 
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 20px 40px rgba(255, 107, 53, 0.4)'
+                }}
+                _active={{ transform: 'translateY(-2px)' }}
+                transition="all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+              >
+                Historial
+              </Button>
+            </Grid>
+          </Box>
+
+          {/* Main Content Premium */}
+          <Box
+            bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
+            borderRadius="3xl"
+            border="1px solid rgba(255, 215, 0, 0.1)"
+            overflow="hidden"
+          >
             <Tabs index={activeTab} onChange={setActiveTab}>
-              <CardHeader>
-                <TabList border="none">
-                  <Tab _selected={{ color: 'blue.500', borderColor: 'blue.500' }}>
+              <Box p={8} pb={0}>
+                <TabList border="none" gap={4}>
+                  <Tab
+                    color="gray.400"
+                    fontWeight="600"
+                    fontSize="lg"
+                    _selected={{ 
+                      color: 'gold',
+                      borderColor: 'gold',
+                      borderWidth: '3px'
+                    }}
+                    _hover={{ color: 'white' }}
+                    borderRadius="lg"
+                    px={6}
+                    py={3}
+                  >
                     Transacciones Recientes
                   </Tab>
-                  <Tab _selected={{ color: 'purple.500', borderColor: 'purple.500' }}>
+                  <Tab
+                    color="gray.400"
+                    fontWeight="600"
+                    fontSize="lg"
+                    _selected={{ 
+                      color: 'gold',
+                      borderColor: 'gold',
+                      borderWidth: '3px'
+                    }}
+                    _hover={{ color: 'white' }}
+                    borderRadius="lg"
+                    px={6}
+                    py={3}
+                  >
                     Cuentas Favoritas
                   </Tab>
                 </TabList>
-              </CardHeader>
+              </Box>
 
               <TabPanels>
                 {/* Transacciones Tab */}
-                <TabPanel>
-                  <VStack spacing={4} align="stretch">
-                    {transactions.slice(0, 5).map((transaction) => (
+                <TabPanel p={8}>
+                  <VStack spacing={6} align="stretch">
+                    {transactions.slice(0, 5).map((transaction, index) => (
                       <Box
                         key={transaction.id}
-                        p={4}
-                        bg={useColorModeValue('gray.50', 'gray.700')}
-                        borderRadius="xl"
-                        _hover={{ bg: useColorModeValue('gray.100', 'gray.600') }}
-                        transition="all 0.2s"
+                        p={6}
+                        bg="linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)"
+                        borderRadius="2xl"
+                        border="1px solid rgba(255, 255, 255, 0.05)"
+                        _hover={{ 
+                          bg: 'rgba(255, 215, 0, 0.05)',
+                          border: '1px solid rgba(255, 215, 0, 0.2)',
+                          transform: 'translateY(-2px)'
+                        }}
+                        transition="all 0.3s ease"
                       >
                         <Flex justify="space-between" align="center">
-                          <HStack spacing={3}>
+                          <HStack spacing={4}>
                             <Box
-                              p={2}
-                              bg={transaction.type === 'income' ? 'green.100' : 'red.100'}
-                              borderRadius="lg"
+                              p={3}
+                              bg={transaction.type === 'income' 
+                                ? 'linear-gradient(135deg, #00FF88, #00CC6A)' 
+                                : 'linear-gradient(135deg, #FF4757, #FF3742)'
+                              }
+                              borderRadius="xl"
+                              boxShadow={transaction.type === 'income'
+                                ? '0 8px 25px rgba(0, 255, 136, 0.3)'
+                                : '0 8px 25px rgba(255, 71, 87, 0.3)'
+                              }
                             >
                               {transaction.type === 'income' ?
-                                <ArrowDownLeft size={20} color="#38A169" /> :
-                                <ArrowUpRight size={20} color="#E53E3E" />
+                                <ArrowDownLeft size={20} color="#000" /> :
+                                <ArrowUpRight size={20} color="#FFF" />
                               }
                             </Box>
-                            <VStack align="start" spacing={1}>
-                              <Text fontWeight="semibold" color={textColor}>
+                            <VStack align="start" spacing={2}>
+                              <Text fontWeight="700" color="white" fontSize="lg">
                                 {transaction.description}
                               </Text>
-                              <HStack spacing={2}>
+                              <HStack spacing={3}>
                                 <Badge
-                                  colorScheme={transaction.type === 'income' ? 'green' : 'red'}
+                                  bg={transaction.type === 'income' ? '#00FF88' : '#FF4757'}
+                                  color={transaction.type === 'income' ? 'black' : 'white'}
                                   borderRadius="full"
-                                  px={2}
+                                  px={3}
                                   py={1}
+                                  fontWeight="600"
                                 >
                                   {transaction.category}
                                 </Badge>
-                                <Text fontSize="sm" color="gray.500">
+                                <Text fontSize="sm" color="gray.400" fontWeight="500">
                                   {transaction.date}
                                 </Text>
                               </HStack>
@@ -407,9 +662,9 @@ const DashboardUsers = () => {
                           </HStack>
                           <VStack align="end" spacing={1}>
                             <Text
-                              fontSize="lg"
-                              fontWeight="bold"
-                              color={transaction.type === 'income' ? 'green.500' : 'red.500'}
+                              fontSize="xl"
+                              fontWeight="900"
+                              color={transaction.type === 'income' ? '#00FF88' : '#FF4757'}
                             >
                               {transaction.type === 'income' ? '+' : '-'}$
                               {transaction.amount.toLocaleString()}
@@ -422,39 +677,59 @@ const DashboardUsers = () => {
                 </TabPanel>
 
                 {/* Cuentas Favoritas Tab */}
-                <TabPanel>
-                  <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4}>
+                <TabPanel p={8}>
+                  <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
                     {favoriteAccounts.map((account) => (
                       <Box
                         key={account.id}
-                        p={4}
-                        bg={useColorModeValue('gray.50', 'gray.700')}
-                        borderRadius="xl"
-                        _hover={{ bg: useColorModeValue('gray.100', 'gray.600'), transform: 'translateY(-2px)' }}
-                        transition="all 0.2s"
+                        p={6}
+                        bg="linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)"
+                        borderRadius="2xl"
+                        border="1px solid rgba(255, 255, 255, 0.05)"
+                        _hover={{ 
+                          bg: 'rgba(255, 215, 0, 0.05)',
+                          border: '1px solid rgba(255, 215, 0, 0.2)',
+                          transform: 'translateY(-2px)'
+                        }}
+                        transition="all 0.3s ease"
                         cursor="pointer"
                       >
                         <HStack spacing={4}>
-                          <Avatar name={account.avatar} size="md" bg="blue.500" />
-                          <VStack align="start" spacing={1} flex="1">
+                          <Avatar 
+                            name={account.avatar} 
+                            size="lg" 
+                            bg="linear-gradient(135deg, #FFD700, #FFA500)"
+                            color="black"
+                            fontWeight="bold"
+                          />
+                          <VStack align="start" spacing={2} flex="1">
                             <HStack>
-                              <Text fontWeight="bold" color={textColor}>{account.name}</Text>
+                              <Text fontWeight="700" color="white" fontSize="lg">
+                                {account.name}
+                              </Text>
                               <IconButton
                                 icon={<Star size={16} />}
                                 variant="ghost"
                                 size="sm"
-                                color="yellow.500"
+                                color="gold"
+                                _hover={{ bg: 'rgba(255, 215, 0, 0.1)' }}
                               />
                             </HStack>
-                            <Text fontSize="sm" color="gray.500">
+                            <Text fontSize="sm" color="gray.400" fontWeight="500">
                               {account.account} • {account.bank}
                             </Text>
                           </VStack>
                           <Button
-                            size="sm"
-                            colorScheme="blue"
-                            variant="outline"
-                            borderRadius="lg"
+                            size="md"
+                            bg="linear-gradient(135deg, #FFD700, #FFA500)"
+                            color="black"
+                            borderRadius="xl"
+                            fontWeight="700"
+                            _hover={{ 
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 10px 25px rgba(255, 215, 0, 0.4)'
+                            }}
+                            transition="all 0.3s ease"
                             onClick={() => {
                               setSelectedFavorite(account.id.toString());
                               onQuickPayOpen();
@@ -469,73 +744,126 @@ const DashboardUsers = () => {
                 </TabPanel>
               </TabPanels>
             </Tabs>
-          </Card>
+          </Box>
 
-          {/* Modal de Transferencia */}
+          {/* Modal de Transferencia Premium */}
           <Modal isOpen={isTransferOpen} onClose={onTransferClose} size="md">
-            <ModalOverlay backdropFilter="blur(10px)" />
-            <ModalContent borderRadius="2xl">
-              <ModalHeader>Nueva Transferencia</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
-                <VStack spacing={4}>
+            <ModalOverlay backdropFilter="blur(20px)" bg="rgba(0, 0, 0, 0.8)" />
+            <ModalContent 
+              bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
+              borderRadius="3xl"
+              border="1px solid rgba(255, 215, 0, 0.2)"
+            >
+              <ModalHeader color="white" fontSize="2xl" fontWeight="800">
+                Nueva Transferencia
+              </ModalHeader>
+              <ModalCloseButton color="gold" />
+              <ModalBody pb={8}>
+                <VStack spacing={6}>
                   <FormControl>
-                    <FormLabel>Destinatario</FormLabel>
+                    <FormLabel color="gray.300" fontWeight="600">Destinatario</FormLabel>
                     <Input
                       placeholder="Nombre o número de cuenta"
                       value={transferTo}
                       onChange={(e) => setTransferTo(e.target.value)}
-                      borderRadius="lg"
+                      borderRadius="xl"
+                      bg="rgba(255, 255, 255, 0.05)"
+                      border="1px solid rgba(255, 255, 255, 0.1)"
+                      color="white"
+                      _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
+                      _focus={{ border: '2px solid #FFD700', boxShadow: '0 0 0 3px rgba(255, 215, 0, 0.1)' }}
+                      p={4}
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Monto</FormLabel>
+                    <FormLabel color="gray.300" fontWeight="600">Monto</FormLabel>
                     <Input
                       type="number"
                       placeholder="0.00"
                       value={transferAmount}
                       onChange={(e) => setTransferAmount(e.target.value)}
-                      borderRadius="lg"
+                      borderRadius="xl"
+                      bg="rgba(255, 255, 255, 0.05)"
+                      border="1px solid rgba(255, 255, 255, 0.1)"
+                      color="white"
+                      _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
+                      _focus={{ border: '2px solid #FFD700', boxShadow: '0 0 0 3px rgba(255, 215, 0, 0.1)' }}
+                      p={4}
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Concepto</FormLabel>
+                    <FormLabel color="gray.300" fontWeight="600">Concepto</FormLabel>
                     <Textarea
                       placeholder="Descripción de la transferencia"
                       value={transferConcept}
                       onChange={(e) => setTransferConcept(e.target.value)}
-                      borderRadius="lg"
+                      borderRadius="xl"
+                      bg="rgba(255, 255, 255, 0.05)"
+                      border="1px solid rgba(255, 255, 255, 0.1)"
+                      color="white"
+                      _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
+                      _focus={{ border: '2px solid #FFD700', boxShadow: '0 0 0 3px rgba(255, 215, 0, 0.1)' }}
+                      p={4}
+                      resize="none"
+                      rows={3}
                     />
                   </FormControl>
                   <Button
-                    colorScheme="blue"
+                    bg="linear-gradient(135deg, #FFD700 0%, #FFA500 100%)"
+                    color="black"
                     size="lg"
                     width="full"
-                    borderRadius="lg"
+                    borderRadius="xl"
+                    fontWeight="700"
+                    fontSize="lg"
+                    height="60px"
                     onClick={handleTransfer}
+                    _hover={{ 
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 15px 35px rgba(255, 215, 0, 0.4)'
+                    }}
+                    transition="all 0.3s ease"
                   >
-                    Transferir
+                    Confirmar Transferencia
                   </Button>
                 </VStack>
               </ModalBody>
             </ModalContent>
           </Modal>
 
-          {/* Modal de Pago Rápido */}
+          {/* Modal de Pago Rápido Premium */}
           <Modal isOpen={isQuickPayOpen} onClose={onQuickPayClose} size="md">
-            <ModalOverlay backdropFilter="blur(10px)" />
-            <ModalContent borderRadius="2xl">
-              <ModalHeader>Pago Rápido</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
-                <VStack spacing={4}>
+            <ModalOverlay backdropFilter="blur(20px)" bg="rgba(0, 0, 0, 0.8)" />
+            <ModalContent 
+              bg="linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)"
+              borderRadius="3xl"
+              border="1px solid rgba(255, 215, 0, 0.2)"
+            >
+              <ModalHeader color="white" fontSize="2xl" fontWeight="800">
+                Pago Rápido
+              </ModalHeader>
+              <ModalCloseButton color="gold" />
+              <ModalBody pb={8}>
+                <VStack spacing={6}>
                   <FormControl>
-                    <FormLabel>Contacto Favorito</FormLabel>
+                    <FormLabel color="gray.300" fontWeight="600">Contacto Favorito</FormLabel>
                     <Select
                       placeholder="Seleccionar contacto"
                       value={selectedFavorite}
                       onChange={(e) => setSelectedFavorite(e.target.value)}
-                      borderRadius="lg"
+                      borderRadius="xl"
+                      bg="rgba(255, 255, 255, 0.05)"
+                      border="1px solid rgba(255, 255, 255, 0.1)"
+                      color="white"
+                      _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
+                      _focus={{ border: '2px solid #FFD700', boxShadow: '0 0 0 3px rgba(255, 215, 0, 0.1)' }}
+                      p={4}
+                      sx={{
+                        '& option': {
+                          bg: '#2d2d2d',
+                          color: 'white'
+                        }
+                      }}
                     >
                       {favoriteAccounts.map((account) => (
                         <option key={account.id} value={account.id}>
@@ -545,21 +873,36 @@ const DashboardUsers = () => {
                     </Select>
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Monto</FormLabel>
+                    <FormLabel color="gray.300" fontWeight="600">Monto</FormLabel>
                     <Input
                       type="number"
                       placeholder="0.00"
                       value={quickPayAmount}
                       onChange={(e) => setQuickPayAmount(e.target.value)}
-                      borderRadius="lg"
+                      borderRadius="xl"
+                      bg="rgba(255, 255, 255, 0.05)"
+                      border="1px solid rgba(255, 255, 255, 0.1)"
+                      color="white"
+                      _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
+                      _focus={{ border: '2px solid #FFD700', boxShadow: '0 0 0 3px rgba(255, 215, 0, 0.1)' }}
+                      p={4}
                     />
                   </FormControl>
                   <Button
-                    colorScheme="green"
+                    bg="linear-gradient(135deg, #00FF88 0%, #00CC6A 100%)"
+                    color="black"
                     size="lg"
                     width="full"
-                    borderRadius="lg"
+                    borderRadius="xl"
+                    fontWeight="700"
+                    fontSize="lg"
+                    height="60px"
                     onClick={handleQuickPay}
+                    _hover={{ 
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 15px 35px rgba(0, 255, 136, 0.4)'
+                    }}
+                    transition="all 0.3s ease"
                   >
                     Enviar Pago
                   </Button>

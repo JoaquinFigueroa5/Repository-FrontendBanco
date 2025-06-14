@@ -370,14 +370,6 @@ export default function Login() {
                             </Button>
                         </HStack>
                     </VStack>
-
-                    {/* Enlace de registro */}
-                    <Text textAlign="center" color="gray.600" mt={6}>
-                        ¿No tienes una cuenta?{' '}
-                        <Link color="yellow.600" fontWeight="semibold" _hover={{ color: "yellow.700" }}>
-                            Regístrate aquí
-                        </Link>
-                    </Text>
                 </Box>
             </Flex>
         </Flex>

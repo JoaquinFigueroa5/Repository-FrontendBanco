@@ -41,13 +41,18 @@ import {
     SettingsIcon,
     StarIcon,
 } from '@chakra-ui/icons';
+import { useLocation } from 'react-router-dom';
+import useUserStore from '../../context/UserStore';
+import { logout } from '../../shared/hooks/useLogout';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
 
-const NavLink = ({ children, href = '#', isActive = false, ...props }) => {
-    const activeColor = useColorModeValue('blue.500', 'blue.300');
-    const hoverColor = useColorModeValue('gray.600', 'gray.300');
+const NavLink = ({ children, href = '#', ...props }) => {
+    const location = useLocation();
+
+    // Verifica si la ruta actual coincide exactamente o empieza con href (útil para rutas como /eventos/123)
+    const isActive = location.pathname === href || location.pathname.startsWith(href + '/');
 
     return (
         <MotionBox
@@ -55,15 +60,16 @@ const NavLink = ({ children, href = '#', isActive = false, ...props }) => {
             whileTap={{ scale: 0.95 }}
         >
             <Link
-                px={3}
+                px={4}
                 py={2}
                 rounded="lg"
-                color={isActive ? activeColor : useColorModeValue('gray.700', 'gray.200')}
-                fontWeight={isActive ? 'semibold' : 'medium'}
+                color={isActive ? '#FFD700' : 'gray.300'}
+                fontWeight={isActive ? 'bold' : 'medium'}
                 position="relative"
                 _hover={{
                     textDecoration: 'none',
-                    color: hoverColor,
+                    color: '#FFD700',
+                    bg: 'rgba(255, 215, 0, 0.1)',
                 }}
                 href={href}
                 {...props}
@@ -75,12 +81,13 @@ const NavLink = ({ children, href = '#', isActive = false, ...props }) => {
                         bottom="-2px"
                         left="50%"
                         width="80%"
-                        height="2px"
-                        bg={activeColor}
+                        height="3px"
+                        bg="linear-gradient(90deg, #FFD700, #FFA500)"
                         borderRadius="full"
                         initial={{ scaleX: 0, x: '-50%' }}
                         animate={{ scaleX: 1, x: '-50%' }}
                         transition={{ duration: 0.3 }}
+                        boxShadow="0 0 8px rgba(255, 215, 0, 0.6)"
                     />
                 )}
             </Link>
@@ -100,6 +107,11 @@ const NotificationBell = () => {
                 size="md"
                 variant="ghost"
                 aria-label="Notifications"
+                color="gray.300"
+                _hover={{
+                    bg: 'rgba(255, 215, 0, 0.1)',
+                    color: '#FFD700',
+                }}
                 icon={
                     <Box position="relative">
                         <BellIcon boxSize={5} />
@@ -115,10 +127,12 @@ const NotificationBell = () => {
                                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                                 >
                                     <Badge
-                                        colorScheme="red"
+                                        bg="#FFD700"
+                                        color="black"
                                         borderRadius="full"
-                                        boxSize="8px"
+                                        boxSize="10px"
                                         p={0}
+                                        boxShadow="0 0 6px rgba(255, 215, 0, 0.8)"
                                     />
                                 </MotionBox>
                             )}
@@ -144,17 +158,20 @@ const SearchBar = ({ isOpen, onToggle }) => {
                 >
                     <InputGroup size="md">
                         <InputLeftElement pointerEvents="none">
-                            <SearchIcon color="gray.400" />
+                            <SearchIcon color="#FFD700" />
                         </InputLeftElement>
                         <Input
                             placeholder="Buscar..."
                             borderRadius="full"
-                            bg={useColorModeValue('white', 'gray.700')}
+                            bg="rgba(0, 0, 0, 0.6)"
+                            color="white"
                             border="1px solid"
-                            borderColor={useColorModeValue('gray.200', 'gray.600')}
+                            borderColor="rgba(255, 215, 0, 0.3)"
+                            _placeholder={{ color: 'gray.400' }}
                             _focus={{
-                                borderColor: 'blue.400',
-                                boxShadow: '0 0 0 1px var(--chakra-colors-blue-400)',
+                                borderColor: '#FFD700',
+                                boxShadow: '0 0 0 1px #FFD700, 0 0 20px rgba(255, 215, 0, 0.3)',
+                                bg: 'rgba(0, 0, 0, 0.8)',
                             }}
                         />
                     </InputGroup>
@@ -165,38 +182,85 @@ const SearchBar = ({ isOpen, onToggle }) => {
 };
 
 const UserMenu = () => {
+    const { user, fetchUser } = useUserStore();
+
+    const handleLogout = () => {
+        logout();
+        fetchUser();
+    }
+
     return (
         <Menu>
             <MotionBox whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <MenuButton
                     as={Button}
                     rounded="full"
-                    variant="link"
+                    variant="ghost"
                     cursor="pointer"
                     minW={0}
+                    color="gray.300"
+                    _hover={{
+                        bg: 'rgba(255, 215, 0, 0.1)',
+                        color: '#FFD700',
+                    }}
                 >
                     <HStack spacing={2}>
                         <Avatar
-                            size="sm"
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            name="Usuario"
+                            size="md"
+                            color='black'
+                            name={`${user?.name || user?.username} ${user?.surname ?? ''}`}
+                            bg="linear-gradient(135deg, #FFD700, #FFA500)"
+                            border="2px solid"
+                            borderColor="#FFD700"
+                            boxShadow="0 0 15px rgba(255, 215, 0, 0.4)"
                         />
                         <VStack spacing={0} alignItems="flex-start" display={{ base: 'none', md: 'flex' }}>
-                            <Text fontSize="sm" fontWeight="medium">Juan Pérez</Text>
-                            <Text fontSize="xs" color="gray.500">Developer</Text>
+                            <Text fontSize="sm" fontWeight="medium" color="gray.200">
+                                {user?.name || user?.username} {user?.surname}
+                            </Text>
+                            <Text fontSize="xs" color="gray.400">{user?.work}</Text>
                         </VStack>
-                        <ChevronDownIcon />
+                        <ChevronDownIcon color="#FFD700" />
                     </HStack>
                 </MenuButton>
             </MotionBox>
             <MenuList
-                bg={useColorModeValue('white', 'gray.800')}
-                borderColor={useColorModeValue('gray.200', 'gray.700')}
-                boxShadow="lg"
+                bg="rgba(0, 0, 0, 0.95)"
+                borderColor="rgba(255, 215, 0, 0.3)"
+                border="1px solid"
+                boxShadow="0 10px 40px rgba(255, 215, 0, 0.2)"
+                backdropFilter="blur(10px)"
             >
-                <MenuItem icon={<SettingsIcon />}>Configuración</MenuItem>
-                <MenuItem icon={<StarIcon />}>Favoritos</MenuItem>
-                <MenuItem>Cerrar Sesión</MenuItem>
+                <MenuItem
+                    icon={<SettingsIcon color="#FFD700" />}
+                    color="gray.200"
+                    _hover={{
+                        bg: 'rgba(255, 215, 0, 0.1)',
+                        color: '#FFD700',
+                    }}
+                >
+                    Configuración
+                </MenuItem>
+                <MenuItem
+                    icon={<StarIcon color="#FFD700" />}
+                    color="gray.200"
+                    _hover={{
+                        bg: 'rgba(255, 215, 0, 0.1)',
+                        color: '#FFD700',
+                    }}
+                >
+                    Favoritos
+                </MenuItem>
+                <MenuItem
+                    onClick={handleLogout}
+                    color="gray.200"
+                    _hover={{
+                        bg: 'rgba(255, 215, 0, 0.1)',
+                        color: '#FFD700',
+                    }}
+                >
+                    Cerrar Sesión
+                </MenuItem>
             </MenuList>
         </Menu>
     );
@@ -205,11 +269,16 @@ const UserMenu = () => {
 const MobileNav = ({ isOpen, onClose, navItems, activeItem, setActiveItem }) => {
     return (
         <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="sm">
-            <DrawerOverlay />
-            <DrawerContent>
-                <DrawerCloseButton />
-                <DrawerHeader borderBottomWidth="1px">
-                    <Text fontSize="xl" fontWeight="bold" color="blue.500">
+            <DrawerOverlay bg="rgba(0, 0, 0, 0.8)" />
+            <DrawerContent bg="linear-gradient(135deg, #000000 0%, #1a1a1a 100%)">
+                <DrawerCloseButton color="#FFD700" _hover={{ bg: 'rgba(255, 215, 0, 0.1)' }} />
+                <DrawerHeader borderBottomWidth="1px" borderColor="rgba(255, 215, 0, 0.3)">
+                    <Text
+                        fontSize="xl"
+                        fontWeight="bold"
+                        bgGradient="linear(to-r, #FFD700, #FFA500)"
+                        bgClip="text"
+                    >
                         Los chiludos banco
                     </Text>
                 </DrawerHeader>
@@ -224,12 +293,15 @@ const MobileNav = ({ isOpen, onClose, navItems, activeItem, setActiveItem }) => 
                                 <Link
                                     p={3}
                                     rounded="lg"
-                                    bg={activeItem === item.name ? 'blue.50' : 'transparent'}
-                                    color={activeItem === item.name ? 'blue.600' : 'gray.600'}
-                                    fontWeight={activeItem === item.name ? 'semibold' : 'medium'}
+                                    bg={activeItem === item.name ? 'rgba(255, 215, 0, 0.1)' : 'transparent'}
+                                    color={activeItem === item.name ? '#FFD700' : 'gray.300'}
+                                    fontWeight={activeItem === item.name ? 'bold' : 'medium'}
+                                    border={activeItem === item.name ? '1px solid' : 'none'}
+                                    borderColor={activeItem === item.name ? 'rgba(255, 215, 0, 0.3)' : 'transparent'}
                                     _hover={{
-                                        bg: 'gray.50',
+                                        bg: 'rgba(255, 215, 0, 0.1)',
                                         textDecoration: 'none',
+                                        color: '#FFD700',
                                     }}
                                     onClick={() => {
                                         setActiveItem(item.name);
@@ -240,7 +312,7 @@ const MobileNav = ({ isOpen, onClose, navItems, activeItem, setActiveItem }) => 
                                 </Link>
                             </MotionBox>
                         ))}
-                        <Divider />
+                        <Divider borderColor="rgba(255, 215, 0, 0.3)" />
                         <UserMenu />
                     </VStack>
                 </DrawerBody>
@@ -257,7 +329,7 @@ const NavBar = () => {
     const { colorMode, toggleColorMode } = useColorMode();
 
     const navItems = [
-        { name: 'Inicio', href: '#' },
+        { name: 'Inicio', href: '/dashboard' },
         { name: 'Productos', href: '#' },
         { name: 'Servicios', href: '#' },
         { name: 'Sobre Nosotros', href: '#' },
@@ -271,9 +343,6 @@ const NavBar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const navBg = useColorModeValue('white', 'gray.800');
-    const borderColor = useColorModeValue('gray.200', 'gray.700');
-
     return (
         <>
             <MotionFlex
@@ -284,14 +353,14 @@ const NavBar = () => {
                 w="100%"
                 px={6}
                 py={4}
-                bg={navBg}
-                borderBottom="1px"
-                borderColor={borderColor}
+                bg="linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)"
+                borderBottom="1px solid"
+                borderColor="rgba(255, 215, 0, 0.3)"
                 position="fixed"
                 top={0}
                 zIndex={1000}
-                backdropFilter="blur(10px)"
-                boxShadow={scrollY > 0 ? 'lg' : 'none'}
+                backdropFilter="blur(15px)"
+                boxShadow={scrollY > 0 ? '0 8px 32px rgba(255, 215, 0, 0.15)' : 'none'}
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -304,8 +373,10 @@ const NavBar = () => {
                     <Text
                         fontSize="2xl"
                         fontWeight="bold"
-                        color="blue.500"
+                        bgGradient="linear(to-r, #FFD700, #FFA500, #FFD700)"
+                        bgClip="text"
                         cursor="pointer"
+                        textShadow="0 0 20px rgba(255, 215, 0, 0.5)"
                     >
                         Los chiludos banco
                     </Text>
@@ -340,8 +411,13 @@ const NavBar = () => {
                             size="md"
                             variant="ghost"
                             aria-label="Search"
+                            color="gray.300"
                             icon={<SearchIcon />}
                             onClick={() => setIsSearchOpen(!isSearchOpen)}
+                            _hover={{
+                                bg: 'rgba(255, 215, 0, 0.1)',
+                                color: '#FFD700',
+                            }}
                         />
                     </MotionBox>
 
@@ -351,8 +427,13 @@ const NavBar = () => {
                             size="md"
                             variant="ghost"
                             aria-label="Toggle color mode"
+                            color="gray.300"
                             icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                             onClick={toggleColorMode}
+                            _hover={{
+                                bg: 'rgba(255, 215, 0, 0.1)',
+                                color: '#FFD700',
+                            }}
                         />
                     </MotionBox>
 
@@ -376,6 +457,11 @@ const NavBar = () => {
                             aria-label="Open Menu"
                             onClick={isOpen ? onClose : onOpen}
                             variant="ghost"
+                            color="gray.300"
+                            _hover={{
+                                bg: 'rgba(255, 215, 0, 0.1)',
+                                color: '#FFD700',
+                            }}
                         />
                     </MotionBox>
                 </HStack>
@@ -390,9 +476,7 @@ const NavBar = () => {
                 setActiveItem={setActiveItem}
             />
 
-            <Box h="80px" />
-
-
+            <Box h="70px" />
         </>
     );
 };

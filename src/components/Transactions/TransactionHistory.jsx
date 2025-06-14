@@ -192,7 +192,7 @@ const TransactionHistory = () => {
                   <Box flex="1">
                     <HStack justify="space-between" align="start">
                       <VStack align="start" spacing={0}>
-                        <Text fontWeight="medium" fontSize="sm" color="gray.800">
+                        <Text fontWeight="medium" fontSize="sm" color={useColorModeValue('gray.800', 'gray.200')}>
                           {typeof transaction.details === 'string' ? transaction.details : JSON.stringify(transaction.details) || 'Sin detalles'}
                         </Text>
                         {transaction.accountId && (

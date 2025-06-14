@@ -8,6 +8,7 @@ import {
   Grid,
   Box,
   Icon,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { Send, CreditCard, History, Settings, Plus, ArrowUpRight } from 'lucide-react';
 
@@ -17,41 +18,66 @@ const QuickActions = ({ onTransferClick, onPaymentClick }) => {
       title: 'Transferir',
       description: 'Envía dinero a otra cuenta',
       icon: Send,
-      color: 'brand',
+      color: 'yellow', // Dorado
       onClick: onTransferClick,
     },
     {
       title: 'Pagar Servicios',
       description: 'Paga facturas y servicios',
       icon: CreditCard,
-      color: 'green',
+      color: 'yellow', // Dorado
       onClick: onPaymentClick,
     },
     {
       title: 'Historial',
       description: 'Ver transacciones',
       icon: History,
-      color: 'purple',
+      color: 'yellow', // Dorado
       onClick: () => console.log('Historial'),
     },
     {
       title: 'Configuración',
       description: 'Ajustes de cuenta',
       icon: Settings,
-      color: 'gray',
+      color: 'yellow', // Dorado
       onClick: () => console.log('Configuración'),
     },
   ];
 
   return (
-    <Card>
+    <Card
+      bg="linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%)"
+      border="1px solid"
+      borderColor="rgba(255, 215, 0, 0.3)"
+      boxShadow="0 10px 40px rgba(255, 215, 0, 0.15), inset 0 1px 0 rgba(255, 215, 0, 0.1)"
+      backdropFilter="blur(10px)"
+      position="relative"
+      overflow="hidden"
+      _before={{
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '1px',
+        bgGradient: 'linear(to-r, transparent, #FFD700, transparent)',
+        opacity: 0.6,
+      }}
+    >
       <CardBody>
         <VStack spacing={6} align="stretch">
           <Box>
-            <Text fontSize="xl" fontWeight="bold" color="gray.800" mb={2}>
+            <Text
+              fontSize="xl"
+              fontWeight="bold"
+              mb={2}
+              bgGradient="linear(to-r, #FFD700, #FFA500, #FFD700)"
+              bgClip="text"
+              textShadow="0 0 30px rgba(255, 215, 0, 0.3)"
+            >
               Acciones Rápidas
             </Text>
-            <Text fontSize="sm" color="gray.600">
+            <Text fontSize="sm" color="gray.300" fontWeight="medium">
               Realiza operaciones bancarias fácilmente
             </Text>
           </Box>
@@ -64,53 +90,114 @@ const QuickActions = ({ onTransferClick, onPaymentClick }) => {
                 onClick={action.onClick}
                 p={4}
                 borderRadius="xl"
-                border="1px"
-                borderColor="gray.200"
-                bg="white"
+                border="1px solid"
+                borderColor="rgba(255, 215, 0, 0.2)"
+                bg="linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(26,26,26,0.8) 100%)"
+                backdropFilter="blur(5px)"
                 _hover={{
-                  borderColor: `${action.color}.300`,
-                  boxShadow: 'md',
+                  borderColor: 'rgba(255, 215, 0, 0.6)',
+                  boxShadow: '0 10px 30px rgba(255, 215, 0, 0.2), inset 0 1px 0 rgba(255, 215, 0, 0.1)',
                   transform: 'translateY(-2px)',
+                  bg: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(26,26,26,0.9) 100%)',
                 }}
-                transition="all 0.2s"
+                transition="all 0.3s ease"
                 cursor="pointer"
+                position="relative"
+                overflow="hidden"
               >
                 <VStack spacing={3}>
                   <Box
                     p={3}
                     borderRadius="full"
-                    bg={`${action.color}.50`}
-                    color={`${action.color}.500`}
+                    bg="linear-gradient(135deg, #FFD700, #FFA500)"
+                    boxShadow="0 4px 20px rgba(255, 215, 0, 0.4)"
+                    border="1px solid rgba(255, 215, 0, 0.2)"
+                    _hover={{
+                      boxShadow: '0 6px 25px rgba(255, 215, 0, 0.5)',
+                      transform: 'scale(1.05)',
+                    }}
+                    transition="all 0.2s ease"
                   >
-                    <Icon as={action.icon} boxSize={6} />
+                    <Icon as={action.icon} boxSize={6} color="black" />
                   </Box>
                   <VStack spacing={1}>
-                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">
+                    <Text
+                      fontSize="sm"
+                      fontWeight="bold"
+                      color="#FFD700"
+                      textShadow="0 0 10px rgba(255, 215, 0, 0.3)"
+                    >
                       {action.title}
                     </Text>
-                    <Text fontSize="xs" color="gray.600" textAlign="center">
+                    <Text fontSize="xs" color="gray.400" textAlign="center" fontWeight="medium">
                       {action.description}
                     </Text>
                   </VStack>
                 </VStack>
+
+                {/* Decorative corner glow */}
+                <Box
+                  position="absolute"
+                  top="0"
+                  right="0"
+                  width="40px"
+                  height="40px"
+                  bgGradient="radial(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%)"
+                  pointerEvents="none"
+                />
               </Box>
             ))}
           </Grid>
 
-          <Box pt={4} borderTop="1px" borderColor="gray.100">
+          <Box pt={4} borderTop="1px solid rgba(255, 215, 0, 0.2)">
             <Button
               leftIcon={<Plus size={18} />}
               rightIcon={<ArrowUpRight size={16} />}
               variant="outline"
-              colorScheme="brand"
+              borderColor="rgba(255, 215, 0, 0.6)"
+              color="#FFD700"
+              bg="rgba(255, 215, 0, 0.05)"
               size="sm"
               width="full"
+              fontWeight="bold"
+              _hover={{
+                bg: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                color: 'black',
+                borderColor: '#FFD700',
+                boxShadow: '0 6px 25px rgba(255, 215, 0, 0.4)',
+                transform: 'translateY(-1px)',
+              }}
+              _active={{
+                transform: 'translateY(0px)',
+                boxShadow: '0 3px 15px rgba(255, 215, 0, 0.3)',
+              }}
+              transition="all 0.2s ease"
             >
               Más Opciones
             </Button>
           </Box>
         </VStack>
       </CardBody>
+
+      {/* Decorative corner elements */}
+      <Box
+        position="absolute"
+        top="0"
+        right="0"
+        width="100px"
+        height="100px"
+        bgGradient="radial(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%)"
+        pointerEvents="none"
+      />
+      <Box
+        position="absolute"
+        bottom="0"
+        left="0"
+        width="80px"
+        height="80px"
+        bgGradient="radial(circle, rgba(255, 215, 0, 0.08) 0%, transparent 70%)"
+        pointerEvents="none"
+      />
     </Card>
   );
 };

@@ -39,6 +39,7 @@ export const useLogin = () => {
             });
 
             navigate('/dashboard');
+            location.reload();
 
         } catch (error) {
             toast.error('Error al iniciar sesión', {
