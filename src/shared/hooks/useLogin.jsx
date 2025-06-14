@@ -15,7 +15,7 @@ export const useLogin = () => {
             const response = await loginRequest({ email, password });
 
             if (response.error) {
-                toast.error(response.error?.response?.data || 'Ocurrió un error al iniciar sesión, usuario no encontrado', {
+                toast.error(response.error?.response?.data || response?.msg || 'Ocurrió un error al iniciar sesión, usuario no encontrado', {
                     style: {
                         background: 'red',
                         color: 'white'

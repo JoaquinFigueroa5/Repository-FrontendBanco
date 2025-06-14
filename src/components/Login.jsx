@@ -39,9 +39,8 @@ export default function Login() {
         },
     });
 
-    const { login } = useLogin();
+    const { login, isLoading } = useLogin();
 
-    const [isLoading, setIsLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
 
     const validateEmail = (email) => {
@@ -87,7 +86,6 @@ export default function Login() {
     };
 
     const handleLogin = async () => {
-        setIsLoading(true);        
         login(formState.email.value, formState.password.value)
     };
 

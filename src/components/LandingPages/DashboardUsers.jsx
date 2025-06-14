@@ -210,7 +210,7 @@ const DashboardUsers = () => {
                     color="white"
                     letterSpacing="tight"
                   >
-                    Bienvenido, {user?.username}
+                    Bienvenid@, {user?.username}
                   </Text>
                   <Text
                     color="gray.400"

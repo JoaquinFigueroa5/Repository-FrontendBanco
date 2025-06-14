@@ -29,7 +29,7 @@ import {
     Divider,
     useColorMode,
 } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     HamburgerIcon,
@@ -191,6 +191,8 @@ const UserMenu = () => {
         fetchUser();
     }
 
+    const navigate = useNavigate();
+
     return (
         <Menu>
             <MotionBox whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -240,6 +242,7 @@ const UserMenu = () => {
                         bg: 'rgba(255, 215, 0, 0.1)',
                         color: '#FFD700',
                     }}
+                    onClick={() => navigate('/profile')}
                 >
                     Configuración
                 </MenuItem>
