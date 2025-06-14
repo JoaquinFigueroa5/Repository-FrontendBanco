@@ -298,6 +298,7 @@ const fetchTransactions = async () => {
                   Pago Rápido
                 </Button>
                 <Button
+                  onClick={() => navigate('/deposits')}
                   leftIcon={<DollarSign size={20} />}
                   colorScheme="purple"
                   variant="outline"
@@ -307,7 +308,7 @@ const fetchTransactions = async () => {
                   _hover={{ transform: 'translateY(-2px)', shadow: 'lg' }}
                   transition="all 0.2s"
                 >
-                  Recargar
+                  Depósito
                 </Button>
                 <Button
                   onClick={() => navigate('/transactions')}
