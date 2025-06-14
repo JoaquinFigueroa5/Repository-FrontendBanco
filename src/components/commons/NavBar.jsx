@@ -331,14 +331,15 @@ const NavBar = () => {
     const [activeItem, setActiveItem] = useState('Inicio');
     const [scrollY, setScrollY] = useState(0);
     const { colorMode, toggleColorMode } = useColorMode();
+    const { user } = useUserStore();
 
     const navItems = [
         { name: 'Inicio', href: '/dashboard' },
-        { name: 'Productos', href: '#' },
-        { name: 'Servicios', href: '#' },
-        { name: 'Register', href: '/register' },
-        { name: 'Contacto', href: '#' },
-        { name: 'Transacciones', href: '/transactions' },
+        { name: 'Productos', href: '/productos' },
+        ...(user?.role === 'USER_ROLE' ? [{ name: 'Contacto', href: '#' }] : []),
+        ...(user?.role === 'USER_ROLE' ? [{ name: 'Transacciones', href: '/transactions' }] : []),
+        ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Register', href: '/register' }] : [])
+
     ];
 
     useEffect(() => {

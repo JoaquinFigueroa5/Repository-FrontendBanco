@@ -137,19 +137,7 @@ export default function Register() {
         }
 
         try {
-            await register({ ...formData }); // ✅ ¡CORREGIDO!
-            setFormData({
-                name: "",
-                surname: "",
-                username: "",
-                dpi: "",
-                address: "",
-                work: "",
-                income: "",
-                email: "",
-                password: "",
-                phone: ""
-            });
+            await register({ ...formData });
         } catch (err) {
             console.error('Error en el registro:', err);
         }
@@ -546,6 +534,7 @@ export default function Register() {
                                     transform: "translateY(0)"
                                 }}
                                 transition="all 0.2s"
+                                onClick={handleSubmit}
                             >
                                 Crear Cuenta
                             </Button>

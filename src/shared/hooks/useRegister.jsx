@@ -35,9 +35,9 @@ export const useRegister = () => {
                 work,
                 income
             });
-
+            
             if (response.error) {
-                toast.error(response.error?.response?.data || 'Ocurrió un error durante el registro', {
+                toast.error(response?.msg || 'Ocurrió un error durante el registro', {
                     style: {
                         background: 'red',
                         color: 'white'
@@ -49,8 +49,8 @@ export const useRegister = () => {
 
             const { userDetails } = response.data;
 
-            localStorage.setItem('user', JSON.stringify(userDetails));
-            setUser(userDetails);
+            // localStorage.setItem('user', JSON.stringify(userDetails));
+            // setUser(userDetails);
 
             toast.success('Registro exitoso', {
                 style: {

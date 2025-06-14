@@ -43,8 +43,8 @@ export const login = async (data) => {
 export const register = async (data) => {
     try {
         return await apiClient.post('/auth/register', data);
-    } catch (e) {
-        const msg = e.response?.data?.msg || 'Uknow error'
+    } catch (e) {        
+        const msg = e.response?.data?.msg || e.response?.data?.errors?.[0].msg || 'Uknow error'
         return {
             error: true,
             msg,
@@ -54,6 +54,24 @@ export const register = async (data) => {
 }
 
 export const getTransaction = async (data) => {
+    try{
+        const res = await apiClient.get('/transactions/', data);
+        return {
+            success: true,
+            status: res.status,
+            data: res.data
+        };
+    }catch(e){
+        const msg = e.response?.data?.msg || 'Error general'
+        return {
+            error: true,
+            msg,
+            e
+        }
+    }
+}
+
+export const getTransactionAdmin = async (limit = 10, skip = 0) => {
     try{
         const res = await apiClient.get('/transactions/', data);
         return {
@@ -125,3 +143,63 @@ export const createTransaction = async (data) => {
     };
   }
 };
+
+export const getProducts = async () => {
+    try {
+        const { data } = await apiClient.get('/product/');
+        return data;
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error al obtener productos';
+        return { error: true, msg, e };
+    }
+}
+
+export const getAllProducts = async () => {
+    try {
+        const { data } = await apiClient.get('/product/allProducts');
+        return data;
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error al obtener productos';
+        return { error: true, msg, e };
+    }
+}
+
+export const createProduct = async (productData) => {
+    try {
+        const { data } = await apiClient.post('/product/', productData);
+        return data;
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error al crear producto';
+        return { error: true, msg, e };
+    }
+}
+
+export const updateProduct = async (id, productData) => {
+    try {
+        const { data } = await apiClient.put(`/product/${id}`, productData);
+        return data;
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error al actualizar producto';
+        return { error: true, msg, e };
+    }
+}
+
+export const reactivateProduct = async (id, productData) => {
+    try {
+        const { data } = await apiClient.put(`/product/reactivateProduct/${id}`, productData);
+        return data;
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error al reactivar el producto';
+        return { error: true, msg, e };
+    }
+}
+
+export const deleteProduct = async (id) => {
+    try {
+        const { data } = await apiClient.delete(`/product/${id}`);
+        return data;
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error al eliminar producto';
+        return { error: true, msg, e };
+    }
+}

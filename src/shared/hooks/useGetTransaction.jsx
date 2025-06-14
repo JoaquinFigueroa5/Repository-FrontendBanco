@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getTransaction } from '../../services/api'; // Ajusta la ruta si es necesario
 
-const useGetTransaction = ({ accountId = '', limit = 10, skip = 0 } = {}) => {
+const useGetTransaction = ({ accountId = '', limit = 5, skip = 0 } = {}) => {
   const [transactions, setTransactions] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);

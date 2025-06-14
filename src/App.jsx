@@ -10,6 +10,7 @@ function App() {
 
   return (
     <>
+    <Toaster />
       <Suspense fallback={ <Loading/> } >
         {element}
       </Suspense>
