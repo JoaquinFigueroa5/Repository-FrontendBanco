@@ -41,11 +41,12 @@ export const useDeposits = () => {
     }
   }
 
-  const getMyDeposits = async () => {
+  const getMyDeposits = async (id) => {
     setIsFetching(true)
     setError(null)
     try {
-      const response = await getMyDepositsRequest()
+      console.log(id);
+      const response = await getMyDepositsRequest(id)
       setIsFetching(false)
       if (response?.error) {
         setError(response.msg || 'No se pudieron obtener los depósitos')

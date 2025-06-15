@@ -11,8 +11,9 @@ import {
 } from '@chakra-ui/react'
 import { BanknoteArrowUp } from 'lucide-react'
 import { useDeposits } from '../../shared/hooks/useDeposits'
+import { useAccount } from '../../shared/hooks/useAccount'
 
-const MAX_HEIGHT = 480
+const MAX_HEIGHT = 780
 
 const DepositsHistory = ({ refresh = 0 }) => {
   const textColor = useColorModeValue('gray.800', 'white')
@@ -20,25 +21,31 @@ const DepositsHistory = ({ refresh = 0 }) => {
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const depositBg = useColorModeValue('gray.50', 'gray.800')
 
-  const { deposits, isFetching, error, getMyDeposits, revertDeposit } = useDeposits()
+  const { deposits, isFetching, error, getMyDeposits, revertDeposit } = useDeposits();
+  const { account } = useAccount();
 
   const [, setTick] = useState(0)
   useEffect(() => {
     const interval = setInterval(() => setTick(t => t + 1), 1000)
     return () => clearInterval(interval)
   }, [])
+
   useEffect(() => {
-    getMyDeposits()
-  }, [refresh])
+    getMyDeposits(account?._id)
+  }, [account?._id])
 
   const formatCurrency = (amount) => {
-    const value = Number(amount)
-    if (isNaN(value)) return '$0.00'
-    return new Intl.NumberFormat('es-MX', {
+    const value = parseFloat(amount?.toString?.() || amount);
+
+    if (isNaN(value)) return 'Q0.00';
+    return new Intl.NumberFormat('es-GT', {
       style: 'currency',
-      currency: 'MXN',
-    }).format(value)
-  }
+      currency: 'GTQ',
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
+
 
   const getSecondsLeft = (createdAt) => {
     const now = new Date()
@@ -120,7 +127,7 @@ const DepositsHistory = ({ refresh = 0 }) => {
                       fontWeight="bold"
                       color="orange.600"
                     >
-                      +{formatCurrency(deposit.amount)}
+                      +{formatCurrency(deposit?.amount.$numberDecimal)}
                     </Text>
                     <Badge colorScheme="orange" variant="solid" fontSize="0.7em" px={2}>
                       Depósito
@@ -155,7 +162,7 @@ const DepositsHistory = ({ refresh = 0 }) => {
           })
         )}
         <Box textAlign="center" pt={4}>
-          <Button variant="solid" colorScheme="orange" size="sm" onClick={getMyDeposits}>
+          <Button variant="solid" colorScheme="orange" size="sm" onClick={() => getMyDeposits(account?._id)}>
             Recargar depósitos
           </Button>
         </Box>

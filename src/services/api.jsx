@@ -156,9 +156,10 @@ export const createDeposit = async (data) => {
     }
 };
 
-export const getMyDeposits = async () => {
+export const getMyDeposits = async (id) => {
     try {
-        return await apiClient.get('/deposit/myDeposits')
+        console.log(id);
+        return await apiClient.get(`/deposit/account/${id}`)
     } catch (error) {
         return {
             error: true,

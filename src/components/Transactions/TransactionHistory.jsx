@@ -71,15 +71,15 @@ const TransactionHistory = () => {
   };
 
   const getTransactionColor = (type, amount) => {
-    if (type === 'deposit' || amount > 0) return 'green';
+    if (type === 'deposit' || amount > 0) return 'red';
     if (type === 'transfer' || type === 'transferencia') return 'blue';
     if (type === 'payment') return 'orange';
-    return 'red';
+    return 'green';
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'completed': return 'green';
+      case 'completed': return 'red';
       case 'pending': return 'yellow';
       case 'failed': return 'red';
       default: return 'gray';
@@ -211,9 +211,9 @@ const TransactionHistory = () => {
                         <Text
                           fontSize="md"
                           fontWeight="bold"
-                          color={transaction.amount > 0 ? 'green.600' : 'red.600'}
+                          color={transaction.amount > 0 ? 'red.600' : 'green.600'}
                         >
-                          {transaction.amount > 0 ? '+' : '-'}
+                          {transaction.amount > 0 ? '-' : '+'}
                           {formatCurrency(transaction.amount)}
                         </Text>
                         <Badge

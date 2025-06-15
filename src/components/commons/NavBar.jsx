@@ -341,8 +341,8 @@ const NavBar = () => {
         { name: 'Inicio', href: '/dashboard' },
         { name: 'Productos', href: '/productos' },
         ...(user?.role === 'USER_ROLE' ? [{ name: 'Contacto', href: '#' }] : []),
-        ...(user?.role === 'USER_ROLE' ? [{ name: 'Transacciones', href: '/transactions' }] : []),
-        ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Register', href: '/register' }] : [])
+        ...(user?.role === 'USER_ROLE' ? [{ name: 'Transferencias', href: '/transactions' }] : []),
+        ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Registrar Usuario', href: '/register' }] : [])
 
     ];
 

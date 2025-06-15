@@ -63,18 +63,18 @@ import { useNavigate } from 'react-router-dom';
 import useUserStore from '../../context/UserStore';
 import TransferModal from '../Transactions/TransferModa';
 import useTransfer from '../../shared/hooks/UseTransfer';
+import { useAccount } from '../../shared/hooks/useAccount';
 const DashboardUsers = () => {
   const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
-  const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure();
   const { isOpen: isQuickPayOpen, onOpen: onQuickPayOpen, onClose: onQuickPayClose } = useDisclosure();
   const toast = useToast();
 
   const [quickPayAmount, setQuickPayAmount] = useState('');
   const [selectedFavorite, setSelectedFavorite] = useState('');
+  const { account } = useAccount();  
 
-  const [balance] = useState(25847.50);
   const [savingsBalance] = useState(12340.00);
   const [creditLimit] = useState(5000.00);
   const [creditUsed] = useState(1250.00);
@@ -151,9 +151,6 @@ const DashboardUsers = () => {
       isClosable: true,
     });
   };
-
-  console.log(user);
-
 
   return (
     <>
@@ -293,7 +290,7 @@ const DashboardUsers = () => {
                     color="white"
                     letterSpacing="tight"
                   >
-                    {showBalance ? `$${balance.toLocaleString()}` : '••••••••'}
+                    {showBalance ? '••••••••' : `Q${account?.balance?.$numberDecimal}`}
                   </Text>
                   <HStack spacing={2}>
                     <Text fontSize="sm" color="gold" fontWeight="600">GTQ</Text>
@@ -468,7 +465,7 @@ const DashboardUsers = () => {
                 borderRadius="2xl"
                 fontWeight="700"
                 fontSize="lg"
-                onClick={onTransferOpen}
+                onClick={() => navigate('/transactions')}
                 _hover={{
                   transform: 'translateY(-4px)',
                   boxShadow: '0 20px 40px rgba(255, 215, 0, 0.4)'
@@ -729,56 +726,6 @@ const DashboardUsers = () => {
               </TabPanels>
             </Tabs>
           </Box>
-
-          {/* Modal de Transferencia */}
-          <Modal isOpen={isTransferOpen} onClose={onTransferClose} size="md">
-            <ModalOverlay backdropFilter="blur(10px)" />
-            <ModalContent borderRadius="2xl">
-              <ModalHeader>Nueva Transferencia</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
-                <VStack spacing={4}>
-                  <FormControl>
-                    <FormLabel>Destinatario</FormLabel>
-                    <Input
-                      placeholder="Nombre o número de cuenta"
-                      value={transferTo}
-                      onChange={(e) => setTransferTo(e.target.value)}
-                      borderRadius="lg"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Monto</FormLabel>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={transferAmount}
-                      onChange={(e) => setTransferAmount(e.target.value)}
-                      borderRadius="lg"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Concepto</FormLabel>
-                    <Textarea
-                      placeholder="Descripción de la transferencia"
-                      value={transferConcept}
-                      onChange={(e) => setTransferConcept(e.target.value)}
-                      borderRadius="lg"
-                    />
-                  </FormControl>
-                  <Button
-                    colorScheme="blue"
-                    size="lg"
-                    width="full"
-                    borderRadius="lg"
-                    onClick={handleTransfer}
-                  >
-                    Transferir
-                  </Button>
-                </VStack>
-              </ModalBody>
-            </ModalContent>
-          </Modal>
 
           {/* Modal de Pago Rápido Premium */}
           <Modal isOpen={isQuickPayOpen} onClose={onQuickPayClose} size="md">
