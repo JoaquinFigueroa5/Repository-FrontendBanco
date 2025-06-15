@@ -71,12 +71,9 @@ const DashboardUsers = () => {
   const { isOpen: isQuickPayOpen, onOpen: onQuickPayOpen, onClose: onQuickPayClose } = useDisclosure();
   const toast = useToast();
 
-  // Estados para transacciones
-
   const [quickPayAmount, setQuickPayAmount] = useState('');
   const [selectedFavorite, setSelectedFavorite] = useState('');
 
-  // Datos simulados
   const [balance] = useState(25847.50);
   const [savingsBalance] = useState(12340.00);
   const [creditLimit] = useState(5000.00);
@@ -503,6 +500,7 @@ const DashboardUsers = () => {
               </Button>
 
               <Button
+                onClick={() => navigate('/deposits')}
                 leftIcon={<DollarSign size={22} />}
                 bg="linear-gradient(135deg, #8A2BE2 0%, #6A1B9A 100%)"
                 color="white"
@@ -518,7 +516,7 @@ const DashboardUsers = () => {
                 _active={{ transform: 'translateY(-2px)' }}
                 transition="all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
               >
-                Recargar
+                Depositar
               </Button>
 
               <Button

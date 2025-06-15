@@ -123,8 +123,7 @@ export const getUserAccount = async () => {
             e
         }
     }
-}
-
+};
 
 export const createTransaction = async (data) => {
   try {
@@ -142,6 +141,44 @@ export const createTransaction = async (data) => {
       e,
     };
   }
+};
+
+export const createDeposit = async (data) => {
+    try {
+        return await apiClient.post('/deposit', data)
+    } catch (error) {
+        const msg = error.response?.data?.msg || 'Error creating deposit';
+        return {
+            error: true,
+            msg,
+            e: error
+        }
+    }
+};
+
+export const getMyDeposits = async () => {
+    try {
+        return await apiClient.get('/deposit/myDeposits')
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.msg || 'Error al obtener los depósitos',
+            e: error
+        }
+    }
+};
+
+export const revertDeposit = async (depositId) => {
+    try {
+        return await apiClient.post(`/deposit/${depositId}`)
+    } catch (error) {
+        const msg = error.response?.data?.msg || 'Error al revertir el depósito';
+        return {
+            error: true,
+            msg,
+            e: error
+        }
+    }
 };
 
 export const getProducts = async () => {

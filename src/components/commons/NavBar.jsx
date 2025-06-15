@@ -283,6 +283,7 @@ const MobileNav = ({ isOpen, onClose, navItems, activeItem, setActiveItem }) => 
                         fontWeight="bold"
                         bgGradient="linear(to-r, #FFD700, #FFA500)"
                         bgClip="text"
+                        onClick={() => navigate('/dashboard')}
                     >
                         Los chiludos banco
                     </Text>
@@ -386,7 +387,9 @@ const NavBar = () => {
                         cursor="pointer"
                         textShadow="0 0 20px rgba(255, 215, 0, 0.5)"
                     >
-                        Los chiludos banco
+                        <RouterLink to='/dashboard' >
+                            Los chiludos banco
+                        </RouterLink>
                     </Text>
                 </MotionBox>
 

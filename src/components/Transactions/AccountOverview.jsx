@@ -19,7 +19,7 @@ import { useColorModeValue } from '@chakra-ui/react';
 import useUserStore from '../../context/UserStore';
 import { useAccount } from '../../shared/hooks/useAccount';
 
-const AccountOverview = ({ }) => {
+const AccountOverview = ({ refresh }) => {
 
   const { account, loading, error, fetchAccount } = useAccount();
 
@@ -27,7 +27,7 @@ const AccountOverview = ({ }) => {
 
   useEffect(() => {
     fetchAccount();
-  }, []);
+  }, [refresh]);
   const textColor = useColorModeValue('gray.800', 'white');
   const [showBalance, setShowBalance] = useState(true);
 
