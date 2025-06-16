@@ -22,7 +22,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useGetUserTransactions } from '../../shared/hooks/useGetUserTransactions'; 
+import { useGetUserTransactions } from '../../shared/hooks/useGetUserTransactions';
+import useUserStore from '../../context/UserStore';
 
 const TransactionHistory = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,6 +35,9 @@ const TransactionHistory = () => {
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   const { transactions, loading, error, refetch } = useGetUserTransactions();
+
+  const { user } = useUserStore();
+  const userId = user?._id;
 
   const normalizeAmount = (amount) => {
     if (!amount) return 0;
@@ -64,15 +68,15 @@ const TransactionHistory = () => {
   };
 
   const getTransactionColor = (type, amount) => {
-    if (type === 'deposito' || amount > 0) return 'red';
+    if (type === 'deposito' || amount > 0) return 'green';
     if (type === 'transferencia') return 'blue';
     if (type === 'retiro') return 'orange';
-    return 'green';
+    return 'red';
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'completed': return 'red';
+      case 'completed': return 'green';
       case 'pending': return 'yellow';
       case 'failed': return 'red';
       default: return 'gray';
@@ -89,9 +93,9 @@ const TransactionHistory = () => {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('es-MX', {
+    return new Intl.NumberFormat('es-GT', {
       style: 'currency',
-      currency: 'MXN',
+      currency: 'GTQ',
     }).format(Math.abs(amount));
   };
 
@@ -201,11 +205,12 @@ const TransactionHistory = () => {
                         <Text
                           fontSize="md"
                           fontWeight="bold"
-                          color={transaction.amount > 0 ? 'red.600' : 'green.600'}
+                          color={transaction?.type === 'sent' ? 'red.600' : 'green.600'}
                         >
-                          {transaction.amount > 0 ? '-' : '+'}
+                          {transaction?.type === 'sent' ? '-' : '+'}
                           {formatCurrency(transaction.amount)}
                         </Text>
+
                         <Badge
                           colorScheme={getStatusColor(transaction.status)}
                           variant="solid"

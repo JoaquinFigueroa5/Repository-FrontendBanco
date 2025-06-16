@@ -28,21 +28,6 @@ const RecentTransactions = () => {
       p={8}
     >
       <Tabs isFitted variant="enclosed">
-        <TabList mb="1em">
-          <Tab
-            _selected={{
-              color: 'gold',
-              borderColor: 'gold',
-              borderWidth: '3px'
-            }}
-            color="gray.400"
-            fontWeight="600"
-            fontSize="lg"
-          >
-            Transacciones Recientes
-          </Tab>
-        </TabList>
-
         <TabPanels>
           <TabPanel>
             {loading ? (
@@ -88,13 +73,13 @@ const RecentTransactions = () => {
                       </HStack>
                       <VStack align="end" spacing={1}>
                         <Text
-  fontSize="xl"
-  fontWeight="900"
-  color={transaction.type === 'income' ? '#00FF88' : '#FF4757'}
->
-  {transaction.type === 'income' ? '+' : '-'}$
-  {Number(transaction.amount.$numberDecimal).toLocaleString()}
-</Text>
+                          fontSize="xl"
+                          fontWeight="900"
+                          color={transaction.type === 'income' ? '#00FF88' : '#FF4757'}
+                        >
+                          {transaction.type === 'income' ? '+' : '-'}$
+                          {Number(transaction.amount.$numberDecimal).toLocaleString()}
+                        </Text>
                       </VStack>
                     </Flex>
                   </Box>
