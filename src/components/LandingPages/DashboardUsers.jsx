@@ -64,6 +64,8 @@ import useUserStore from '../../context/UserStore';
 import TransferModal from '../Transactions/TransferModa';
 import useTransfer from '../../shared/hooks/UseTransfer';
 import { useAccount } from '../../shared/hooks/useAccount';
+import { useGetUserTransactions } from '../../shared/hooks/useGetUserTransactions';
+import  RecentTransactions  from '../Transactions/RecentTransactions'
 const DashboardUsers = () => {
   const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
@@ -74,18 +76,17 @@ const DashboardUsers = () => {
   const [quickPayAmount, setQuickPayAmount] = useState('');
   const [selectedFavorite, setSelectedFavorite] = useState('');
   const { account } = useAccount();  
+  const {
+    transactions,
+    loading,
+    error,
+    refetch
+  } = useGetUserTransactions();
 
   const [savingsBalance] = useState(12340.00);
   const [creditLimit] = useState(5000.00);
   const [creditUsed] = useState(1250.00);
 
-  const [transactions, setTransactions] = useState([
-    { id: 1, type: 'income', amount: 2500.00, description: 'Salario', date: '2025-06-10', category: 'Trabajo' },
-    { id: 2, type: 'expense', amount: 150.00, description: 'Supermercado', date: '2025-06-09', category: 'Alimentación' },
-    { id: 3, type: 'expense', amount: 45.00, description: 'Gasolina', date: '2025-06-09', category: 'Transporte' },
-    { id: 4, type: 'income', amount: 320.00, description: 'Freelance', date: '2025-06-08', category: 'Trabajo' },
-    { id: 5, type: 'expense', amount: 89.99, description: 'Netflix', date: '2025-06-07', category: 'Entretenimiento' },
-  ]);
 
   const [favoriteAccounts] = useState([
     { id: 1, name: 'María García', account: '****1234', bank: 'Banco Nacional', avatar: 'MG' },
@@ -104,17 +105,11 @@ const DashboardUsers = () => {
     transferAmount, setTransferAmount,
     transferConcept, setTransferConcept,
     handleTransfer,
-    fromAccountId, setFromAccountId,
-    loading, error
+    fromAccountId, setFromAccountId
   } = useTransfer(() => {
     onTransferClose();
-    fetchTransactions(); // refresca la lista en UI
+    refetch(); // ✅ actualiza con el hook
   });
-
-  const fetchTransactions = async () => {
-    // Llamá a tu API para traer las transacciones y guardalas en estado
-    setTransactions(await api.getTransactions());
-  };
 
   const handleQuickPay = () => {
     if (!quickPayAmount || !selectedFavorite) {
@@ -284,14 +279,14 @@ const DashboardUsers = () => {
                 </HStack>
 
                 <VStack align="start" spacing={2}>
-                  <Text
-                    fontSize="4xl"
-                    fontWeight="900"
-                    color="white"
-                    letterSpacing="tight"
-                  >
-                    {showBalance ? '••••••••' : `Q${account?.balance?.$numberDecimal}`}
-                  </Text>
+                    <Text
+                    fontSize="4xl"
+                    fontWeight="900"
+                    color="white"
+                    letterSpacing="tight"
+                  >
+                    {showBalance ? '••••••••' : `Q${account?.balance?.$numberDecimal}`} 
+                  </Text>
                   <HStack spacing={2}>
                     <Text fontSize="sm" color="gold" fontWeight="600">GTQ</Text>
                     <Box width="4px" height="4px" bg="gray.600" borderRadius="full" />
@@ -586,75 +581,7 @@ const DashboardUsers = () => {
               <TabPanels>
                 {/* Transacciones Tab */}
                 <TabPanel p={8}>
-                  <VStack spacing={6} align="stretch">
-                    {transactions.slice(0, 5).map((transaction, index) => (
-                      <Box
-                        key={transaction.id}
-                        p={6}
-                        bg="linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)"
-                        borderRadius="2xl"
-                        border="1px solid rgba(255, 255, 255, 0.05)"
-                        _hover={{
-                          bg: 'rgba(255, 215, 0, 0.05)',
-                          border: '1px solid rgba(255, 215, 0, 0.2)',
-                          transform: 'translateY(-2px)'
-                        }}
-                        transition="all 0.3s ease"
-                      >
-                        <Flex justify="space-between" align="center">
-                          <HStack spacing={4}>
-                            <Box
-                              p={3}
-                              bg={transaction.type === 'income'
-                                ? 'linear-gradient(135deg, #00FF88, #00CC6A)'
-                                : 'linear-gradient(135deg, #FF4757, #FF3742)'
-                              }
-                              borderRadius="xl"
-                              boxShadow={transaction.type === 'income'
-                                ? '0 8px 25px rgba(0, 255, 136, 0.3)'
-                                : '0 8px 25px rgba(255, 71, 87, 0.3)'
-                              }
-                            >
-                              {transaction.type === 'income' ?
-                                <ArrowDownLeft size={20} color="#000" /> :
-                                <ArrowUpRight size={20} color="#FFF" />
-                              }
-                            </Box>
-                            <VStack align="start" spacing={2}>
-                              <Text fontWeight="700" color="white" fontSize="lg">
-                                {transaction.description}
-                              </Text>
-                              <HStack spacing={3}>
-                                <Badge
-                                  bg={transaction.type === 'income' ? '#00FF88' : '#FF4757'}
-                                  color={transaction.type === 'income' ? 'black' : 'white'}
-                                  borderRadius="full"
-                                  px={3}
-                                  py={1}
-                                  fontWeight="600"
-                                >
-                                  {transaction.category}
-                                </Badge>
-                                <Text fontSize="sm" color="gray.400" fontWeight="500">
-                                  {transaction.date}
-                                </Text>
-                              </HStack>
-                            </VStack>
-                          </HStack>
-                          <VStack align="end" spacing={1}>
-                            <Text
-                              fontSize="xl"
-                              fontWeight="900"
-                              color={transaction.type === 'income' ? '#00FF88' : '#FF4757'}
-                            >
-                              {transaction.type === 'income' ? '+' : '-'}$
-                              {transaction.amount.toLocaleString()}
-                            </Text>
-                          </VStack>
-                        </Flex>
-                      </Box>
-                    ))}
-                  </VStack>
+                  <RecentTransactions />
                 </TabPanel>
 
                 {/* Cuentas Favoritas Tab */}

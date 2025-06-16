@@ -33,10 +33,8 @@ const TransactionHistory = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
-  // Aquí usamos el hook que trae las transacciones del usuario logueado
   const { transactions, loading, error, refetch } = useGetUserTransactions();
 
-  // Convierte Decimal128 a número float para facilitar comparaciones y formateo
   const normalizeAmount = (amount) => {
     if (!amount) return 0;
     if (typeof amount === 'object' && '$numberDecimal' in amount) {
@@ -45,25 +43,20 @@ const TransactionHistory = () => {
     return Number(amount);
   };
 
-  // Normalizamos type y status para filtros, y amount para uso interno
   const normalizedTransactions = transactions.map(t => ({
     ...t,
     amount: normalizeAmount(t.amount),
     type: typeof t.type === 'string' ? t.type.toLowerCase() : '',
-    // tu status es booleano true/false, lo convertimos a texto para filtros
     status: t.status === true ? 'completed' : 'failed',
   }));
 
   const getTransactionIcon = (type, amount) => {
     switch (type) {
       case 'transferencia':
-      case 'transfer':
         return amount > 0 ? ArrowDownLeft : ArrowUpRight;
-      case 'payment':
-        return CreditCard;
-      case 'deposit':
+      case 'deposito':
         return ArrowDownLeft;
-      case 'withdrawal':
+      case 'reversion':
         return Banknote;
       default:
         return CreditCard;
@@ -71,9 +64,9 @@ const TransactionHistory = () => {
   };
 
   const getTransactionColor = (type, amount) => {
-    if (type === 'deposit' || amount > 0) return 'red';
-    if (type === 'transfer' || type === 'transferencia') return 'blue';
-    if (type === 'payment') return 'orange';
+    if (type === 'deposito' || amount > 0) return 'red';
+    if (type === 'transferencia') return 'blue';
+    if (type === 'retiro') return 'orange';
     return 'green';
   };
 
@@ -112,7 +105,6 @@ const TransactionHistory = () => {
 
   return (
     <VStack spacing={6} align="stretch">
-      {/* Filtros */}
       <HStack spacing={4}>
         <InputGroup>
           <InputLeftElement pointerEvents="none">
@@ -132,10 +124,9 @@ const TransactionHistory = () => {
           minW="150px"
         >
           <option value="all">Todos los tipos</option>
-          <option value="transfer">Transferencia</option>
-          <option value="payment">Pagos</option>
-          <option value="deposit">Depósitos</option>
-          <option value="withdrawal">Retiros</option>
+          <option value="transferencia">Transferencia</option>
+          <option value="deposito">Depósitos</option>
+          <option value="retiro">Retiros</option>
         </Select>
         <Select
           value={filterStatus}
@@ -150,7 +141,6 @@ const TransactionHistory = () => {
         </Select>
       </HStack>
 
-      {/* Lista de transacciones */}
       <VStack spacing={3} align="stretch">
         {loading ? (
           <Box textAlign="center" py={8}>
@@ -201,9 +191,9 @@ const TransactionHistory = () => {
                             Cuenta origen: {transaction.accountId.accountNumber || 'N/A'} - {transaction.accountId.userId?.name} {transaction.accountId.userId?.surname}
                           </Text>
                         )}
-                        {transaction.destinationAccount  && (
+                        {transaction.destinationAccount && (
                           <Text fontSize="xs" color="gray.500">
-                            Cuenta destino: {transaction.destinationAccount.accountNumber || 'N/A'} 
+                            Cuenta destino: {transaction.destinationAccount.accountNumber || 'N/A'}
                           </Text>
                         )}
                       </VStack>
@@ -244,7 +234,6 @@ const TransactionHistory = () => {
         )}
       </VStack>
 
-      {/* Botón cargar más */}
       {filteredTransactions.length > 0 && (
         <Box textAlign="center" pt={4}>
           <Button variant="outline" size="sm" onClick={refetch}>
