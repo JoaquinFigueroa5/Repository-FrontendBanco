@@ -13,6 +13,7 @@ import {
   StatHelpText,
   StatArrow,
   IconButton,
+  Input
 } from '@chakra-ui/react';
 import { Eye, EyeOff, CreditCard, TrendingUp } from 'lucide-react';
 import { useColorModeValue } from '@chakra-ui/react';
@@ -22,7 +23,9 @@ import { useAccount } from '../../shared/hooks/useAccount';
 const AccountOverview = ({ refresh }) => {
 
   const { account, loading, error, fetchAccount } = useAccount();
-
+  const [gastos, setGastos] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+  
   const { user } = useUserStore()
 
   useEffect(() => {
@@ -32,9 +35,9 @@ const AccountOverview = ({ refresh }) => {
   const [showBalance, setShowBalance] = useState(true);
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('es-MX', {
+    return new Intl.NumberFormat('es-GT', {
       style: 'currency',
-      currency: 'MXN'
+      currency: 'GTQ'
     }).format(amount);
   };
 
@@ -129,7 +132,7 @@ const AccountOverview = ({ refresh }) => {
               bgClip="text"
               textShadow="0 0 30px rgba(255, 215, 0, 0.3)"
             >
-              {showBalance ? `Q ${account?.balance?.$numberDecimal}` : '••••'}
+              {showBalance ? '••••' : `Q ${account?.balance?.$numberDecimal}`}
             </Text>
             <HStack spacing={2}>
               <Box
@@ -150,18 +153,32 @@ const AccountOverview = ({ refresh }) => {
             <Stat size="sm">
               <StatLabel color="whiteAlpha.800">Ingresos</StatLabel>
               <StatNumber fontSize="lg" color="white">
-                {showBalance ? formatCurrency(3500) : '••••'}
+                {showBalance ? '••••' : formatCurrency(user?.income?.$numberDecimal)}
               </StatNumber>
               <StatHelpText color="whiteAlpha.700" mb={0}>
                 <StatArrow type="increase" />
                 12.5%
               </StatHelpText>
             </Stat>
-            <Stat size="sm">
+            <Stat size="sm" onClick={() => setIsEditing(true)}>
               <StatLabel color="whiteAlpha.800">Gastos</StatLabel>
-              <StatNumber fontSize="lg" color="white">
-                {showBalance ? formatCurrency(1250) : '••••'}
-              </StatNumber>
+
+              {isEditing ? (
+                <Input
+                  size="sm"
+                  value={gastos}
+                  type="number"
+                  color="white"
+                  onChange={(e) => setGastos(Number(e.target.value))}
+                  onBlur={() => setIsEditing(false)}
+                  autoFocus
+                />
+              ) : (
+                <StatNumber fontSize="lg" color="white">
+                  {showBalance ? '••••' : formatCurrency(gastos)}
+                </StatNumber>
+              )}
+
               <StatHelpText color="whiteAlpha.700" mb={0}>
                 <StatArrow type="decrease" />
                 8.2%

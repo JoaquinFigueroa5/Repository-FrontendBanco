@@ -154,7 +154,6 @@ const TransactionsPage = () => {
           </VStack>
         </Container>
 
-        {/* Modals */}
         <TransferModal
           isOpen={isTransferOpen}
           onClose={onTransferClose}

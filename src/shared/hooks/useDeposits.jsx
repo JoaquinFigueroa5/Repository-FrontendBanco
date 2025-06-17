@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { 
   createDeposit as createDepositRequest, 
   getMyDeposits as getMyDepositsRequest,
-  revertDeposit as revertDepositRequest
+  revertDeposit as revertDepositRequest,
+  getDeposits as getDepositRequest
 } from '../../services'
 
 export const useDeposits = () => {
@@ -85,6 +86,28 @@ export const useDeposits = () => {
     }
   }
 
+  const fetchDeposits = async() => {
+    setIsFetching(true);
+    setError(null);
+
+    const res = await getDepositRequest();
+
+    setIsFetching(false);
+
+    if(res.error){
+      toast.error('Error al obtener los depositos')
+      
+      return
+    }
+
+    setDeposits(res.data.deposits)
+    
+  }
+
+  useEffect(() => {
+    fetchDeposits();
+  }, [])
+
   return {
     deposits,
     isFetching,
@@ -92,5 +115,6 @@ export const useDeposits = () => {
     createDeposit,
     getMyDeposits,
     revertDeposit,
+    fetchDeposits
   }
 }

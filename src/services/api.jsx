@@ -169,6 +169,18 @@ export const getMyDeposits = async (id) => {
     }
 };
 
+export const getDeposits = async() => {
+    try {
+        return await apiClient.get('/deposit')
+    } catch (error) {
+        return {
+            error: true,
+            msg: error.response?.data?.msg || 'Error al obtener los depositos',
+            e: error
+        }
+    }
+}
+
 export const revertDeposit = async (depositId) => {
     try {
         return await apiClient.post(`/deposit/${depositId}`)

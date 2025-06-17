@@ -535,7 +535,7 @@ const AlertsPanel = () => {
 const QuickActions = () => {
   const actions = [
     { name: 'Crear Usuario', icon: '👤', color: 'yellow', href: '/register' },
-    { name: 'Backup Manual', icon: '💸', color: 'orange', href: '/deposits' },
+    { name: 'Depositos', icon: '💸', color: 'orange', href: '/deposits' },
     { name: 'Configurar Alertas', icon: '🔔', color: 'yellow', href: '#' },
     { name: 'Generar Reporte', icon: '📊', color: 'orange', href: '#' },
     { name: 'Mantenimiento', icon: '🔧', color: 'red', href: '#' },

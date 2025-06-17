@@ -111,7 +111,7 @@ const TransferModal = ({
                       color: 'white'
                     }}
                   >
-                    {account.accountNumber} - Q{parseFloat(account?.balance).toFixed(2)}
+                    {account.accountNumber} - Q{parseFloat(account?.balance?.$numberDecimal).toFixed(2)}
                   </option>
                 )}
               </Select>

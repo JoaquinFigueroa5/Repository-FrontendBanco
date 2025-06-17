@@ -285,7 +285,7 @@ const DepositsPage = () => {
                                 {user?.role === 'USER_ROLE' && (
                                     <DepositUsers onSuccess={handleDepositSuccess} />
                                 )}
-                                {!['ADMIN_ROLE', 'USER_ROLE'].includes(user.role) && (
+                                {!['ADMIN_ROLE', 'USER_ROLE'].includes(user?.role) && (
                                     <MotionBox
                                         bg="rgba(255, 69, 0, 0.1)"
                                         border="1px solid rgba(255, 69, 0, 0.3)"

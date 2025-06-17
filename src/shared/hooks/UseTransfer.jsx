@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createTransaction } from '../../services';
+import toast from 'react-hot-toast';
 
 const useTransfer = (onSuccess) => {
   const [transferTo, setTransferTo] = useState('');
@@ -14,13 +15,27 @@ const useTransfer = (onSuccess) => {
     setError(null);
 
     try {
-      await createTransaction({
+      const response = await createTransaction({
         accountId: fromAccountId,
         type: 'Transferencia',
         amount: parseFloat(transferAmount),
         details: transferConcept,
         destinationNumberAccount: transferTo,
       });
+
+      if (response.error) {
+        toast.error(response.error?.response?.data || response?.message || response?.e?.response?.data?.message || 'Ocurrio un error al hacer la transferencia', {
+          style: {
+            background: 'red',
+            color: 'white'
+          }
+        });
+        setLoading(false);
+        return
+      }
+
+      toast.success('Transferencia hecha exitosamente!')
+      location.reload();
 
       // Limpiar campos después de enviar
       setTransferTo('');

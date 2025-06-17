@@ -74,7 +74,7 @@ const buttonVariants = {
 const DepositAdmin = ({ onSuccess }) => {
   const [numberAccount, setNumberAccount] = useState('')
   const [amount, setAmount] = useState('')
-  const { createDeposit, isFetching } = useDeposits()
+  const { createDeposit, isFetching, fetchDeposits } = useDeposits()
   const toast = useToast()
 
   const handleDeposit = async () => {
