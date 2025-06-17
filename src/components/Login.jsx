@@ -20,12 +20,15 @@ import {
     Divider,
     useColorModeValue,
     Spinner,
-    Link
+    Link,
+    useColorMode
 } from "@chakra-ui/react";
 import { EmailIcon, LockIcon, CheckIcon } from "@chakra-ui/icons";
 import { useLogin } from "../shared/hooks";
 
 export default function Login() {
+    const { colorMode, toggleColorMode } = useColorMode();
+
     const [formState, setFormState] = useState({
         email: {
             value: "",
@@ -369,6 +372,9 @@ export default function Login() {
                         </HStack>
                     </VStack>
                 </Box>
+                {/* <Button onClick={toggleColorMode}>
+                    Cambiar a {colorMode === 'light' ? 'modo oscuro' : 'modo claro'}
+                </Button> */}
             </Flex>
         </Flex>
     );
