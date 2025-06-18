@@ -43,7 +43,7 @@ export const login = async (data) => {
 export const register = async (data) => {
     try {
         return await apiClient.post('/auth/register', data);
-    } catch (e) {        
+    } catch (e) {
         const msg = e.response?.data?.msg || e.response?.data?.errors?.[0].msg || 'Uknow error'
         return {
             error: true,
@@ -54,14 +54,14 @@ export const register = async (data) => {
 }
 
 export const getTransaction = async (data) => {
-    try{
+    try {
         const res = await apiClient.get('/transactions/', data);
         return {
             success: true,
             status: res.status,
             data: res.data
         };
-    }catch(e){
+    } catch (e) {
         const msg = e.response?.data?.msg || 'Error general'
         return {
             error: true,
@@ -72,14 +72,14 @@ export const getTransaction = async (data) => {
 }
 
 export const getTransactionAdmin = async (limit = 10, skip = 0) => {
-    try{
+    try {
         const res = await apiClient.get('/transactions/', data);
         return {
             success: true,
             status: res.status,
             data: res.data
         };
-    }catch(e){
+    } catch (e) {
         const msg = e.response?.data?.msg || 'Error general'
         return {
             error: true,
@@ -89,15 +89,15 @@ export const getTransactionAdmin = async (limit = 10, skip = 0) => {
     }
 }
 
-export const getTransactionUser = async ( data ) => {
-    try{
+export const getTransactionUser = async (data) => {
+    try {
         const res = await apiClient.get('/transactions/user', data);
         return {
             success: true,
             status: res.status,
             data: res.data
         };
-    }catch(e){
+    } catch (e) {
         const msg = e.response?.data?.msg || 'Error general'
         return {
             error: true,
@@ -117,7 +117,7 @@ export const getUserAccount = async () => {
         };
     } catch (e) {
         const msg = e.response?.data?.msg || 'Error'
-        return{
+        return {
             error: true,
             msg,
             e
@@ -126,21 +126,22 @@ export const getUserAccount = async () => {
 };
 
 export const createTransaction = async (data) => {
-  try {
-    const res = await apiClient.post('/transactions', data);
-    return {
-      success: true,
-      status: res.status,
-      data: res.data,
-    };
-  } catch (e) {
-    const msg = e.response?.data?.msg || 'Error al crear la transacción';
-    return {
-      error: true,
-      msg,
-      e,
-    };
-  }
+    try {
+        // console.log(data); 
+        const res = await apiClient.post('/transactions', data);
+        return {
+            success: true,
+            status: res.status,
+            data: res.data,
+        };
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error al crear la transacción';
+        return {
+            error: true,
+            msg,
+            e,
+        };
+    }
 };
 
 export const createDeposit = async (data) => {
@@ -169,7 +170,7 @@ export const getMyDeposits = async (id) => {
     }
 };
 
-export const getDeposits = async() => {
+export const getDeposits = async () => {
     try {
         return await apiClient.get('/deposit')
     } catch (error) {
@@ -256,30 +257,56 @@ export const deleteProduct = async (id) => {
 
 export const getProfile = async () => {
     try {
-      const response = await apiClient.get('/user/profile');
-      return response.data.user;
+        const response = await apiClient.get('/user/profile');
+        return response.data.user;
     } catch (e) {
-      console.error('Error en getProfile:', e);
-      return { error: true, e };
+        console.error('Error en getProfile:', e);
+        return { error: true, e };
     }
 };
 
 export const updateUser = async (id, updatedData) => {
     try {
-      const response = await apiClient.put(`/user/${id}`, updatedData);
-      return response.data.user;
+        const response = await apiClient.put(`/user/${id}`, updatedData);
+        return response.data.user;
     } catch (e) {
-      console.error('Error en updateUser:', e);
-      return { error: true, e };
+        console.error('Error en updateUser:', e);
+        return { error: true, e };
     }
 };
 
 export const deleteUser = async (id) => {
     try {
-      const response = await apiClient.delete(`/user/${id}`);
-      return response.data;
+        const response = await apiClient.delete(`/user/${id}`);
+        return response.data;
     } catch (e) {
-      console.error('Error en deleteUser:', e);
-      return { error: true, e };
+        console.error('Error en deleteUser:', e);
+        return { error: true, e };
     }
 };
+
+export const toggleFavorite = async (id) => {
+    try {
+        return await apiClient.put(`/user/favorite/${id}`)
+    } catch (error) {
+        const msg = error.response?.data?.msg || 'Error al favoritear la cuenta';
+        return {
+            error: true,
+            msg,
+            e: error
+        }
+    }
+}
+
+export const getAccountFavorite = async() => {
+    try {
+        return await apiClient.get('/user/getFavorites')
+    } catch (error) {
+        const msg = error.response?.data?.msg || 'Error al mostrar las cuentas';
+        return {
+            error: true,
+            msg,
+            e: error
+        }
+    }
+}

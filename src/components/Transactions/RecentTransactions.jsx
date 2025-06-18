@@ -58,7 +58,6 @@ const itemVariants = {
 
 const RecentTransactions = () => {
   const { transactions, loading, error } = useGetUserTransactions();
-  console.log('Transacciones recibidas:', transactions);
 
   const getTransactionConfig = (type) => {
     if (type === 'received') {

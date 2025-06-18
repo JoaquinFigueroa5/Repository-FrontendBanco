@@ -58,6 +58,7 @@ import {
   History,
   Settings
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import NavBar from '../commons/NavBar';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../../context/UserStore';
@@ -65,17 +66,20 @@ import TransferModal from '../Transactions/TransferModa';
 import useTransfer from '../../shared/hooks/UseTransfer';
 import { useAccount } from '../../shared/hooks/useAccount';
 import { useGetUserTransactions } from '../../shared/hooks/useGetUserTransactions';
-import  RecentTransactions  from '../Transactions/RecentTransactions'
+import RecentTransactions from '../Transactions/RecentTransactions'
+import { useUsers } from '../../shared/hooks/useUsers';
+
 const DashboardUsers = () => {
   const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
   const { isOpen: isQuickPayOpen, onOpen: onQuickPayOpen, onClose: onQuickPayClose } = useDisclosure();
+  const { accounts, getAccountFavorite } = useUsers();
   const toast = useToast();
 
   const [quickPayAmount, setQuickPayAmount] = useState('');
   const [selectedFavorite, setSelectedFavorite] = useState('');
-  const { account } = useAccount();  
+  const { account } = useAccount();
   const {
     transactions,
     loading,
@@ -87,18 +91,7 @@ const DashboardUsers = () => {
   const [creditLimit] = useState(5000.00);
   const [creditUsed] = useState(1250.00);
 
-
-  const [favoriteAccounts] = useState([
-    { id: 1, name: 'María García', account: '****1234', bank: 'Banco Nacional', avatar: 'MG' },
-    { id: 2, name: 'Juan Pérez', account: '****5678', bank: 'Banco Central', avatar: 'JP' },
-    { id: 3, name: 'Ana López', account: '****9012', bank: 'Banco Popular', avatar: 'AL' },
-    { id: 4, name: 'Carlos Ruiz', account: '****3456', bank: 'Banco Internacional', avatar: 'CR' },
-  ]);
-
   const { user } = useUserStore();
-
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const textColor = useColorModeValue('gray.800', 'white');
 
   const {
     transferTo, setTransferTo,
@@ -108,10 +101,10 @@ const DashboardUsers = () => {
     fromAccountId, setFromAccountId
   } = useTransfer(() => {
     onTransferClose();
-    refetch(); // ✅ actualiza con el hook
+    refetch();
   });
 
-  const handleQuickPay = () => {
+  const handleQuickPay = async () => {
     if (!quickPayAmount || !selectedFavorite) {
       toast({
         title: 'Error',
@@ -123,29 +116,24 @@ const DashboardUsers = () => {
       return;
     }
 
-    const favorite = favoriteAccounts.find(f => f.id.toString() === selectedFavorite);
-    const newTransaction = {
-      id: transactions.length + 1,
-      type: 'expense',
-      amount: parseFloat(quickPayAmount),
-      description: `Pago rápido a ${favorite.name}`,
-      date: new Date().toISOString().split('T')[0],
-      category: 'Pago rápido'
-    };
+    console.log('Cuenta data', accounts);
+    console.log('Destination Account', selectedFavorite);
+    
+    
+    setFromAccountId(account._id);
+    setTransferAmount(quickPayAmount);
+    setTransferConcept('Pago Rapido');
+    setTransferTo(selectedFavorite);
 
-    setTransactions([newTransaction, ...transactions]);
-    setQuickPayAmount('');
-    setSelectedFavorite('');
-    onQuickPayClose();
+    setTimeout(() => {
+      handleTransfer();
+    }, 0);
 
-    toast({
-      title: 'Pago realizado',
-      description: `Pago de $${quickPayAmount} a ${favorite.name}`,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
   };
+
+  useEffect(() => {
+    getAccountFavorite();
+  }, [])
 
   return (
     <>
@@ -279,14 +267,14 @@ const DashboardUsers = () => {
                 </HStack>
 
                 <VStack align="start" spacing={2}>
-                    <Text
-                    fontSize="4xl"
-                    fontWeight="900"
-                    color="white"
-                    letterSpacing="tight"
-                  >
-                    {showBalance ? '••••••••' : `Q${account?.balance?.$numberDecimal}`} 
-                  </Text>
+                  <Text
+                    fontSize="4xl"
+                    fontWeight="900"
+                    color="white"
+                    letterSpacing="tight"
+                  >
+                    {showBalance ? '••••••••' : `Q${account?.balance?.$numberDecimal}`}
+                  </Text>
                   <HStack spacing={2}>
                     <Text fontSize="sm" color="gold" fontWeight="600">GTQ</Text>
                     <Box width="4px" height="4px" bg="gray.600" borderRadius="full" />
@@ -587,9 +575,9 @@ const DashboardUsers = () => {
                 {/* Cuentas Favoritas Tab */}
                 <TabPanel p={8}>
                   <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
-                    {favoriteAccounts.map((account) => (
+                    {accounts.map((account) => (
                       <Box
-                        key={account.id}
+                        key={account._id}
                         p={6}
                         bg="linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)"
                         borderRadius="2xl"
@@ -604,7 +592,7 @@ const DashboardUsers = () => {
                       >
                         <HStack spacing={4}>
                           <Avatar
-                            name={account.avatar}
+                            name={`${account.userId.name} ${account.userId.surname}`}
                             size="lg"
                             bg="linear-gradient(135deg, #FFD700, #FFA500)"
                             color="black"
@@ -613,7 +601,7 @@ const DashboardUsers = () => {
                           <VStack align="start" spacing={2} flex="1">
                             <HStack>
                               <Text fontWeight="700" color="white" fontSize="lg">
-                                {account.name}
+                                {`${account.userId.name} ${account.userId.surname}`}
                               </Text>
                               <IconButton
                                 icon={<Star size={16} />}
@@ -624,7 +612,7 @@ const DashboardUsers = () => {
                               />
                             </HStack>
                             <Text fontSize="sm" color="gray.400" fontWeight="500">
-                              {account.account} • {account.bank}
+                              {account.accountNumber}
                             </Text>
                           </VStack>
                           <Button
@@ -639,7 +627,7 @@ const DashboardUsers = () => {
                             }}
                             transition="all 0.3s ease"
                             onClick={() => {
-                              setSelectedFavorite(account.id.toString());
+                              setSelectedFavorite(account.accountNumber);
                               onQuickPayOpen();
                             }}
                           >
@@ -688,9 +676,9 @@ const DashboardUsers = () => {
                         }
                       }}
                     >
-                      {favoriteAccounts.map((account) => (
-                        <option key={account.id} value={account.id}>
-                          {account.name} - {account.account}
+                      {accounts.map((account) => (
+                        <option key={account._id} value={account._id}>
+                          {account.userId.name} - {account.accountNumber}
                         </option>
                       ))}
                     </Select>

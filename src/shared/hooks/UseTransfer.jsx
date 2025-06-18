@@ -21,7 +21,7 @@ const useTransfer = (onSuccess) => {
         amount: parseFloat(transferAmount),
         details: transferConcept,
         destinationNumberAccount: transferTo,
-      });
+      });      
 
       if (response.error) {
         toast.error(response.error?.response?.data || response?.message || response?.e?.response?.data?.message || 'Ocurrio un error al hacer la transferencia', {
