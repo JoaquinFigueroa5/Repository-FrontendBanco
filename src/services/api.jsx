@@ -311,6 +311,7 @@ export const getAccountFavorite = async() => {
     }
 }
 
+
 export const getUser = async() => {
     try {
         return await apiClient.get('/user')
