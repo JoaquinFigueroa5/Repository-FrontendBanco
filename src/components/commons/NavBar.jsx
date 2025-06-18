@@ -342,8 +342,8 @@ const NavBar = () => {
         { name: 'Productos', href: '/productos' },
         ...(user?.role === 'USER_ROLE' ? [{ name: 'Contacto', href: '#' }] : []),
         ...(user?.role === 'USER_ROLE' ? [{ name: 'Transferencias', href: '/transactions' }] : []),
-        ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Registrar Usuario', href: '/register' }] : [])
-
+        ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Registrar Usuario', href: '/register' }] : []),
+        ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Usuarios', href: '/users' }] : [])
     ];
 
     useEffect(() => {
