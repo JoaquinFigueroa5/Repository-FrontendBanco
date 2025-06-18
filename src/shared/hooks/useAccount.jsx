@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
-import { getUserAccount } from '../../services'
+import { getUserAccount, getAccounts as getAccountsRequest, toggleFavorite as toggleFavoriteRequest } from '../../services'
+import toast from 'react-hot-toast'
 
 export const useAccount = () => {
   const [account, setAccount] = useState(null)
+  const [accountsGen, setAccountsGen] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -25,6 +27,36 @@ export const useAccount = () => {
     }
   }
 
+  const getAccounts = async () => {
+    setLoading(true);
+
+    const response = await getAccountsRequest();
+
+    if (response.error) {
+      toast.error(response.e?.response?.data || 'Error al traer las cuentas');
+      setLoading(false);
+      return
+    }
+
+    setAccountsGen(response.data.accounts)
+
+  }
+
+  const toggleFavorites = async (id) => {
+    const response = await toggleFavoriteRequest(id);
+
+    if(response.error){
+      toast.error(result.e?.response?.data?.msg || 'No se pudo togglear');
+      return
+    }
+
+    console.log(response.data.favorites);
+    
+
+    return accountsGen
+
+  }
+
   useEffect(() => {
     fetchAccount()
   }, [])
@@ -33,6 +65,9 @@ export const useAccount = () => {
     account,
     loading,
     error,
-    fetchAccount
+    accountsGen,
+    getAccounts,
+    fetchAccount,
+    toggleFavorites
   }
 }

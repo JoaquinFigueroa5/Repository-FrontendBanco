@@ -125,6 +125,19 @@ export const getUserAccount = async () => {
     }
 };
 
+export const getAccounts = async() => {
+    try {
+        return await apiClient.get('/accounts')
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error'
+        return {
+            error: true,
+            msg,
+            er
+        }
+    }
+}
+
 export const createTransaction = async (data) => {
     try {
         // console.log(data); 

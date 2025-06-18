@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton,
   ModalBody, VStack, FormControl, FormLabel, Input, Textarea, Button, Select,
-  Box, Text
+  Box, Text, HStack
 } from "@chakra-ui/react";
+import { StarIcon } from "@chakra-ui/icons";
 import { useAccount } from "../../shared/hooks/useAccount";
 
 const TransferModal = ({
@@ -126,27 +127,30 @@ const TransferModal = ({
               >
                 Destinatario
               </FormLabel>
-              <Input
-                placeholder="Nombre o número de cuenta"
-                value={transferTo}
-                onChange={(e) => setTransferTo(e.target.value)}
-                borderRadius="lg"
-                bg="rgba(0, 0, 0, 0.4)"
-                border="1px solid"
-                borderColor="rgba(255, 215, 0, 0.2)"
-                color="white"
-                _hover={{
-                  borderColor: "rgba(255, 215, 0, 0.4)",
-                }}
-                _focus={{
-                  borderColor: "#FFD700",
-                  boxShadow: "0 0 20px rgba(255, 215, 0, 0.3)",
-                  bg: "rgba(0, 0, 0, 0.6)",
-                }}
-                _placeholder={{
-                  color: "gray.400"
-                }}
-              />
+              <HStack spacing={4} align="center">
+                <Input
+                  placeholder="Nombre o número de cuenta"
+                  value={transferTo}
+                  onChange={(e) => setTransferTo(e.target.value)}
+                  borderRadius="lg"
+                  bg="rgba(0, 0, 0, 0.4)"
+                  border="1px solid"
+                  borderColor="rgba(255, 215, 0, 0.2)"
+                  color="white"
+                  _hover={{
+                    borderColor: "rgba(255, 215, 0, 0.4)",
+                  }}
+                  _focus={{
+                    borderColor: "#FFD700",
+                    boxShadow: "0 0 20px rgba(255, 215, 0, 0.3)",
+                    bg: "rgba(0, 0, 0, 0.6)",
+                  }}
+                  _placeholder={{
+                    color: "gray.400"
+                  }}
+                  flex="1"
+                />
+              </HStack>
             </FormControl>
 
             <FormControl>

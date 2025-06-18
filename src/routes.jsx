@@ -7,6 +7,7 @@ const UserPage = lazy(() => import('./components/Profile/ProfilePage.jsx'));
 const Register = lazy(() => import('./components/Register'));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const DashboardMain = lazy(() => import("./pages/DashboardMain"));
+const FavoritesPage = lazy(() => import('./pages/FavoritesPage.jsx'));
 
 const routes = [
     { path: '/', element: <Login />},
@@ -16,7 +17,8 @@ const routes = [
     { path: '/register', element: <Register /> },
     { path: '/profile', element: <UserPage />},
     { path: '/deposits', element: <DepositsPage/>},
-    { path: '/register', element: <Register/>}
+    { path: '/register', element: <Register/>},
+    { path: '/favorites', element: <FavoritesPage /> }
 
 ]
 
