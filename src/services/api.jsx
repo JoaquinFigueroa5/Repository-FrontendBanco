@@ -298,11 +298,24 @@ export const deleteUser = async (id) => {
     }
 };
 
-export const toggleFavorite = async (id) => {
+export const addFavorite = async (id) => {
     try {
-        return await apiClient.put(`/user/favorite/${id}`)
+        return await apiClient.put(`/user/addFavorite/${id}`)
     } catch (error) {
-        const msg = error.response?.data?.msg || 'Error al favoritear la cuenta';
+        const msg = error.response?.data?.msg || 'Error al agregar el favorito de la cuenta';
+        return {
+            error: true,
+            msg,
+            e: error
+        }
+    }
+}
+
+export const removeFavorite = async (id) => {
+    try {
+        return await apiClient.put(`/user/removeFavorite/${id}`)
+    } catch (error) {
+        const msg = error.response?.data?.msg || 'Error al quitar el favorito de la cuenta';
         return {
             error: true,
             msg,

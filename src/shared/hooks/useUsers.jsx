@@ -1,6 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { toggleFavorite as toggleFavoriteRequest, getAccountFavorite as getAccountFavoriteRequest } from "../../services";
+import { getAccountFavorite as getAccountFavoriteRequest } from "../../services";
 
 export const useUsers = () => {
     const [accounts, setAccounts] = useState([]);
@@ -15,7 +15,7 @@ export const useUsers = () => {
             toast.error(response.e?.reponse?.data || 'Error al traer las cuentas fav.')
             setIsLoading(false);
             return;
-        }
+        }        
 
         setAccounts(response.data.favorites)
     };

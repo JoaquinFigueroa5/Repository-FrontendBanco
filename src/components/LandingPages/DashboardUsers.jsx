@@ -575,9 +575,9 @@ const DashboardUsers = () => {
                 {/* Cuentas Favoritas Tab */}
                 <TabPanel p={8}>
                   <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
-                    {accounts.map((account) => (
+                    {accounts.map((account, index) => (
                       <Box
-                        key={account._id}
+                        key={index}
                         p={6}
                         bg="linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)"
                         borderRadius="2xl"

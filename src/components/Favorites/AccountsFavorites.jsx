@@ -36,15 +36,16 @@ const AccountsFavorites = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const { accounts, getAccountFavorite } = useUsers();
-    const { accountsGen, getAccounts, toggleFavorites } = useAccount();
+    const { accountsGen, getAccounts, addFavorite, removeFavorite } = useAccount();
     const toast = useToast();
 
     useEffect(() => {
         getAccounts();
     }, []);
 
-    // console.log(accountsGen);
-
+    useEffect(() => {
+        getAccountFavorite();
+    }, [])
 
     const handleSearch = (value) => {
         setSearchTerm(value);
@@ -64,12 +65,11 @@ const AccountsFavorites = () => {
         }
     };
 
-    const addToFavorites = (account) => {
-        if (!favorites.find(fav => fav._id === account._id)) {
-            toggleFavorites(account._id);
-            console.log(toggleFavorites(account._id));
-            
-            setFavorites();
+    const addToFavorites = async(account) => {
+        if (!accounts.find(fav => fav._id === account._id)) {
+            await addFavorite(account._id);
+            await getAccountFavorite();
+
             toast({
                 title: 'Cuenta agregada',
                 description: `${account.name} se agregó a favoritos`,
@@ -77,6 +77,7 @@ const AccountsFavorites = () => {
                 duration: 3000,
                 isClosable: true,
             });
+
         } else {
             toast({
                 title: 'Cuenta ya existe',
@@ -88,8 +89,9 @@ const AccountsFavorites = () => {
         }
     };
 
-    const removeFromFavorites = (accountId) => {
-        setFavorites(favorites.filter(fav => fav._id !== accountId));
+    const removeFromFavorites = async(accountId) => {
+        await removeFavorite(accountId);
+        await getAccountFavorite();
         toast({
             title: 'Cuenta eliminada',
             description: 'La cuenta se eliminó de favoritos',
@@ -97,6 +99,7 @@ const AccountsFavorites = () => {
             duration: 3000,
             isClosable: true,
         });
+
     };
 
     const getTypeColor = (type) => {
@@ -169,7 +172,7 @@ const AccountsFavorites = () => {
                                 rounded="full"
                                 fontSize="sm"
                             >
-                                {favorites.length} favoritos
+                                {accounts.length} favoritos
                             </Badge>
                         </HStack>
                     </MotionBox>
@@ -196,8 +199,8 @@ const AccountsFavorites = () => {
                             />
                         </InputGroup>
                     </MotionBox>
-
-                    {favorites.length > 0 && (
+                    {/* {console.log('Favs', accounts)} */}
+                    {accounts.length > 0 && (
                         <>
                             {/* Favorites Grid */}
                             <MotionBox
@@ -207,12 +210,12 @@ const AccountsFavorites = () => {
                             >
                                 <VStack align="start" spacing={4}>
                                     <Heading size="md" color="gold">
-                                        Mis Favoritos ({favorites.length})
+                                        Mis Favoritos ({accounts.length})
                                     </Heading>
                                     <Grid templateColumns="repeat(auto-fill, minmax(350px, 1fr))" gap={4} w="full">
                                         <AnimatePresence>
-                                            {favorites.map((account, index) => (
-                                                <GridItem key={account._id}>
+                                            {accounts.map((account, index) => (
+                                                <GridItem key={index}>
                                                     <MotionCard
                                                         initial={{ opacity: 0, scale: 0.9 }}
                                                         animate={{ opacity: 1, scale: 1 }}
@@ -335,10 +338,12 @@ const AccountsFavorites = () => {
                                                             leftIcon={<AddIcon />}
                                                             colorScheme="yellow"
                                                             size="sm"
-                                                            onClick={() => addToFavorites(account)}
-                                                            isDisabled={favorites.some(fav => fav._id === account._id)}
+                                                            onClick={() => {
+                                                                addToFavorites(account);
+                                                            }}
+                                                            isDisabled={accounts.some(fav => fav._id === account._id)}
                                                         >
-                                                            {favorites.some(fav => fav._id === account._id) ? 'Agregado' : 'Agregar'}
+                                                            {accounts.some(fav => fav._id === account._id) ? 'Agregado' : 'Agregar'}
                                                         </Button>
                                                     </HStack>
                                                 </CardBody>
@@ -351,7 +356,7 @@ const AccountsFavorites = () => {
                     )}
 
                     {/* Empty state cuando no hay búsquedas y no hay favoritos */}
-                    {favorites.length === 0 && !searchTerm && <EmptyFavoritesView />}
+                    {accounts.length === 0 && !searchTerm && <EmptyFavoritesView />}
 
                     {/* No results message */}
                     {searchTerm && searchResults.length === 0 && !isSearching && (
