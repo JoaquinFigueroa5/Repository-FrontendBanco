@@ -336,3 +336,18 @@ export const getAccountFavorite = async() => {
         }
     }
 }
+
+
+export const getUser = async() => {
+    try {
+        return await apiClient.get('/user')
+    } catch (error) {
+        const msg = error.response?.data?.msg || 'Error al mostrar los usuarios';
+        return {
+            error: true,
+            msg,
+            e: error
+        }
+    }
+}
+
