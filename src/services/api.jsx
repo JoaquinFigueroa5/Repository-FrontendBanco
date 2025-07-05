@@ -313,7 +313,7 @@ export const addFavorite = async (id) => {
 
 export const removeFavorite = async (id) => {
     try {
-        return await apiClient.put(`/user/removeFavorite/${id}`)
+        return await apiClient.put(`/user/removeFavorites/${id}`)
     } catch (error) {
         const msg = error.response?.data?.msg || 'Error al quitar el favorito de la cuenta';
         return {

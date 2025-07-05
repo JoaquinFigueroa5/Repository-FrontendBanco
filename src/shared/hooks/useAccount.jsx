@@ -45,8 +45,11 @@ export const useAccount = () => {
   const addFavorite = async (id) => {
     const response = await addFavoriteRequest(id);
 
+    console.log(response);
+    
+
     if(response.error){
-      toast.error(result.e?.response?.data?.msg || 'No se pudo togglear');
+      toast.error(response.e?.response?.data?.msg || 'No se pudo togglear');
       return
     }    
 
@@ -58,7 +61,7 @@ export const useAccount = () => {
     const response = await removeFavoriteRequest(id);
 
     if(response.error){
-      toast.error(result.e?.response?.data?.msg || 'No se pudo togglear');
+      toast.error(response.e?.response?.data?.msg || 'No se pudo togglear');
       return
     }    
 

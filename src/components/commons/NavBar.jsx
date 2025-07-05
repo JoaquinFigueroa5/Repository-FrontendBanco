@@ -246,16 +246,20 @@ const UserMenu = () => {
                 >
                     Configuración
                 </MenuItem>
-                <MenuItem
-                    icon={<StarIcon color="#FFD700" />}
-                    color="gray.200"
-                    _hover={{
-                        bg: 'rgba(255, 215, 0, 0.1)',
-                        color: '#FFD700',
-                    }}
-                >
-                    Favoritos
-                </MenuItem>
+                <RouterLink to='/favorites' >
+                    <MenuItem
+                        icon={<StarIcon color="#FFD700" />}
+                        color="gray.200"
+                        _hover={{
+                            bg: 'rgba(255, 215, 0, 0.1)',
+                            color: '#FFD700',
+                        }}
+                    >
+
+                        Favoritos
+
+                    </MenuItem>
+                </RouterLink>
                 <MenuItem
                     onClick={handleLogout}
                     color="gray.200"
@@ -285,7 +289,7 @@ const MobileNav = ({ isOpen, onClose, navItems, activeItem, setActiveItem }) => 
                         bgClip="text"
                         onClick={() => navigate('/dashboard')}
                     >
-                        Los chiludos banco
+                        Los masca
                     </Text>
                 </DrawerHeader>
                 <DrawerBody>
@@ -340,11 +344,11 @@ const NavBar = () => {
     const navItems = [
         { name: 'Inicio', href: '/dashboard' },
         { name: 'Productos', href: '/productos' },
-        ...(user?.role === 'USER_ROLE' ? [{ name: 'Contacto', href: '#' }] : []),
+        ...(user?.role === 'USER_ROLE' ? [{ name: 'Contacto', href: 'https://mail.google.com/mail/?view=cm&fs=1&to=figueroaalvarez594@gmail.com&su=Consulta&body=Hola,%20tengo%20una%20pregunta%20sobre...' }] : []),
         ...(user?.role === 'USER_ROLE' ? [{ name: 'Transferencias', href: '/transactions' }] : []),
         ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Registrar Usuario', href: '/register' }] : []),
-        ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Usuarios', href: '/users'}] : []),
-        ...(user?.role === 'USER_ROLE' ? [{ name: 'Favoritos', href: '/favorites'}] : []),
+        ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Usuarios', href: '/users' }] : []),
+        ...(user?.role === 'USER_ROLE' ? [{ name: 'Favoritos', href: '/favorites' }] : []),
 
     ];
 
@@ -390,7 +394,7 @@ const NavBar = () => {
                         textShadow="0 0 20px rgba(255, 215, 0, 0.5)"
                     >
                         <RouterLink to='/dashboard' >
-                            Los chiludos banco
+                            Los masca
                         </RouterLink>
                     </Text>
                 </MotionBox>

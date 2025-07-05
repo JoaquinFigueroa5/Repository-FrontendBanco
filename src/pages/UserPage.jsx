@@ -335,27 +335,6 @@ const UserPage = () => {
                                         Administra perfiles, permisos y actividad de usuarios
                                     </Text>
                                 </VStack>
-
-                                <HStack spacing={4}>
-                                    <MotionButton
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        leftIcon={<FiUserPlus />}
-                                        bg="linear-gradient(135deg, gold, yellow.400)"
-                                        color="black"
-                                        fontWeight="700"
-                                        px={6}
-                                        py={3}
-                                        borderRadius="16px"
-                                        _hover={{
-                                            bg: "linear-gradient(135deg, yellow.400, gold)",
-                                            shadow: "0 10px 30px rgba(255, 215, 0, 0.3)"
-                                        }}
-                                        onClick={onOpen}
-                                    >
-                                        Nuevo Usuario
-                                    </MotionButton>
-                                </HStack>
                             </Flex>
 
                             {/* Barra de búsqueda y filtros */}

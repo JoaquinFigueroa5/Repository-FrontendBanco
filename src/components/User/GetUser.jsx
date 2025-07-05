@@ -37,10 +37,16 @@ import {
     CardBody,
     Heading,
     Stack,
-    Divider
+    Divider,
+    Container
 } from '@chakra-ui/react';
 import { EditIcon, DeleteIcon, ViewIcon } from '@chakra-ui/icons';
+import { motion } from 'framer-motion';
 import useUser from '../../shared/hooks/useGetUsers';
+
+const MotionBox = motion(Box);
+const MotionCard = motion(Card);
+const MotionTr = motion(Tr);
 
 const GetUser = () => {
     const { users, loading, error, editUser, removeUser, fetchUsers } = useUser();
@@ -153,248 +159,508 @@ const GetUser = () => {
 
     if (loading) {
         return (
-            <Flex justify="center" align="center" minH="400px">
-                <VStack spacing={4}>
-                    <Spinner size="xl" color="gold" thickness="4px" />
-                    <Text color="gray.600" fontSize="lg">Cargando usuarios...</Text>
-                </VStack>
-            </Flex>
+            <Container maxW="7xl" py={8}>
+                <MotionBox
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <Flex justify="center" align="center" minH="400px">
+                        <VStack spacing={6}>
+                            <Box position="relative">
+                                <Spinner
+                                    size="xl"
+                                    thickness="4px"
+                                    speed="0.65s"
+                                    emptyColor="gray.200"
+                                    color="gold"
+                                />
+                                <Box
+                                    position="absolute"
+                                    top="50%"
+                                    left="50%"
+                                    transform="translate(-50%, -50%)"
+                                    w="60px"
+                                    h="60px"
+                                    bgGradient="radial(gold, transparent)"
+                                    opacity="0.3"
+                                    borderRadius="full"
+                                    animation="pulse 2s infinite"
+                                />
+                            </Box>
+                            <Text
+                                color="gray.600"
+                                fontSize="lg"
+                                fontWeight="medium"
+                                letterSpacing="wide"
+                            >
+                                Cargando usuarios...
+                            </Text>
+                        </VStack>
+                    </Flex>
+                </MotionBox>
+            </Container>
         );
     }
 
     if (error) {
         return (
-            <Alert status="error" borderRadius="lg" bg="red.50" border="1px solid" borderColor="red.200">
-                <AlertIcon color="red.500" />
-                <Box>
-                    <AlertTitle color="red.800">Error al cargar usuarios</AlertTitle>
-                    <AlertDescription color="red.600">{error}</AlertDescription>
-                </Box>
-            </Alert>
+            <Container maxW="7xl" py={8}>
+                <MotionBox
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }}
+                >
+                    <Alert
+                        status="error"
+                        borderRadius="xl"
+                        bg="red.50"
+                        border="1px solid"
+                        borderColor="red.200"
+                        p={6}
+                    >
+                        <AlertIcon color="red.500" />
+                        <Box>
+                            <AlertTitle color="red.800" fontSize="lg" fontWeight="bold">
+                                Error al cargar usuarios
+                            </AlertTitle>
+                            <AlertDescription color="red.600" mt={2}>
+                                {error}
+                            </AlertDescription>
+                        </Box>
+                    </Alert>
+                </MotionBox>
+            </Container>
         );
     }
 
+    console.log(users);
+
     return (
-        <Box>
-            <Card bg="white" shadow="xl" borderRadius="2xl" border="1px solid" borderColor="gray.100">
-                <CardBody p={8}>
-                    <TableContainer>
-                        <Table variant="simple" size="md">
-                            <Thead>
-                                <Tr bg="gray.50">
-                                    <Th
-                                        color="gray.700"
-                                        fontSize="sm"
-                                        fontWeight="bold"
-                                        textTransform="uppercase"
-                                        letterSpacing="wide"
-                                        py={4}
-                                    >
-                                        Usuario
-                                    </Th>
-                                    <Th
-                                        color="gray.700"
-                                        fontSize="sm"
-                                        fontWeight="bold"
-                                        textTransform="uppercase"
-                                        letterSpacing="wide"
-                                        py={4}
-                                    >
-                                        Email
-                                    </Th>
-                                    <Th
-                                        color="gray.700"
-                                        fontSize="sm"
-                                        fontWeight="bold"
-                                        textTransform="uppercase"
-                                        letterSpacing="wide"
-                                        py={4}
-                                    >
-                                        Teléfono
-                                    </Th>
-                                    <Th
-                                        color="gray.700"
-                                        fontSize="sm"
-                                        fontWeight="bold"
-                                        textTransform="uppercase"
-                                        letterSpacing="wide"
-                                        py={4}
-                                    >
-                                        Rol
-                                    </Th>
-                                    <Th
-                                        color="gray.700"
-                                        fontSize="sm"
-                                        fontWeight="bold"
-                                        textTransform="uppercase"
-                                        letterSpacing="wide"
-                                        py={4}
-                                    >
-                                        Acciones
-                                    </Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {users.map((user) => (
-                                    <Tr key={user._id} _hover={{ bg: "gray.50" }} transition="all 0.2s">
-                                        <Td py={4}>
-                                            <HStack spacing={3}>
-                                                <Avatar
-                                                    size="sm"
-                                                    name={user.name}
-                                                    bg="gold"
-                                                    color="black"
-                                                    fontWeight="bold"
-                                                />
-                                                <Text fontWeight="medium" color="gray.800">
-                                                    {user.name}
-                                                </Text>
-                                            </HStack>
-                                        </Td>
-                                        <Td py={4}>
-                                            <Text color="gray.600">{user.email}</Text>
-                                        </Td>
-                                        <Td py={4}>
-                                            <Text color="gray.600">{user.phone || 'N/A'}</Text>
-                                        </Td>
-                                        <Td py={4}>
-                                            <Badge
-                                                colorScheme={user.role === 'admin' ? 'yellow' : 'gray'}
-                                                bg={user.role === 'admin' ? 'gold' : 'gray.100'}
-                                                color={user.role === 'admin' ? 'black' : 'gray.600'}
-                                                px={3}
-                                                py={1}
-                                                borderRadius="full"
-                                                fontWeight="medium"
-                                                textTransform="capitalize"
-                                            >
-                                                {user.role || 'Usuario'}
-                                            </Badge>
-                                        </Td>
-                                        <Td py={4}>
-                                            <HStack spacing={2}>
-                                                <IconButton
-                                                    icon={<ViewIcon />}
-                                                    size="sm"
-                                                    colorScheme="blue"
-                                                    variant="ghost"
-                                                    onClick={() => handleView(user)}
-                                                    _hover={{ bg: "blue.100", transform: "scale(1.1)" }}
-                                                    transition="all 0.2s"
-                                                    aria-label="Ver usuario"
-                                                />
-                                                <IconButton
-                                                    icon={<EditIcon />}
-                                                    size="sm"
-                                                    bg="gold"
-                                                    color="black"
-                                                    _hover={{ bg: "yellow.400", transform: "scale(1.1)" }}
-                                                    transition="all 0.2s"
-                                                    onClick={() => handleEdit(user)}
-                                                    aria-label="Editar usuario"
-                                                />
-                                                <IconButton
-                                                    icon={<DeleteIcon />}
-                                                    size="sm"
-                                                    bg="black"
-                                                    color="white"
-                                                    _hover={{ bg: "gray.800", transform: "scale(1.1)" }}
-                                                    transition="all 0.2s"
-                                                    onClick={() => handleDelete(user)}
-                                                    aria-label="Eliminar usuario"
-                                                />
-                                            </HStack>
-                                        </Td>
+        <Container maxW="7xl" py={8}>
+            <MotionBox
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+            >
+                {/* Header */}
+                <VStack spacing={6} mb={8} align="stretch">
+                    <Box textAlign="center">
+                        <Heading
+                            size="2xl"
+                            bgGradient="linear(to-r, black, gold, black)"
+                            bgClip="text"
+                            fontWeight="black"
+                            letterSpacing="tight"
+                            mb={2}
+                        >
+                            Gestión de Usuarios
+                        </Heading>
+                        <Text color="gray.600" fontSize="lg" fontWeight="medium">
+                            Administra y visualiza todos los usuarios del sistema
+                        </Text>
+                    </Box>
+
+                    <Box h="1px" bgGradient="linear(to-r, transparent, gold, transparent)" />
+                </VStack>
+
+                {/* Main Card */}
+                <MotionCard
+                    bg="white"
+                    shadow="2xl"
+                    borderRadius="3xl"
+                    border="1px solid"
+                    borderColor="gray.100"
+                    overflow="hidden"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.2 }}
+                    _hover={{
+                        shadow: "3xl",
+                        transform: "translateY(-2px)"
+                    }}
+                // transition="all 0.3s ease"
+                >
+                    <Box
+                        h="4px"
+                        bgGradient="linear(to-r, black, gold, black)"
+                    />
+
+                    <CardBody p={0}>
+                        <TableContainer>
+                            <Table variant="simple" size="lg">
+                                <Thead>
+                                    <Tr bg="gray.900" position="relative">
+                                        <Th
+                                            color="gold"
+                                            fontSize="sm"
+                                            fontWeight="bold"
+                                            textTransform="uppercase"
+                                            letterSpacing="widest"
+                                            py={6}
+                                            position="relative"
+                                            zIndex={1}
+                                        >
+                                            Usuario
+                                        </Th>
+                                        <Th
+                                            color="gold"
+                                            fontSize="sm"
+                                            fontWeight="bold"
+                                            textTransform="uppercase"
+                                            letterSpacing="widest"
+                                            py={6}
+                                            position="relative"
+                                            zIndex={1}
+                                        >
+                                            Email
+                                        </Th>
+                                        <Th
+                                            color="gold"
+                                            fontSize="sm"
+                                            fontWeight="bold"
+                                            textTransform="uppercase"
+                                            letterSpacing="widest"
+                                            py={6}
+                                            position="relative"
+                                            zIndex={1}
+                                        >
+                                            Teléfono
+                                        </Th>
+                                        <Th
+                                            color="gold"
+                                            fontSize="sm"
+                                            fontWeight="bold"
+                                            textTransform="uppercase"
+                                            letterSpacing="widest"
+                                            py={6}
+                                            position="relative"
+                                            zIndex={1}
+                                        >
+                                            Rol
+                                        </Th>
+                                        <Th
+                                            color="gold"
+                                            fontSize="sm"
+                                            fontWeight="bold"
+                                            textTransform="uppercase"
+                                            letterSpacing="widest"
+                                            py={6}
+                                            position="relative"
+                                            zIndex={1}
+                                        >
+                                            Acciones
+                                        </Th>
                                     </Tr>
-                                ))}
-                            </Tbody>
-                        </Table>
-                    </TableContainer>
-                </CardBody>
-            </Card>
+                                </Thead>
+                                <Tbody>
+                                    {users.map((user, index) => (
+                                        <MotionTr
+                                            key={user._id}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ duration: 0.5, delay: index * 0.1 }}
+                                            _hover={{
+                                                bg: "gold.50",
+                                                transform: "scale(1.01)"
+                                            }}
+                                            // transition="all 0.3s ease"
+                                            borderBottom="1px solid"
+                                            borderColor="gray.100"
+                                        >
+                                            <Td py={6}>
+                                                <HStack spacing={4}>
+                                                    <Box position="relative">
+                                                        <Avatar
+                                                            size="md"
+                                                            name={user.name}
+                                                            bg="gold"
+                                                            color="black"
+                                                            fontWeight="bold"
+                                                            border="2px solid"
+                                                            borderColor="gold"
+                                                            shadow="lg"
+                                                        />
+                                                        <Box
+                                                            position="absolute"
+                                                            top="-2px"
+                                                            right="-2px"
+                                                            w="4"
+                                                            h="4"
+                                                            bg="green.400"
+                                                            borderRadius="full"
+                                                            border="2px solid white"
+                                                        />
+                                                    </Box>
+                                                    <VStack align="start" spacing={0}>
+                                                        <Text
+                                                            fontWeight="bold"
+                                                            color="gray.900"
+                                                            fontSize="md"
+                                                        >
+                                                            {user.name}
+                                                        </Text>
+                                                        <Text
+                                                            fontSize="sm"
+                                                            color="gray.500"
+                                                            fontWeight="medium"
+                                                        >
+                                                            @{user.username || 'sin-usuario'}
+                                                        </Text>
+                                                    </VStack>
+                                                </HStack>
+                                            </Td>
+                                            <Td py={6}>
+                                                <Text
+                                                    color="gray.700"
+                                                    fontWeight="medium"
+                                                    fontSize="md"
+                                                >
+                                                    {user.email}
+                                                </Text>
+                                            </Td>
+                                            <Td py={6}>
+                                                <Text
+                                                    color="gray.700"
+                                                    fontWeight="medium"
+                                                    fontSize="md"
+                                                >
+                                                    {user.phone || 'N/A'}
+                                                </Text>
+                                            </Td>
+                                            <Td py={6}>
+                                                <Badge
+                                                    bg={user.role === 'ADMIN_ROLE' ? 'gold' : 'black'}
+                                                    color={user.role === 'ADMIN_ROLE' ? 'black' : 'white'}
+                                                    px={4}
+                                                    py={2}
+                                                    borderRadius="full"
+                                                    fontWeight="bold"
+                                                    textTransform="uppercase"
+                                                    fontSize="xs"
+                                                    letterSpacing="wide"
+                                                    shadow="md"
+                                                >
+                                                    {user.role === 'ADMIN_ROLE' ? '👑 Admin' : '👤 Usuario'}
+                                                </Badge>
+                                            </Td>
+                                            <Td py={6}>
+                                                <HStack spacing={2}>
+                                                    <IconButton
+                                                        icon={<ViewIcon />}
+                                                        size="sm"
+                                                        bg="blue.500"
+                                                        color="white"
+                                                        borderRadius="full"
+                                                        _hover={{
+                                                            bg: "blue.600",
+                                                            transform: "scale(1.15)",
+                                                            shadow: "lg"
+                                                        }}
+                                                        transition="all 0.2s"
+                                                        onClick={() => handleView(user)}
+                                                        aria-label="Ver usuario"
+                                                    />
+                                                    <IconButton
+                                                        icon={<EditIcon />}
+                                                        size="sm"
+                                                        bg="gold"
+                                                        color="black"
+                                                        borderRadius="full"
+                                                        _hover={{
+                                                            bg: "yellow.400",
+                                                            transform: "scale(1.15)",
+                                                            shadow: "lg"
+                                                        }}
+                                                        transition="all 0.2s"
+                                                        onClick={() => handleEdit(user)}
+                                                        aria-label="Editar usuario"
+                                                    />
+                                                    <IconButton
+                                                        icon={<DeleteIcon />}
+                                                        size="sm"
+                                                        bg="black"
+                                                        color="white"
+                                                        borderRadius="full"
+                                                        _hover={{
+                                                            bg: "red.600",
+                                                            transform: "scale(1.15)",
+                                                            shadow: "lg"
+                                                        }}
+                                                        transition="all 0.2s"
+                                                        onClick={() => handleDelete(user)}
+                                                        aria-label="Eliminar usuario"
+                                                    />
+                                                </HStack>
+                                            </Td>
+                                        </MotionTr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        </TableContainer>
+                    </CardBody>
+                </MotionCard>
+            </MotionBox>
 
             {/* Modal para ver usuario */}
-            <Modal isOpen={isViewOpen} onClose={onViewClose} size="md">
-                <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
-                <ModalContent borderRadius="2xl" border="1px solid" borderColor="gray.200">
-                    <ModalHeader bg="gray.50" borderTopRadius="2xl">
-                        <Heading size="md" color="gray.800">Detalles del Usuario</Heading>
+            <Modal isOpen={isViewOpen} onClose={onViewClose} size="lg">
+                <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+                <ModalContent
+                    borderRadius="3xl"
+                    border="2px solid"
+                    borderColor="gold"
+                    overflow="hidden"
+                    bg="white"
+                    shadow="2xl"
+                >
+                    <Box
+                        h="4px"
+                        bgGradient="linear(to-r, black, gold, black)"
+                    />
+                    <ModalHeader
+                        bg="gray.900"
+                        color="gold"
+                        py={6}
+                        position="relative"
+                    >
+                        <Box
+                            position="absolute"
+                            top={0}
+                            left={0}
+                            right={0}
+                            bottom={0}
+                            bgGradient="linear(135deg, black, gray.900)"
+                            opacity={0.95}
+                        />
+                        <HStack spacing={3} position="relative" zIndex={1}>
+                            <Box
+                                w="6"
+                                h="6"
+                                bg="gold"
+                                borderRadius="full"
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                            >
+                                <Text fontSize="xs" color="black" fontWeight="bold">👤</Text>
+                            </Box>
+                            <Heading size="lg" fontWeight="bold" letterSpacing="tight">
+                                Detalles del Usuario
+                            </Heading>
+                        </HStack>
                     </ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody p={6}>
+                    <ModalCloseButton color="gold" zIndex={2} />
+                    <ModalBody p={8} bg="white">
                         {selectedUser && (
-                            <VStack spacing={4} align="stretch">
-                                <Flex align="center" justify="center" mb={4}>
-                                    <Avatar
-                                        size="xl"
-                                        name={selectedUser.name}
-                                        bg="gold"
-                                        color="black"
-                                        fontWeight="bold"
-                                    />
-                                </Flex>
-                                <Stack spacing={3}>
-                                    <Box>
-                                        <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={1}>NOMBRE</Text>
-                                        <Text fontSize="lg" color="gray.800">{selectedUser.name}</Text>
-                                    </Box>
-                                    <Divider />
-                                    <Box>
-                                        <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={1}>APELLIDO</Text>
-                                        <Text fontSize="lg" color="gray.800">{selectedUser.surname}</Text>
-                                    </Box>
-                                    <Divider />
-                                    <Box>
-                                        <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={1}>DPI</Text>
-                                        <Text fontSize="lg" color="gray.800">{selectedUser.dpi}</Text>
-                                    </Box>
-                                    <Divider />
-                                    <Box>
-                                        <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={1}>DIRECCION</Text>
-                                        <Text fontSize="lg" color="gray.800">{selectedUser.address}</Text>
-                                    </Box>
-                                    <Divider />
-                                    <Box>
-                                        <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={1}>TRABAJO</Text>
-                                        <Text fontSize="lg" color="gray.800">{selectedUser.work}</Text>
-                                    </Box>
-                                    <Divider />
-                                    <Box>
-                                        <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={1}>GANANCIA</Text>
-                                        <Text fontSize="lg" color="gray.800">{selectedUser.role === 'ADMIN_ROLE' ? "" : selectedUser.income.$numberDecimal}</Text>
-                                    </Box>
-                                    <Divider />
-                                    <Box>
-                                        <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={1}>EMAIL</Text>
-                                        <Text fontSize="lg" color="gray.800">{selectedUser.email}</Text>
-                                    </Box>
-                                    <Divider />
-                                    <Box>
-                                        <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={1}>TELÉFONO</Text>
-                                        <Text fontSize="lg" color="gray.800">{selectedUser.phone || 'No especificado'}</Text>
-                                    </Box>
-                                    <Divider />
-                                    <Box>
-                                        <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={1}>ROL</Text>
-                                        <Badge
-                                            colorScheme={selectedUser.role === 'admin' ? 'yellow' : 'gray'}
-                                            bg={selectedUser.role === 'admin' ? 'gold' : 'gray.100'}
-                                            color={selectedUser.role === 'admin' ? 'black' : 'gray.600'}
-                                            px={3}
-                                            py={1}
+                            <VStack spacing={6} align="stretch">
+                                <Flex align="center" justify="center" mb={6}>
+                                    <Box position="relative">
+                                        <Avatar
+                                            size="2xl"
+                                            name={selectedUser.name}
+                                            bg="gold"
+                                            color="black"
+                                            fontWeight="bold"
+                                            border="4px solid"
+                                            borderColor="gold"
+                                            shadow="xl"
+                                        />
+                                        <Box
+                                            position="absolute"
+                                            bottom="0"
+                                            right="0"
+                                            w="8"
+                                            h="8"
+                                            bg="green.400"
                                             borderRadius="full"
-                                            fontWeight="medium"
-                                            textTransform="capitalize"
+                                            border="3px solid white"
+                                            display="flex"
+                                            alignItems="center"
+                                            justifyContent="center"
                                         >
-                                            {selectedUser.role || 'Usuario'}
-                                        </Badge>
+                                            <Text fontSize="sm">✓</Text>
+                                        </Box>
                                     </Box>
+                                </Flex>
+
+                                <Stack spacing={4}>
+                                    {[
+                                        { label: 'NOMBRE', value: selectedUser.name },
+                                        { label: 'APELLIDO', value: selectedUser.surname },
+                                        { label: 'DPI', value: selectedUser.dpi },
+                                        { label: 'DIRECCIÓN', value: selectedUser.address },
+                                        { label: 'TRABAJO', value: selectedUser.work },
+                                        { label: 'GANANCIA', value: selectedUser.role === 'ADMIN_ROLE' ? 'Administrador' : selectedUser.income?.$numberDecimal },
+                                        { label: 'EMAIL', value: selectedUser.email },
+                                        { label: 'TELÉFONO', value: selectedUser.phone || 'No especificado' }
+                                    ].map((item, index) => (
+                                        <Box key={index}>
+                                            <HStack justify="space-between" align="start" py={3}>
+                                                <Text
+                                                    fontSize="sm"
+                                                    fontWeight="bold"
+                                                    color="gray.500"
+                                                    letterSpacing="widest"
+                                                    minW="120px"
+                                                >
+                                                    {item.label}
+                                                </Text>
+                                                <Text
+                                                    fontSize="md"
+                                                    color="gray.900"
+                                                    fontWeight="medium"
+                                                    textAlign="right"
+                                                    flex={1}
+                                                >
+                                                    {item.value || 'No especificado'}
+                                                </Text>
+                                            </HStack>
+                                            <Divider borderColor="gray.200" />
+                                        </Box>
+                                    ))}
+
+                                    <HStack justify="space-between" align="center" py={3}>
+                                        <Text
+                                            fontSize="sm"
+                                            fontWeight="bold"
+                                            color="gray.500"
+                                            letterSpacing="widest"
+                                        >
+                                            ROL
+                                        </Text>
+                                        <Badge
+                                            bg={selectedUser.role === 'ADMIN_ROLE' ? 'gold' : 'black'}
+                                            color={selectedUser.role === 'ADMIN_ROLE' ? 'black' : 'white'}
+                                            px={4}
+                                            py={2}
+                                            borderRadius="full"
+                                            fontWeight="bold"
+                                            textTransform="uppercase"
+                                            fontSize="xs"
+                                            letterSpacing="wide"
+                                        >
+                                            {selectedUser.role === 'ADMIN_ROLE' ? '👑 Admin' : '👤 Usuario'}
+                                        </Badge>
+                                    </HStack>
                                 </Stack>
                             </VStack>
                         )}
                     </ModalBody>
-                    <ModalFooter bg="gray.50" borderBottomRadius="2xl">
-                        <Button onClick={onViewClose} bg="gray.200" color="gray.700" _hover={{ bg: "gray.300" }}>
+                    <ModalFooter bg="gray.50" py={6}>
+                        <Button
+                            onClick={onViewClose}
+                            bg="black"
+                            color="white"
+                            fontWeight="bold"
+                            px={8}
+                            borderRadius="full"
+                            _hover={{
+                                bg: "gray.800",
+                                transform: "translateY(-2px)",
+                                shadow: "lg"
+                            }}
+                            transition="all 0.2s"
+                        >
                             Cerrar
                         </Button>
                     </ModalFooter>
@@ -402,121 +668,116 @@ const GetUser = () => {
             </Modal>
 
             {/* Modal para editar usuario */}
-            <Modal isOpen={isEditOpen} onClose={onEditClose} size="md">
-                <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
-                <ModalContent borderRadius="2xl" border="1px solid" borderColor="gray.200">
-                    <ModalHeader bg="gray.50" borderTopRadius="2xl">
-                        <Heading size="md" color="gray.800">Editar Usuario</Heading>
+            <Modal isOpen={isEditOpen} onClose={onEditClose} size="xl">
+                <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+                <ModalContent
+                    borderRadius="3xl"
+                    border="2px solid"
+                    borderColor="gold"
+                    overflow="hidden"
+                    bg="white"
+                    shadow="2xl"
+                    color='black'
+                >
+                    <Box
+                        h="4px"
+                        bgGradient="linear(to-r, black, gold, black)"
+                    />
+                    <ModalHeader
+                        bg="gray.900"
+                        color="gold"
+                        py={6}
+                        position="relative"
+                    >
+                        <Box
+                            position="absolute"
+                            top={0}
+                            left={0}
+                            right={0}
+                            bottom={0}
+                            bgGradient="linear(135deg, black, gray.900)"
+                            opacity={0.95}
+                        />
+                        <HStack spacing={3} position="relative" zIndex={1}>
+                            <Box
+                                w="6"
+                                h="6"
+                                bg="gold"
+                                borderRadius="full"
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                            >
+                                <Text fontSize="xs" color="black" fontWeight="bold">✏️</Text>
+                            </Box>
+                            <Heading size="lg" fontWeight="bold" letterSpacing="tight">
+                                Editar Usuario
+                            </Heading>
+                        </HStack>
                     </ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody p={6}>
-                        <VStack spacing={4}>
-                            <FormControl>
-                                <FormLabel color="gray.700" fontWeight="medium">Nombre</FormLabel>
-                                <Input
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    placeholder="Nombre del usuario"
-                                    borderRadius="lg"
-                                    borderColor="gray.300"
-                                    _focus={{ borderColor: "gold", boxShadow: "0 0 0 1px gold" }}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <FormLabel color="gray.700" fontWeight="medium">Apellido</FormLabel>
-                                <Input
-                                    name="surname"
-                                    value={formData.surname}
-                                    onChange={handleInputChange}
-                                    placeholder="Apellido del usuario"
-                                    borderRadius="lg"
-                                    borderColor="gray.300"
-                                    _focus={{ borderColor: "gold", boxShadow: "0 0 0 1px gold" }}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <FormLabel color="gray.700" fontWeight="medium">Usuario</FormLabel>
-                                <Input
-                                    name="username"
-                                    value={formData.username}
-                                    onChange={handleInputChange}
-                                    placeholder="Usuario"
-                                    borderRadius="lg"
-                                    borderColor="gray.300"
-                                    _focus={{ borderColor: "gold", boxShadow: "0 0 0 1px gold" }}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <FormLabel color="gray.700" fontWeight="medium">Direccion</FormLabel>
-                                <Input
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleInputChange}
-                                    placeholder="Direccion del usuario"
-                                    borderRadius="lg"
-                                    borderColor="gray.300"
-                                    _focus={{ borderColor: "gold", boxShadow: "0 0 0 1px gold" }}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <FormLabel color="gray.700" fontWeight="medium">Trabajo</FormLabel>
-                                <Input
-                                    name="work"
-                                    value={formData.work}
-                                    onChange={handleInputChange}
-                                    placeholder="Trabajo del usuario"
-                                    borderRadius="lg"
-                                    borderColor="gray.300"
-                                    _focus={{ borderColor: "gold", boxShadow: "0 0 0 1px gold" }}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <FormLabel color="gray.700" fontWeight="medium">Ganancia</FormLabel>
-                                <Input
-                                    name="income"
-                                    value={formData.income ? formData.income.toString() : ''}
-                                    onChange={handleInputChange}
-                                    placeholder="Ganancia del usuario"
-                                    borderRadius="lg"
-                                    borderColor="gray.300"
-                                    _focus={{ borderColor: "gold", boxShadow: "0 0 0 1px gold" }}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <FormLabel color="gray.700" fontWeight="medium">Email</FormLabel>
-                                <Input
-                                    name="email"
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    placeholder="email@ejemplo.com"
-                                    borderRadius="lg"
-                                    borderColor="gray.300"
-                                    _focus={{ borderColor: "gold", boxShadow: "0 0 0 1px gold" }}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <FormLabel color="gray.700" fontWeight="medium">Teléfono</FormLabel>
-                                <Input
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleInputChange}
-                                    placeholder="Número de teléfono"
-                                    borderRadius="lg"
-                                    borderColor="gray.300"
-                                    _focus={{ borderColor: "gold", boxShadow: "0 0 0 1px gold" }}
-                                />
-                            </FormControl>
+                    <ModalCloseButton color="gold" zIndex={2} />
+                    <ModalBody p={8} bg="white">
+                        <VStack spacing={6}>
+                            {[
+                                { name: 'name', label: 'Nombre', placeholder: 'Nombre del usuario' },
+                                { name: 'surname', label: 'Apellido', placeholder: 'Apellido del usuario' },
+                                { name: 'username', label: 'Usuario', placeholder: 'Usuario' },
+                                { name: 'address', label: 'Dirección', placeholder: 'Dirección del usuario' },
+                                { name: 'work', label: 'Trabajo', placeholder: 'Trabajo del usuario' },
+                                { name: 'income', label: 'Ganancia', placeholder: 'Ganancia del usuario' },
+                                { name: 'email', label: 'Email', placeholder: 'email@ejemplo.com', type: 'email' },
+                                { name: 'phone', label: 'Teléfono', placeholder: 'Número de teléfono' }
+                            ].map((field, index) => (
+                                <FormControl key={index}>
+                                    <FormLabel
+                                        color="gray.700"
+                                        fontWeight="bold"
+                                        fontSize="sm"
+                                        textTransform="uppercase"
+                                        letterSpacing="wide"
+                                    >
+                                        {field.label}
+                                    </FormLabel>
+                                    <Input
+                                        name={field.name}
+                                        type={field.type || 'text'}
+                                        value={field.name === 'income' ? (formData[field.name] ? formData[field.name].toString() : '') : formData[field.name]}
+                                        onChange={handleInputChange}
+                                        placeholder={field.placeholder}
+                                        borderRadius="xl"
+                                        borderColor="gray.300"
+                                        borderWidth="2px"
+                                        py={3}
+                                        px={4}
+                                        fontSize="md"
+                                        _focus={{
+                                            borderColor: "gold",
+                                            boxShadow: "0 0 0 3px rgba(255, 215, 0, 0.1)",
+                                            transform: "scale(1.02)"
+                                        }}
+                                        _hover={{
+                                            borderColor: "gray.400"
+                                        }}
+                                        transition="all 0.2s"
+                                    />
+                                </FormControl>
+                            ))}
                         </VStack>
                     </ModalBody>
-                    <ModalFooter bg="gray.50" borderBottomRadius="2xl">
-                        <HStack spacing={3}>
+                    <ModalFooter bg="gray.50" py={6}>
+                        <HStack spacing={4}>
                             <Button
                                 onClick={onEditClose}
                                 bg="gray.200"
                                 color="gray.700"
-                                _hover={{ bg: "gray.300" }}
+                                fontWeight="bold"
+                                px={8}
+                                borderRadius="full"
+                                _hover={{
+                                    bg: "gray.300",
+                                    transform: "translateY(-2px)"
+                                }}
+                                transition="all 0.2s"
                             >
                                 Cancelar
                             </Button>
@@ -525,10 +786,16 @@ const GetUser = () => {
                                 bg="gold"
                                 color="black"
                                 fontWeight="bold"
-                                _hover={{ bg: "yellow.400", transform: "translateY(-1px)" }}
+                                px={8}
+                                borderRadius="full"
+                                _hover={{
+                                    bg: "yellow.400",
+                                    transform: "translateY(-2px)",
+                                    shadow: "lg"
+                                }}
                                 transition="all 0.2s"
                             >
-                                Guardar Cambios
+                                💾 Guardar Cambios
                             </Button>
                         </HStack>
                     </ModalFooter>
@@ -536,36 +803,105 @@ const GetUser = () => {
             </Modal>
 
             {/* Modal para confirmar eliminación */}
-            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} size="sm">
-                <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
-                <ModalContent borderRadius="2xl" border="1px solid" borderColor="red.200">
-                    <ModalHeader bg="red.50" borderTopRadius="2xl">
-                        <Heading size="md" color="red.800">Confirmar Eliminación</Heading>
+            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} size="md">
+                <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+                <ModalContent
+                    borderRadius="3xl"
+                    border="2px solid"
+                    borderColor="red.400"
+                    overflow="hidden"
+                    bg="white"
+                    shadow="2xl"
+                >
+                    <Box
+                        h="4px"
+                        bgGradient="linear(to-r, red.500, red.600, red.500)"
+                    />
+                    <ModalHeader
+                        bg="red.500"
+                        color="white"
+                        py={6}
+                        position="relative"
+                    >
+                        <HStack spacing={3}>
+                            <Box
+                                w="6"
+                                h="6"
+                                bg="white"
+                                borderRadius="full"
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                            >
+                                <Text fontSize="xs" color="red.500" fontWeight="bold">⚠️</Text>
+                            </Box>
+                            <Heading size="lg" fontWeight="bold" letterSpacing="tight">
+                                Confirmar Eliminación
+                            </Heading>
+                        </HStack>
                     </ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody p={6}>
-                        <VStack spacing={4} textAlign="center">
-                            <Text color="gray.700" fontSize="lg">
+                    <ModalCloseButton color="white" />
+                    <ModalBody p={8}>
+                        <VStack spacing={6} textAlign="center">
+                            <Text color="gray.700" fontSize="lg" fontWeight="medium">
                                 ¿Estás seguro de que deseas eliminar a este usuario?
                             </Text>
                             {selectedUser && (
-                                <Box p={4} bg="gray.50" borderRadius="lg" w="full">
-                                    <Text fontWeight="bold" color="gray.800">{selectedUser.name}</Text>
-                                    <Text color="gray.600" fontSize="sm">{selectedUser.email}</Text>
+                                <Box
+                                    p={6}
+                                    bg="gray.50"
+                                    borderRadius="xl"
+                                    w="full"
+                                    border="1px solid"
+                                    borderColor="gray.200"
+                                >
+                                    <HStack spacing={4} justify="center">
+                                        <Avatar
+                                            size="md"
+                                            name={selectedUser.name}
+                                            bg="gold"
+                                            color="black"
+                                            fontWeight="bold"
+                                        />
+                                        <VStack spacing={1} align="start">
+                                            <Text fontWeight="bold" color="gray.800" fontSize="md">
+                                                {selectedUser.name}
+                                            </Text>
+                                            <Text color="gray.600" fontSize="sm">
+                                                {selectedUser.email}
+                                            </Text>
+                                        </VStack>
+                                    </HStack>
                                 </Box>
                             )}
-                            <Text fontSize="sm" color="red.600" fontWeight="medium">
-                                Esta acción no se puede deshacer.
-                            </Text>
+                            <Box
+                                p={4}
+                                bg="red.50"
+                                borderRadius="xl"
+                                border="1px solid"
+                                borderColor="red.200"
+                                w="full"
+                            >
+                                <Text fontSize="sm" color="red.700" fontWeight="bold" textAlign="center">
+                                    ⚠️ Esta acción no se puede deshacer
+                                </Text>
+                            </Box>
                         </VStack>
                     </ModalBody>
-                    <ModalFooter bg="red.50" borderBottomRadius="2xl">
-                        <HStack spacing={3}>
+                    <ModalFooter bg="gray.50" py={6}>
+                        <HStack spacing={4}>
                             <Button
                                 onClick={onDeleteClose}
                                 bg="gray.200"
                                 color="gray.700"
-                                _hover={{ bg: "gray.300" }}
+                                fontWeight="bold"
+                                px={8}
+                                borderRadius="full"
+                                _hover={{
+                                    bg: "gray.300",
+                                    transform: "translateY(-2px)"
+                                }}
+                                transition="all 0.2s"
                             >
                                 Cancelar
                             </Button>
@@ -574,16 +910,22 @@ const GetUser = () => {
                                 bg="black"
                                 color="white"
                                 fontWeight="bold"
-                                _hover={{ bg: "gray.800", transform: "translateY(-1px)" }}
+                                px={8}
+                                borderRadius="full"
+                                _hover={{
+                                    bg: "red.600",
+                                    transform: "translateY(-2px)",
+                                    shadow: "lg"
+                                }}
                                 transition="all 0.2s"
                             >
-                                Eliminar Usuario
+                                🗑️ Eliminar Usuario
                             </Button>
                         </HStack>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </Box>
+        </Container>
     );
 };
 
