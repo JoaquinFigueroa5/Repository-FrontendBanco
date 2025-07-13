@@ -402,7 +402,6 @@ const NavBar = () => {
                             <NavLink
                                 key={item.name}
                                 href={item.href}
-                                isActive={activeItem === item.name}
                                 onClick={() => setActiveItem(item.name)}
                             >
                                 {item.name}

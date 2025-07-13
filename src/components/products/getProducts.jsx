@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Center,
@@ -24,14 +24,24 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { SearchIcon, ChevronDownIcon, AddIcon, EditIcon, DeleteIcon, RepeatIcon } from '@chakra-ui/icons';
+import { FaMoneyBillWave, FaChartLine } from 'react-icons/fa';
+import { SiBitcoin } from 'react-icons/si';
+
 import { useProductsView } from '../../shared/hooks/hooksProducts/useProductsView';
 import { useAllProductsView } from '../../shared/hooks/hooksProducts/useAllProductView';
 import { useDeleteProduct } from '../../shared/hooks/hooksProducts/useProductsDelete';
 import { useReactivateProduct } from '../../shared/hooks/hooksProducts/useProductReactivate';
+
 import NavBar from '../commons/NavBar';
 import { AddProductModal } from './addProducts';
 import { EditProductModal } from './updateProducts';
 import { ConfirmationModal } from './confirmationModalProducts';
+import ProductCard from './productCard';
+import DivisasModal from './DivisaModal';
+import AccionesModal from './StockModal'; 
+import CriptoModal from './CryptoModal';
+
+import ModalCompra from './ModalCompra'; 
 
 const GetProducts = () => {
   const { products: activeProducts, loading: activeLoading, refetch: refetchActive } = useProductsView();
@@ -44,7 +54,7 @@ const GetProducts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [initialLoad, setInitialLoad] = useState(true); // Nuevo estado para controlar la carga inicial
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const loading = activeLoading || allLoading || deleteLoading || reactivateLoading;
 
@@ -52,11 +62,16 @@ const GetProducts = () => {
   const [isReactivateModalOpen, setIsReactivateModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
 
-  // Efecto para marcar cuando el componente ya ha cargado por primera vez
+  const [openModal, setOpenModal] = useState(null); // para DivisasModal u otros
+
+  // Modal de compra
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+  const [productToBuy, setProductToBuy] = useState(null);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setInitialLoad(false);
-    }, 1000); // Pequeño delay para asegurar que todo ha cargado
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -89,11 +104,29 @@ const GetProducts = () => {
   const handleConfirmDelete = async () => {
     await removeProduct(selectedProductId);
     handleProductUpdated();
+    setIsDeleteModalOpen(false);
   };
 
   const handleConfirmReactivate = async () => {
     await reactivate(selectedProductId);
     handleProductUpdated();
+    setIsReactivateModalOpen(false);
+  };
+
+  const openBuyModal = (product) => {
+    setProductToBuy(product);
+    setIsBuyModalOpen(true);
+  };
+
+  const closeBuyModal = () => {
+    setIsBuyModalOpen(false);
+    setProductToBuy(null);
+  };
+
+  const handlePurchaseSuccess = () => {
+    refetchActive();
+    refetchAll();
+    closeBuyModal();
   };
 
   if (loading && !deleteLoading && !reactivateLoading) {
@@ -120,6 +153,14 @@ const GetProducts = () => {
   const MotionBox = motion(Box);
   const MotionFlex = motion(Flex);
 
+  const handleCardClick = (type) => {
+    setOpenModal(type);
+  };
+
+  const closeModal = () => {
+    setOpenModal(null);
+  };
+
   return (
     <>
       <NavBar />
@@ -130,7 +171,7 @@ const GetProducts = () => {
         bg="linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #000000 100%)"
         minH="100vh"
       >
-        {/* Header con gradiente dorado */}
+        {/* Header */}
         <MotionFlex
           mb={12}
           direction={{ base: 'column', md: 'row' }}
@@ -270,6 +311,36 @@ const GetProducts = () => {
           </Flex>
         </MotionFlex>
 
+        <SimpleGrid columns={{ base: 1, sm: 2, md: 2, lg: 3 }} spacing={6} mb={12}>
+          <ProductCard
+            label="Divisas"
+            isPositive={true}
+            icon={FaMoneyBillWave}
+            onClick={() => handleCardClick('divisas')}
+          />
+          <ProductCard
+            label="Acciones"
+            isPositive={true}
+            icon={FaChartLine}
+            onClick={() => handleCardClick('acciones')}
+          />
+          <ProductCard
+            label="Criptomonedas"
+            isPositive={false}
+            icon={SiBitcoin}
+            onClick={() => handleCardClick('criptomonedas')}
+          />
+        </SimpleGrid>
+        {openModal === "divisas" && (
+        <DivisasModal isOpen={true} onClose={closeModal} />
+      )}
+      {openModal === "acciones" && (
+        <AccionesModal isOpen={true} onClose={closeModal} />
+      )}
+      {openModal === "criptomonedas" && (
+        <CriptoModal isOpen={true} onClose={closeModal} />
+      )}
+
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} spacing={8}>
           {filteredProducts.map((product, index) => {
             const priceString = product?.price?.$numberDecimal || product?.price || "0";
@@ -307,6 +378,7 @@ const GetProducts = () => {
                   }}
                   opacity={product.status === false ? 0.6 : 1}
                   transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+                  onClick={() => product.status && openBuyModal(product)}
                 >
                   {product.status === false && (
                     <Badge
@@ -341,125 +413,84 @@ const GetProducts = () => {
                       height: '100%',
                       bg: "linear-gradient(45deg, rgba(218, 165, 32, 0.1) 0%, transparent 50%, rgba(255, 215, 0, 0.05) 100%)",
                       zIndex: 2,
-                      opacity: product.status ? 1 : 0.3,
+                      opacity: product.status ? 1 : 0,
                       transition: 'opacity 0.3s ease',
-                    }}
-                    _groupHover={{
-                      _before: {
-                        opacity: product.status ? 0.8 : 0.3,
-                      },
+                      pointerEvents: 'none',
                     }}
                   >
                     <Image
                       src={product.image}
                       alt={product.name}
-                      objectFit="cover"
-                      height="320px"
                       width="100%"
-                      transition="transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)"
-                      _groupHover={{
-                        transform: product.status ? 'scale(1.08)' : 'none',
-                      }}
-                      position="relative"
-                      zIndex={1}
+                      height="320px"
+                      objectFit="cover"
                       loading="lazy"
-                      filter={product.status === false ? "grayscale(100%) brightness(0.7)" : "none"}
+                      transition="transform 0.4s ease"
+                      _groupHover={{ transform: product.status ? 'scale(1.05)' : 'none' }}
+                      draggable={false}
+                      borderTopRadius="2xl"
                     />
                   </Box>
 
-                  <Stack spacing={4} p={8} textAlign="center" position="relative" zIndex={2}>
-                    <Text
-                      color="gray.400"
-                      fontSize="sm"
-                      fontWeight="600"
-                      textTransform="uppercase"
-                      letterSpacing="wider"
-                      mb={1}
-                    >
+                  <Stack
+                    p={6}
+                    spacing={3}
+                    borderBottomRadius="2xl"
+                    bg="linear-gradient(to top, rgba(26,26,26,0.9), transparent)"
+                  >
+                    <Flex justify="space-between" align="center">
+                      <Heading fontSize="xl" fontWeight="extrabold" color="gold.400">
+                        {product.name}
+                      </Heading>
+
+                      <Badge
+                        px={3}
+                        py={1}
+                        fontWeight="bold"
+                        borderRadius="full"
+                        bg="green.500" 
+                        color="white"
+                        boxShadow={`0 0 12px rgba(0, 255, 0, 0.6) `}
+                        transition="all 0.3s ease"
+                      >
+                        ${price.toFixed(2)}
+                      </Badge>
+                    </Flex>
+
+                    <Text fontWeight="medium" fontSize="md" color="whiteAlpha.800" noOfLines={3}>
                       {product.description}
                     </Text>
 
-                    <Heading
-                      fontSize="xl"
-                      fontWeight="700"
-                      noOfLines={2}
-                      color="white"
-                      lineHeight="1.3"
-                    >
-                      {product.name}
-                    </Heading>
-
-                    <Text
-                      fontSize="2xl"
-                      fontWeight="800"
-                      bgGradient="linear(135deg, gold.300 0%, yellow.400 100%)"
-                      bgClip="text"
-                      letterSpacing="tight"
-                    >
-                      ${price.toFixed(2)}
-                    </Text>
-
-                    <ButtonGroup spacing={3} justifyContent="center" pt={2}>
+                    {/* Botones de editar, eliminar, reactivar (si quieres) */}
+                    <ButtonGroup size="sm" spacing={2} mt={4}>
                       <IconButton
                         aria-label="Editar producto"
                         icon={<EditIcon />}
-                        bg="linear-gradient(135deg, #1E90FF 0%, #4169E1 100%)"
-                        color="white"
-                        size="md"
-                        borderRadius="full"
-                        boxShadow="0 6px 20px rgba(30, 144, 255, 0.3)"
-                        onClick={() => handleEditClick(product)}
-                        _hover={{
-                          bg: "linear-gradient(135deg, #4169E1 0%, #0000FF 100%)",
-                          transform: "translateY(-2px)",
-                          boxShadow: "0 8px 25px rgba(30, 144, 255, 0.5)"
+                        colorScheme="yellow"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleEditClick(product);
                         }}
-                        _active={{
-                          transform: "translateY(0px)"
-                        }}
-                        transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                       />
                       {product.status ? (
                         <IconButton
-                          aria-label="Desactivar producto"
+                          aria-label="Eliminar producto"
                           icon={<DeleteIcon />}
-                          bg="linear-gradient(135deg, #DC143C 0%, #B22222 100%)"
-                          color="white"
-                          size="md"
-                          borderRadius="full"
-                          boxShadow="0 6px 20px rgba(220, 20, 60, 0.3)"
-                          onClick={() => handleDeleteClick(product._id)}
-                          isLoading={deleteLoading}
-                          _hover={{
-                            bg: "linear-gradient(135deg, #B22222 0%, #8B0000 100%)",
-                            transform: "translateY(-2px)",
-                            boxShadow: "0 8px 25px rgba(220, 20, 60, 0.5)"
+                          colorScheme="red"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleDeleteClick(product._id);
                           }}
-                          _active={{
-                            transform: "translateY(0px)"
-                          }}
-                          transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                         />
                       ) : (
                         <IconButton
                           aria-label="Reactivar producto"
                           icon={<RepeatIcon />}
-                          bg="linear-gradient(135deg, #32CD32 0%, #228B22 100%)"
-                          color="white"
-                          size="md"
-                          borderRadius="full"
-                          boxShadow="0 6px 20px rgba(50, 205, 50, 0.3)"
-                          onClick={() => handleReactivateClick(product._id)}
-                          isLoading={reactivateLoading}
-                          _hover={{
-                            bg: "linear-gradient(135deg, #228B22 0%, #006400 100%)",
-                            transform: "translateY(-2px)",
-                            boxShadow: "0 8px 25px rgba(50, 205, 50, 0.5)"
+                          colorScheme="green"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleReactivateClick(product._id);
                           }}
-                          _active={{
-                            transform: "translateY(0px)"
-                          }}
-                          transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                         />
                       )}
                     </ButtonGroup>
@@ -471,6 +502,13 @@ const GetProducts = () => {
         </SimpleGrid>
       </Box>
 
+      {/* Modales */}
+      <AddProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onProductAdded={handleProductAdded}
+      />
+
       <EditProductModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
@@ -478,21 +516,12 @@ const GetProducts = () => {
         onProductUpdated={handleProductUpdated}
       />
 
-      <AddProductModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onProductAdded={handleProductAdded}
-      />
-
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Desactivar producto"
-        message="¿Estás seguro de que deseas desactivar este producto?"
-        confirmText="Desactivar"
-        cancelText="Cancelar"
-        confirmColor="red"
+        title="Eliminar producto"
+        body="¿Está seguro que desea eliminar este producto?"
       />
 
       <ConfirmationModal
@@ -500,10 +529,14 @@ const GetProducts = () => {
         onClose={() => setIsReactivateModalOpen(false)}
         onConfirm={handleConfirmReactivate}
         title="Reactivar producto"
-        message="¿Estás seguro de que deseas reactivar este producto?"
-        confirmText="Reactivar"
-        cancelText="Cancelar"
-        confirmColor="green"
+        body="¿Está seguro que desea reactivar este producto?"
+      />
+
+      <ModalCompra
+        isOpen={isBuyModalOpen}
+        onClose={closeBuyModal}
+        product={productToBuy}
+        onPurchaseSuccess={handlePurchaseSuccess}
       />
     </>
   );

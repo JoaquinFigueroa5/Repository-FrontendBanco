@@ -351,3 +351,24 @@ export const getUser = async() => {
     }
 }
 
+export const buyProduct = async ({ productId, quantity }) => {
+  try {
+    const res = await apiClient.post('/product/buyProduct', {
+      productId,
+      quantity,
+    });
+
+    return {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+  } catch (e) {
+    const msg = e.response?.data?.msg || 'Error al comprar el producto';
+    return {
+      error: true,
+      msg,
+      e,
+    };
+  }
+};

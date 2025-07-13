@@ -170,7 +170,7 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
 
             <FormControl display="flex" alignItems="center">
               <FormLabel htmlFor="asset" mb="0" color={textColor}>
-                ¿Es un activo?
+                ¿Es una accion?
               </FormLabel>
               <Switch
                 id="asset"
