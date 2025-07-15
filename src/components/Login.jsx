@@ -372,9 +372,9 @@ export default function Login() {
                         </HStack>
                     </VStack>
                 </Box>
-                <Button onClick={toggleColorMode}>
+                {/* <Button onClick={toggleColorMode}>
                     Cambiar a {colorMode === 'light' ? 'modo oscuro' : 'modo claro'}
-                </Button>
+                </Button> */}
             </Flex>
         </Flex>
     );
