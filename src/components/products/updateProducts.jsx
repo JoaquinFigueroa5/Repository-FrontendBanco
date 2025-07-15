@@ -331,61 +331,29 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
               </MotionBox>
             </FormControl>
 
-            <Divider borderColor="whiteAlpha.200" />
+            <FormControl display="flex" alignItems="center">
+              <FormLabel htmlFor="asset" mb="0" color='yellow.400'>
+                ¿Es una accion?
+              </FormLabel>
+              <Switch
+                id="asset"
+                isChecked={formData.asset}
+                onChange={() => handleToggle('asset')}
+                colorScheme="teal"
+              />
+            </FormControl>
 
-            <VStack spacing={4} w="full">
-              <MotionBox
-                as={FormControl}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Flex justify="space-between" align="center">
-                  <FormLabel htmlFor="asset" mb="0" color="gold" fontWeight="semibold">
-                    ¿Es un activo?
-                  </FormLabel>
-                  <HStack>
-                    <Icon
-                      as={formData.asset ? FiToggleRight : FiToggleLeft}
-                      color={formData.asset ? "gold" : "whiteAlpha.600"}
-                      boxSize={5}
-                    />
-                    <Switch
-                      id="asset"
-                      isChecked={formData.asset}
-                      onChange={() => handleToggle('asset')}
-                      colorScheme="yellow"
-                      size="lg"
-                    />
-                  </HStack>
-                </Flex>
-              </MotionBox>
-
-              <MotionBox
-                as={FormControl}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Flex justify="space-between" align="center">
-                  <FormLabel htmlFor="status" mb="0" color="gold" fontWeight="semibold">
-                    ¿Disponible?
-                  </FormLabel>
-                  <HStack>
-                    <Icon
-                      as={formData.status ? FiToggleRight : FiToggleLeft}
-                      color={formData.status ? "gold" : "whiteAlpha.600"}
-                      boxSize={5}
-                    />
-                    <Switch
-                      id="status"
-                      isChecked={formData.status}
-                      onChange={() => handleToggle('status')}
-                      colorScheme="yellow"
-                      size="lg"
-                    />
-                  </HStack>
-                </Flex>
-              </MotionBox>
-            </VStack>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel htmlFor="status" mb="0" color='yellow.400'>
+                ¿Disponible?
+              </FormLabel>
+              <Switch
+                id="status"
+                isChecked={formData.status}
+                onChange={() => handleToggle('status')}
+                colorScheme="teal"
+              />
+            </FormControl>
           </VStack>
         </ModalBody>
 

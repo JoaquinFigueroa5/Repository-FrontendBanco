@@ -52,11 +52,22 @@ const AccountsFavorites = () => {
         if (value.length > 0) {
             setIsSearching(true);
             setTimeout(() => {
-                const results = accountsGen.filter(account =>
-                    account.userId.name.toLowerCase().includes(value.toLowerCase()) ||
-                    account.userId.email.toLowerCase().includes(value.toLowerCase()) ||
-                    account.accountNumber.includes(value.toLowerCase())
-                );
+                const termino = value.toLowerCase();
+
+                const results = accountsGen
+                    ?.filter(acc => {
+                        // si userId no existe, todas las variables quedan como ''
+                        const nombre = acc.userId?.name?.toLowerCase() || '';
+                        const correo = acc.userId?.email?.toLowerCase() || '';
+                        const numero = acc.accountNumber || '';
+
+                        return (
+                            nombre.includes(termino) ||
+                            correo.includes(termino) ||
+                            numero.includes(termino)
+                        );
+                    });
+
                 setSearchResults(results);
                 setIsSearching(false);
             }, 500);
@@ -65,7 +76,7 @@ const AccountsFavorites = () => {
         }
     };
 
-    const addToFavorites = async(account) => {
+    const addToFavorites = async (account) => {
         if (!accounts.find(fav => fav._id === account._id)) {
             await addFavorite(account._id);
             await getAccountFavorite();
@@ -89,7 +100,7 @@ const AccountsFavorites = () => {
         }
     };
 
-    const removeFromFavorites = async(accountId) => {
+    const removeFromFavorites = async (accountId) => {
         await removeFavorite(accountId);
         await getAccountFavorite();
         toast({
@@ -100,15 +111,6 @@ const AccountsFavorites = () => {
             isClosable: true,
         });
 
-    };
-
-    const getTypeColor = (type) => {
-        switch (type) {
-            case 'Premium': return 'gold';
-            case 'Pro': return 'orange.300';
-            case 'Basic': return 'gray.400';
-            default: return 'gray.400';
-        }
     };
 
     const EmptyFavoritesView = () => (
@@ -199,7 +201,7 @@ const AccountsFavorites = () => {
                             />
                         </InputGroup>
                     </MotionBox>
-                    {/* {console.log('Favs', accounts)} */}
+                    {/* {console.log('Favs', accountsGen)} */}
                     {accounts.length > 0 && (
                         <>
                             {/* Favorites Grid */}
