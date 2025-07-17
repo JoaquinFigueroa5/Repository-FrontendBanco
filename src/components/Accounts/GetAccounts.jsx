@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
     Box,
     VStack,
@@ -59,14 +59,12 @@ import {
     ArrowUpRight,
     ChevronRight,
     Settings,
-    Edit3,
-    Ban,
-    Download
+    ChevronUp,
+    ChevronDown
 } from 'lucide-react';
 import { useAccount } from '../../shared/hooks/useAccount';
 import useGetTransaction from '../../shared/hooks/useGetTransaction';
 import NavBar from '../commons/NavBar';
-import GetUserAccount from './GetUserAccount';
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
@@ -77,6 +75,7 @@ const GetAccounts = () => {
     const [filterStatus, setFilterStatus] = useState('all');
     const [selectedAccount, setSelectedAccount] = useState(null);
     const [hoveredCard, setHoveredCard] = useState(null);
+    const [sortOrder, setSortOrder] = useState('none');
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { accountsGen, getAccounts } = useAccount();
     const { transactions, refetch } = useGetTransaction();
@@ -88,8 +87,6 @@ const GetAccounts = () => {
     useEffect(() => {
         refetch();
     }, [])
-
-    console.log(transactions);
 
     const filteredAccounts = (accountsGen ?? []).filter(account => {
         if (!account.userId) return false;
@@ -187,6 +184,105 @@ const GetAccounts = () => {
             minute: "2-digit"
         }
     );
+
+    const getTransactionCount = (account) => {
+        return transactions.reduce(
+            (acc, t) => t.accountId.userId.name === account ? acc + 1 : acc,
+            0
+        );
+    }
+
+    const sortedAccounts = useMemo(() => {
+        if (sortOrder === 'none') return accountsGen;
+
+        const sorted = [...accountsGen].sort((a, b) => {
+            const countA = getTransactionCount(a.userId.name);
+            const countB = getTransactionCount(b.userId.name);
+
+            if (sortOrder === 'asc') {
+                return countA - countB;
+            } else {
+                return countB - countA;
+            }
+        });
+
+        return sorted;
+    }, [accountsGen, transactions, sortOrder]);
+
+    const toggleSort = () => {
+        if (sortOrder === 'none') {
+            setSortOrder('asc');
+        } else if (sortOrder === 'asc') {
+            setSortOrder('desc');
+        } else {
+            setSortOrder('none');
+        }
+    };
+
+    const AnimatedIcon = () => {
+        return (
+            <Box position="relative" w="16px" h="16px" display="flex" alignItems="center" justifyContent="center">
+                <AnimatePresence mode="wait">
+                    {sortOrder === 'asc' && (
+                        <motion.div
+                            key="asc"
+                            initial={{ opacity: 0, y: -10, scale: 0.8, rotate: -180 }}
+                            animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.8, rotate: 180 }}
+                            transition={{
+                                duration: 0.4,
+                                ease: [0.4, 0, 0.2, 1],
+                                scale: { type: "spring", stiffness: 300, damping: 20 }
+                            }}
+                            style={{ position: 'absolute' }}
+                        >
+                            <ChevronDown size={16} color="#000000ff" />
+                        </motion.div>
+                    )}
+
+                    {sortOrder === 'desc' && (
+                        <motion.div
+                            key="desc"
+                            initial={{ opacity: 0, y: 10, scale: 0.8, rotate: 180 }}
+                            animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.8, rotate: -180 }}
+                            transition={{
+                                duration: 0.4,
+                                ease: [0.4, 0, 0.2, 1],
+                                scale: { type: "spring", stiffness: 300, damping: 20 }
+                            }}
+                            style={{ position: 'absolute' }}
+                        >
+                            <ChevronUp size={16} color="#000000ff" />
+                        </motion.div>
+                    )}
+
+                    {sortOrder === 'none' && (
+                        <motion.div
+                            key="none"
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.5 }}
+                            transition={{
+                                duration: 0.3,
+                                ease: [0.4, 0, 0.2, 1],
+                                scale: { type: "spring", stiffness: 400, damping: 25 }
+                            }}
+                            style={{ position: 'absolute' }}
+                        >
+                            <Box
+                                w="16px"
+                                h="16px"
+                                border="1px solid"
+                                borderColor="blackAlpha.900"
+                                borderRadius="sm"
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </Box>
+        );
+    };
 
     return (
         <>
@@ -388,7 +484,7 @@ const GetAccounts = () => {
                                             <option value="pending">Pendientes</option>
                                         </Select>
                                         <IconButton
-                                            icon={<Filter size={20} />}
+                                            icon={<AnimatedIcon />}
                                             bg="linear-gradient(135deg, #FFD700, #FFA500)"
                                             color="black"
                                             _hover={{
@@ -402,7 +498,10 @@ const GetAccounts = () => {
                                             borderRadius="xl"
                                             aria-label="Filtros avanzados"
                                             transition="all 0.3s ease"
-                                        />
+                                            onClick={toggleSort}
+                                        >
+                                            Ordenar por Transacciones
+                                        </ IconButton>
                                     </HStack>
                                 </CardBody>
                             </Card>
@@ -418,7 +517,7 @@ const GetAccounts = () => {
                             transition={{ duration: 1, delay: 0.6 }}
                         >
                             <AnimatePresence>
-                                {filteredAccounts.map((account, index) => (
+                                {sortedAccounts.map((account, index) => (
                                     <GridItem key={account._id}>
                                         <MotionCard
                                             initial={{ opacity: 0, y: 50, scale: 0.9 }}
@@ -470,6 +569,7 @@ const GetAccounts = () => {
                                                     <HStack justify="space-between" align="start">
                                                         <HStack spacing={4}>
                                                             <Box position="relative">
+                                                                {console.log(account.user)}
                                                                 <Avatar
                                                                     size="xl"
                                                                     name={`${account.userId.name} ${account.userId.surname}`}
@@ -535,54 +635,6 @@ const GetAccounts = () => {
                                                                 </HStack>
                                                             </VStack>
                                                         </HStack>
-                                                        {/* <Menu>
-                                                            <MenuButton
-                                                                as={IconButton}
-                                                                icon={<MoreVertical size={18} />}
-                                                                size="sm"
-                                                                bg="rgba(255, 215, 0, 0.1)"
-                                                                color="gold"
-                                                                borderColor="rgba(255, 215, 0, 0.3)"
-                                                                borderWidth="1px"
-                                                                _hover={{
-                                                                    bg: 'rgba(255, 215, 0, 0.2)',
-                                                                    transform: 'scale(1.1)'
-                                                                }}
-                                                                aria-label="Más opciones"
-                                                                borderRadius="lg"
-                                                            />
-                                                            <MenuList
-                                                                bg="rgba(26, 32, 44, 0.95)"
-                                                                borderColor="gold"
-                                                                borderWidth="1px"
-                                                                backdropFilter="blur(10px)"
-                                                            >
-                                                                <MenuItem
-                                                                    bg="transparent"
-                                                                    _hover={{ bg: 'rgba(255, 215, 0, 0.1)' }}
-                                                                    color="white"
-                                                                    icon={<Edit3 size={16} />}
-                                                                >
-                                                                    Editar Usuario
-                                                                </MenuItem>
-                                                                <MenuItem
-                                                                    bg="transparent"
-                                                                    _hover={{ bg: 'rgba(255, 215, 0, 0.1)' }}
-                                                                    color="white"
-                                                                    icon={<Activity size={16} />}
-                                                                >
-                                                                    Ver Transacciones
-                                                                </MenuItem>
-                                                                <MenuItem
-                                                                    bg="transparent"
-                                                                    _hover={{ bg: 'rgba(255, 0, 0, 0.1)' }}
-                                                                    color="red.400"
-                                                                    icon={<Ban size={16} />}
-                                                                >
-                                                                    Suspender Cuenta
-                                                                </MenuItem>
-                                                            </MenuList>
-                                                        </Menu> */}
                                                     </HStack>
 
                                                     <Divider borderColor="rgba(255, 215, 0, 0.3)" />
@@ -1073,23 +1125,6 @@ const GetAccounts = () => {
 
                                 <ModalFooter p={8} pt={0}>
                                     <HStack spacing={4} w="full">
-                                        {/* <Button
-                                            bg="linear-gradient(135deg, #FFD700, #FFA500)"
-                                            color="black"
-                                            _hover={{
-                                                bg: 'linear-gradient(135deg, #FFA500, #FFD700)',
-                                                transform: 'scale(1.05)',
-                                                boxShadow: '0 10px 30px rgba(255, 215, 0, 0.4)'
-                                            }}
-                                            size="lg"
-                                            fontWeight="bold"
-                                            leftIcon={<Edit3 size={18} />}
-                                            flex={1}
-                                            borderRadius="xl"
-                                            h="56px"
-                                        >
-                                            Editar Cuenta
-                                        </Button> */}
                                         <Button
                                             bg="rgba(255, 215, 0, 0.1)"
                                             color="gold"
