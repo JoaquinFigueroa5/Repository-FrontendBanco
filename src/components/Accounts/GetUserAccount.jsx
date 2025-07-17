@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useParams } from 'react-router-dom';
 import {
   Box,
   VStack,
@@ -43,11 +44,21 @@ import {
   FaChartLine
 } from 'react-icons/fa';
 import NavBar from '../commons/NavBar';
+import { useGetTransactionsByUserId } from '../../shared/hooks/useGetTransactionsByUserId ';
 
 const GetUserAccount = () => {
+  const { userId } = useParams(); // <-- ¡Aquí se obtiene el userId de la URL!
+
+  const { transactions, loading, error } = useGetTransactionsByUserId(userId);
+  // ... el resto de tu estado y lógica
+
+  // console.log para depuración, puedes quitarlo después de verificar
+  console.log("UserID en GetUserAccount (obtenido de useParams):", userId);
+  console.log("Error de transacciones (después de hook):", error);
   const [showBalance, setShowBalance] = useState(true);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -95,6 +106,8 @@ const GetUserAccount = () => {
   ]);
 
   const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);
+
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -373,56 +386,83 @@ const GetUserAccount = () => {
                 Transacciones Recientes
               </Text>
 
-              <VStack spacing={4}>
-                {recentTransactions.map((transaction) => (
-                  <motion.div
-                    key={transaction.id}
-                    whileHover={{ x: 5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                    style={{ width: "100%" }}
-                  >
-                    <HStack
-                      justify="space-between"
-                      p={4}
-                      borderRadius="10px"
-                      bg="rgba(255, 215, 0, 0.05)"
-                      border="1px solid rgba(255, 215, 0, 0.1)"
-                      _hover={{ bg: "rgba(255, 215, 0, 0.1)" }}
-                      transition="all 0.3s ease"
-                    >
-                      <HStack spacing={3}>
-                        <Box
-                          p={2}
-                          borderRadius="full"
-                          bg={transaction.type === 'income' ? 'rgba(0, 255, 0, 0.2)' : 'rgba(255, 0, 0, 0.2)'}
-                        >
-                          <Icon
-                            as={transaction.type === 'income' ? FaArrowDown : FaArrowUp}
-                            color={transaction.type === 'income' ? 'green.400' : 'red.400'}
-                            size="16px"
-                          />
-                        </Box>
-                        <VStack align="start" spacing={0}>
-                          <Text color="white" fontSize="md" fontWeight="medium">
-                            {transaction.description}
-                          </Text>
-                          <Text color="gray.400" fontSize="sm">
-                            {transaction.date}
-                          </Text>
-                        </VStack>
-                      </HStack>
+              {loading && (
+                <Text color="gray.400">Cargando transacciones...</Text>
+              )}
 
-                      <Text
-                        color={transaction.type === 'income' ? 'green.400' : 'red.400'}
-                        fontSize="lg"
-                        fontWeight="bold"
+              {error && (
+                <Text color="red.400">{error}</Text>
+              )}
+
+              {!loading && transactions && transactions.length === 0 && (
+                <Text color="gray.400">No hay transacciones para este usuario.</Text>
+              )}
+
+              {!loading && transactions && transactions.length > 0 && (
+                <VStack spacing={4}>
+                  {transactions.slice(0, 10).map((transaction) => {
+
+                    // Extraemos el monto correctamente:
+                    const amountRaw = transaction.amount;
+                    const amount = amountRaw && amountRaw.$numberDecimal
+                      ? parseFloat(amountRaw.$numberDecimal)
+                      : 0;
+
+                    return (
+                      <motion.div
+                        key={transaction._id}
+                        whileHover={{ x: 5 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        style={{ width: "100%" }}
                       >
-                        {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toLocaleString()}
-                      </Text>
-                    </HStack>
-                  </motion.div>
-                ))}
-              </VStack>
+                        <HStack
+                          justify="space-between"
+                          p={4}
+                          borderRadius="10px"
+                          bg="rgba(255, 215, 0, 0.05)"
+                          border="1px solid rgba(255, 215, 0, 0.1)"
+                          _hover={{ bg: "rgba(255, 215, 0, 0.1)" }}
+                          transition="all 0.3s ease"
+                        >
+                          <HStack spacing={3}>
+                            <Box
+                              p={2}
+                              borderRadius="full"
+                              bg={
+                                transaction.type === 'received'
+                                  ? 'rgba(0, 255, 0, 0.2)'
+                                  : 'rgba(255, 0, 0, 0.2)'
+                              }
+                            >
+                              <Icon
+                                as={transaction.type === 'received' ? FaArrowDown : FaArrowUp}
+                                color={transaction.type === 'received' ? 'green.400' : 'red.400'}
+                                boxSize={4}
+                              />
+                            </Box>
+                            <VStack align="start" spacing={0}>
+                              <Text color="white" fontSize="md" fontWeight="medium">
+                                {transaction.details || 'Sin detalles'}
+                              </Text>
+                              <Text color="gray.400" fontSize="sm">
+                                {new Date(transaction.createdAt).toLocaleDateString()}
+                              </Text>
+                            </VStack>
+                          </HStack>
+
+                          <Text
+                            color={transaction.type === 'received' ? 'green.400' : 'red.400'}
+                            fontSize="lg"
+                            fontWeight="bold"
+                          >
+                            {transaction.type === 'received' ? '+' : '-'}${amount.toFixed(2)}
+                          </Text>
+                        </HStack>
+                      </motion.div>
+                    );
+                  })}
+                </VStack>
+              )}
             </Box>
           </motion.div>
         </motion.div>

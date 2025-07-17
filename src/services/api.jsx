@@ -373,3 +373,20 @@ export const buyProduct = async ({ productId, quantity }) => {
     }
 };
 
+export const getTransactionByIdUser = async (userId) => {
+    try {
+        const res = await apiClient.get(`/transactions/admin/${userId}`)
+        return{
+            success: true,
+            status: res.status,
+            data: res.data
+        }
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error'
+        return{
+            error: true,
+            msg,
+            e
+        }
+    }
+}

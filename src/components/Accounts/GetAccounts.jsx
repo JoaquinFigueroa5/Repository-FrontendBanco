@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Box,
     VStack,
@@ -67,12 +68,12 @@ import { useAccount } from '../../shared/hooks/useAccount';
 import useGetTransaction from '../../shared/hooks/useGetTransaction';
 import NavBar from '../commons/NavBar';
 import GetUserAccount from './GetUserAccount';
-
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
 const MotionGrid = motion(Grid);
 
 const GetAccounts = () => {
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
     const [selectedAccount, setSelectedAccount] = useState(null);
@@ -155,6 +156,17 @@ const GetAccounts = () => {
         setSelectedAccount(account);
         onOpen();
     };
+
+const handleViewTransactions = () => {
+    if (selectedAccount && selectedAccount.userId) {
+        // Si userId es un objeto mongoose ObjectId, convertílo a string explícitamente
+        const userIdStr = typeof selectedAccount.userId === 'string'
+            ? selectedAccount.userId
+            : selectedAccount.userId._id?.toString() || selectedAccount.userId.toString();
+
+        navigate(`/historyTrasactions/${userIdStr}`);
+    }
+};
 
     // Estadísticas rápidas
     const stats = {
@@ -1091,6 +1103,8 @@ const GetAccounts = () => {
                                             Editar Cuenta
                                         </Button> */}
                                         <Button
+                                            onClick={handleViewTransactions}
+                                            isDisabled={!selectedAccount}
                                             bg="rgba(255, 215, 0, 0.1)"
                                             color="gold"
                                             borderColor="rgba(255, 215, 0, 0.3)"
@@ -1106,8 +1120,6 @@ const GetAccounts = () => {
                                             flex={1}
                                             borderRadius="xl"
                                             h="56px"
-                                            as='a'
-                                            href={'/historyTrasactions'}
                                         >
                                             Ver Transacciones
                                         </Button>
