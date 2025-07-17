@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
     Box,
     VStack,
@@ -66,13 +65,12 @@ import {
 import { useAccount } from '../../shared/hooks/useAccount';
 import useGetTransaction from '../../shared/hooks/useGetTransaction';
 import NavBar from '../commons/NavBar';
-import GetUserAccount from './GetUserAccount';
+
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
 const MotionGrid = motion(Grid);
 
 const GetAccounts = () => {
-    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
     const [selectedAccount, setSelectedAccount] = useState(null);
@@ -154,17 +152,6 @@ const GetAccounts = () => {
         setSelectedAccount(account);
         onOpen();
     };
-
-const handleViewTransactions = () => {
-    if (selectedAccount && selectedAccount.userId) {
-        // Si userId es un objeto mongoose ObjectId, convertílo a string explícitamente
-        const userIdStr = typeof selectedAccount.userId === 'string'
-            ? selectedAccount.userId
-            : selectedAccount.userId._id?.toString() || selectedAccount.userId.toString();
-
-        navigate(`/historyTrasactions/${userIdStr}`);
-    }
-};
 
     // Estadísticas rápidas
     const stats = {
@@ -582,7 +569,6 @@ const handleViewTransactions = () => {
                                                     <HStack justify="space-between" align="start">
                                                         <HStack spacing={4}>
                                                             <Box position="relative">
-                                                                {console.log(account.user)}
                                                                 <Avatar
                                                                     size="xl"
                                                                     name={`${account.userId.name} ${account.userId.surname}`}
@@ -883,301 +869,308 @@ const handleViewTransactions = () => {
 
                                 <ModalBody p={8}>
                                     {selectedAccount && (
-                                        <VStack spacing={8} align="stretch">
-                                            {/* User Info Section */}
-                                            <HStack spacing={6}>
-                                                <Box position="relative">
-                                                    <Avatar
-                                                        size="2xl"
-                                                        name={`${selectedAccount.userId.name} ${selectedAccount.userId.surname}`}
-                                                        src={selectedAccount.avatar}
-                                                        border="4px solid"
-                                                        borderColor="gold"
-                                                        boxShadow="0 0 30px rgba(255, 215, 0, 0.4)"
-                                                    />
-                                                    <Box
-                                                        position="absolute"
-                                                        top="-4px"
-                                                        right="-4px"
-                                                        bg={getTierColor(selectedAccount.status)}
-                                                        borderRadius="full"
-                                                        p={3}
-                                                        border="3px solid black"
-                                                        boxShadow={`0 0 20px ${getTierColor(selectedAccount.status)}60`}
-                                                    >
-                                                        {getTierIcon(selectedAccount.status)}
-                                                    </Box>
-                                                </Box>
-                                                <VStack align="start" spacing={3} flex={1}>
-                                                    <Text color="white" fontSize="3xl" fontWeight="bold">
-                                                        {`${selectedAccount.userId.name} ${selectedAccount.userId.surname}`}
-                                                    </Text>
-                                                    <Text color="gray.400" fontSize="lg">
-                                                        {selectedAccount.userId.email}
-                                                    </Text>
-                                                    <HStack spacing={3}>
-                                                        <Badge
-                                                            colorScheme={getStatusColor(selectedAccount.status)}
-                                                            size="lg"
-                                                            px={4}
-                                                            py={2}
-                                                            borderRadius="full"
-                                                            fontSize="sm"
-                                                        >
-                                                            {getStatusText(selectedAccount.status)}
-                                                        </Badge>
-                                                        <Badge
-                                                            bg={`${getTierColor(selectedAccount.status)}20`}
-                                                            color={getTierColor(selectedAccount.status)}
-                                                            size="lg"
-                                                            px={4}
-                                                            py={2}
-                                                            borderRadius="full"
-                                                            fontSize="sm"
-                                                            border="2px solid"
-                                                            borderColor={`${getTierColor(selectedAccount.tier)}40`}
-                                                        >
-                                                            {selectedAccount.status}
-                                                        </Badge>
-                                                    </HStack>
-                                                    <Text color="gray.500" fontSize="sm">
-                                                        <Calendar size={14} style={{ display: 'inline', marginRight: '8px' }} />
-                                                        Cliente desde {localReadable(selectedAccount.createdAt)}
-                                                    </Text>
-                                                </VStack>
-                                            </HStack>
-
-                                            <Divider borderColor="rgba(255, 215, 0, 0.4)" />
-
-                                            {/* Stats Cards */}
-                                            <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-                                                <Card
-                                                    bg="rgba(0, 0, 0, 0.4)"
-                                                    borderColor="rgba(255, 215, 0, 0.3)"
-                                                    borderWidth="2px"
-                                                    borderRadius="2xl"
-                                                    overflow="hidden"
-                                                >
-                                                    <CardBody p={6}>
-                                                        <VStack align="start" spacing={3}>
-                                                            <HStack>
-                                                                <Box
-                                                                    p={2}
-                                                                    bg="rgba(255, 215, 0, 0.2)"
-                                                                    borderRadius="lg"
-                                                                >
-                                                                    <CreditCard size={20} color="#FFD700" />
-                                                                </Box>
-                                                                <Text color="gray.400" fontSize="sm">Número de Cuenta</Text>
-                                                            </HStack>
-                                                            <Text color="white" fontFamily="mono" fontSize="xl" fontWeight="bold">
-                                                                {selectedAccount.accountNumber}
-                                                            </Text>
-                                                        </VStack>
-                                                    </CardBody>
-                                                </Card>
-
-                                                <Card
-                                                    bg="rgba(0, 0, 0, 0.4)"
-                                                    borderColor="rgba(255, 215, 0, 0.3)"
-                                                    borderWidth="2px"
-                                                    borderRadius="2xl"
-                                                    overflow="hidden"
-                                                >
-                                                    <CardBody p={6}>
-                                                        <VStack align="start" spacing={3}>
-                                                            <HStack>
-                                                                <Box
-                                                                    p={2}
-                                                                    bg="rgba(255, 215, 0, 0.2)"
-                                                                    borderRadius="lg"
-                                                                >
-                                                                    <Wallet size={20} color="#FFD700" />
-                                                                </Box>
-                                                                <Text color="gray.400" fontSize="sm">Tipo de Cuenta</Text>
-                                                            </HStack>
-                                                            <Text color="gold" fontSize="xl" fontWeight="bold">
-                                                                PREMIUM
-                                                            </Text>
-                                                        </VStack>
-                                                    </CardBody>
-                                                </Card>
-
-                                                <Card
-                                                    bg="rgba(0, 0, 0, 0.4)"
-                                                    borderColor="rgba(255, 215, 0, 0.3)"
-                                                    borderWidth="2px"
-                                                    borderRadius="2xl"
-                                                    overflow="hidden"
-                                                >
-                                                    <CardBody p={6}>
-                                                        <VStack align="start" spacing={3}>
-                                                            <HStack>
-                                                                <Box
-                                                                    p={2}
-                                                                    bg="rgba(255, 215, 0, 0.2)"
-                                                                    borderRadius="lg"
-                                                                >
-                                                                    <DollarSign size={20} color="#FFD700" />
-                                                                </Box>
-                                                                <Text color="gray.400" fontSize="sm">Balance Actual</Text>
-                                                            </HStack>
-                                                            <Text
-                                                                color="gold"
-                                                                fontSize="2xl"
-                                                                fontWeight="bold"
-                                                                textShadow="0 0 20px rgba(255, 215, 0, 0.5)"
-                                                            >
-                                                                Q{selectedAccount.balance.$numberDecimal.toLocaleString()}
-                                                            </Text>
-                                                            <HStack>
-                                                                <TrendingUp size={16} color={selectedAccount.balance.$numberDecimal.toLocaleString() > 0 ? '#00FF80' : '#FF4444'} />
-                                                                <Text
-                                                                    color={selectedAccount.balance.$numberDecimal.toLocaleString() > 0 ? 'green.400' : 'red.400'}
-                                                                    fontSize="sm"
-                                                                    fontWeight="bold"
-                                                                >
-                                                                    {selectedAccount.balance.$numberDecimal.toLocaleString() > 0 ? '+' : ''}{selectedAccount.balance.$numberDecimal.toLocaleString()} este mes
-                                                                </Text>
-                                                            </HStack>
-                                                        </VStack>
-                                                    </CardBody>
-                                                </Card>
-
-                                                <Card
-                                                    bg="rgba(0, 0, 0, 0.4)"
-                                                    borderColor="rgba(255, 215, 0, 0.3)"
-                                                    borderWidth="2px"
-                                                    borderRadius="2xl"
-                                                    overflow="hidden"
-                                                >
-                                                    <CardBody p={6}>
-                                                        <VStack align="start" spacing={3}>
-                                                            <HStack>
-                                                                <Box
-                                                                    p={2}
-                                                                    bg="rgba(255, 215, 0, 0.2)"
-                                                                    borderRadius="lg"
-                                                                >
-                                                                    <Activity size={20} color="#FFD700" />
-                                                                </Box>
-                                                                <Text color="gray.400" fontSize="sm">Actividad</Text>
-                                                            </HStack>
-                                                            <HStack>
-                                                                <Text color="white" fontSize="lg" fontWeight="medium">
-                                                                    {
-                                                                        transactions.reduce(
-                                                                            (acc, t) =>
-                                                                                t.accountId.userId.name === selectedAccount.userId.name ? acc + 1 : acc,
-                                                                            0
-                                                                        )
-                                                                    }
-                                                                </Text>
-                                                                <Text color="white" fontSize="lg" fontWeight="medium">Transaccion(es)</Text>
-
-                                                                <Activity size={16} color="#FFD700" />
-                                                            </HStack>
-                                                            <Text color="gray.500" fontSize="sm">
-                                                                Último acceso: {selectedAccount.lastActivity}
-                                                            </Text>
-                                                        </VStack>
-                                                    </CardBody>
-                                                </Card>
-                                            </Grid>
-
-                                            {/* Credit Score */}
-                                            <Card
-                                                bg="rgba(0, 0, 0, 0.4)"
-                                                borderColor="rgba(255, 215, 0, 0.3)"
-                                                borderWidth="2px"
-                                                borderRadius="2xl"
-                                            >
-                                                <CardBody p={6}>
-                                                    <VStack align="start" spacing={4}>
-                                                        <HStack>
-                                                            <Box
-                                                                p={2}
-                                                                bg="rgba(255, 215, 0, 0.2)"
-                                                                borderRadius="lg"
-                                                            >
-                                                                <Star size={20} color="#FFD700" />
-                                                            </Box>
-                                                            <Text color="gray.400" fontSize="sm">Score Crediticio</Text>
-                                                        </HStack>
-                                                        <HStack w="full" justify="space-between">
-                                                            <Text color="white" fontSize="3xl" fontWeight="bold">
-                                                                PREMIUM
-                                                            </Text>
-                                                            <Text color="gray.500" fontSize="sm">
-                                                                {900 >= 800 ? 'Excelente' :
-                                                                    700 >= 700 ? 'Muy Bueno' :
-                                                                        600 >= 600 ? 'Bueno' : 'Regular'}
-                                                            </Text>
-                                                        </HStack>
-                                                        <Progress
-                                                            value={selectedAccount.creditScore / 10}
-                                                            bg="rgba(255, 215, 0, 0.1)"
-                                                            sx={{
-                                                                '& > div': {
-                                                                    bg: 800 >= 800 ? 'linear-gradient(90deg, #00FF80, #40FF90)' :
-                                                                        selectedAccount.creditScore >= 700 ? 'linear-gradient(90deg, #FFD700, #FFA500)' :
-                                                                            selectedAccount.creditScore >= 600 ? 'linear-gradient(90deg, #FFA500, #FF8C00)' :
-                                                                                'linear-gradient(90deg, #FF4444, #FF6666)'
-                                                                }
-                                                            }}
-                                                            borderRadius="full"
-                                                            h="8px"
-                                                            w="full"
+                                        <>
+                                            <VStack spacing={8} align="stretch">
+                                                {/* User Info Section */}
+                                                <HStack spacing={6}>
+                                                    <Box position="relative">
+                                                        <Avatar
+                                                            size="2xl"
+                                                            name={`${selectedAccount.userId.name} ${selectedAccount.userId.surname}`}
+                                                            src={selectedAccount.avatar}
+                                                            border="4px solid"
+                                                            borderColor="gold"
+                                                            boxShadow="0 0 30px rgba(255, 215, 0, 0.4)"
                                                         />
+                                                        <Box
+                                                            position="absolute"
+                                                            top="-4px"
+                                                            right="-4px"
+                                                            bg={getTierColor(selectedAccount.status)}
+                                                            borderRadius="full"
+                                                            p={3}
+                                                            border="3px solid black"
+                                                            boxShadow={`0 0 20px ${getTierColor(selectedAccount.status)}60`}
+                                                        >
+                                                            {getTierIcon(selectedAccount.status)}
+                                                        </Box>
+                                                    </Box>
+                                                    <VStack align="start" spacing={3} flex={1}>
+                                                        <Text color="white" fontSize="3xl" fontWeight="bold">
+                                                            {`${selectedAccount.userId.name} ${selectedAccount.userId.surname}`}
+                                                        </Text>
+                                                        <Text color="gray.400" fontSize="lg">
+                                                            {selectedAccount.userId.email}
+                                                        </Text>
+                                                        <HStack spacing={3}>
+                                                            <Badge
+                                                                colorScheme={getStatusColor(selectedAccount.status)}
+                                                                size="lg"
+                                                                px={4}
+                                                                py={2}
+                                                                borderRadius="full"
+                                                                fontSize="sm"
+                                                            >
+                                                                {getStatusText(selectedAccount.status)}
+                                                            </Badge>
+                                                            <Badge
+                                                                bg={`${getTierColor(selectedAccount.status)}20`}
+                                                                color={getTierColor(selectedAccount.status)}
+                                                                size="lg"
+                                                                px={4}
+                                                                py={2}
+                                                                borderRadius="full"
+                                                                fontSize="sm"
+                                                                border="2px solid"
+                                                                borderColor={`${getTierColor(selectedAccount.tier)}40`}
+                                                            >
+                                                                {selectedAccount.status}
+                                                            </Badge>
+                                                        </HStack>
+                                                        <Text color="gray.500" fontSize="sm">
+                                                            <Calendar size={14} style={{ display: 'inline', marginRight: '8px' }} />
+                                                            Cliente desde {localReadable(selectedAccount.createdAt)}
+                                                        </Text>
                                                     </VStack>
-                                                </CardBody>
-                                            </Card>
-                                        </VStack>
+                                                </HStack>
+
+                                                <Divider borderColor="rgba(255, 215, 0, 0.4)" />
+
+                                                {/* Stats Cards */}
+                                                <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+                                                    <Card
+                                                        bg="rgba(0, 0, 0, 0.4)"
+                                                        borderColor="rgba(255, 215, 0, 0.3)"
+                                                        borderWidth="2px"
+                                                        borderRadius="2xl"
+                                                        overflow="hidden"
+                                                    >
+                                                        <CardBody p={6}>
+                                                            <VStack align="start" spacing={3}>
+                                                                <HStack>
+                                                                    <Box
+                                                                        p={2}
+                                                                        bg="rgba(255, 215, 0, 0.2)"
+                                                                        borderRadius="lg"
+                                                                    >
+                                                                        <CreditCard size={20} color="#FFD700" />
+                                                                    </Box>
+                                                                    <Text color="gray.400" fontSize="sm">Número de Cuenta</Text>
+                                                                </HStack>
+                                                                <Text color="white" fontFamily="mono" fontSize="xl" fontWeight="bold">
+                                                                    {selectedAccount.accountNumber}
+                                                                </Text>
+                                                            </VStack>
+                                                        </CardBody>
+                                                    </Card>
+
+                                                    <Card
+                                                        bg="rgba(0, 0, 0, 0.4)"
+                                                        borderColor="rgba(255, 215, 0, 0.3)"
+                                                        borderWidth="2px"
+                                                        borderRadius="2xl"
+                                                        overflow="hidden"
+                                                    >
+                                                        <CardBody p={6}>
+                                                            <VStack align="start" spacing={3}>
+                                                                <HStack>
+                                                                    <Box
+                                                                        p={2}
+                                                                        bg="rgba(255, 215, 0, 0.2)"
+                                                                        borderRadius="lg"
+                                                                    >
+                                                                        <Wallet size={20} color="#FFD700" />
+                                                                    </Box>
+                                                                    <Text color="gray.400" fontSize="sm">Tipo de Cuenta</Text>
+                                                                </HStack>
+                                                                <Text color="gold" fontSize="xl" fontWeight="bold">
+                                                                    PREMIUM
+                                                                </Text>
+                                                            </VStack>
+                                                        </CardBody>
+                                                    </Card>
+
+                                                    <Card
+                                                        bg="rgba(0, 0, 0, 0.4)"
+                                                        borderColor="rgba(255, 215, 0, 0.3)"
+                                                        borderWidth="2px"
+                                                        borderRadius="2xl"
+                                                        overflow="hidden"
+                                                    >
+                                                        <CardBody p={6}>
+                                                            <VStack align="start" spacing={3}>
+                                                                <HStack>
+                                                                    <Box
+                                                                        p={2}
+                                                                        bg="rgba(255, 215, 0, 0.2)"
+                                                                        borderRadius="lg"
+                                                                    >
+                                                                        <DollarSign size={20} color="#FFD700" />
+                                                                    </Box>
+                                                                    <Text color="gray.400" fontSize="sm">Balance Actual</Text>
+                                                                </HStack>
+                                                                <Text
+                                                                    color="gold"
+                                                                    fontSize="2xl"
+                                                                    fontWeight="bold"
+                                                                    textShadow="0 0 20px rgba(255, 215, 0, 0.5)"
+                                                                >
+                                                                    Q{selectedAccount.balance.$numberDecimal.toLocaleString()}
+                                                                </Text>
+                                                                <HStack>
+                                                                    <TrendingUp size={16} color={selectedAccount.balance.$numberDecimal.toLocaleString() > 0 ? '#00FF80' : '#FF4444'} />
+                                                                    <Text
+                                                                        color={selectedAccount.balance.$numberDecimal.toLocaleString() > 0 ? 'green.400' : 'red.400'}
+                                                                        fontSize="sm"
+                                                                        fontWeight="bold"
+                                                                    >
+                                                                        {selectedAccount.balance.$numberDecimal.toLocaleString() > 0 ? '+' : ''}{selectedAccount.balance.$numberDecimal.toLocaleString()} este mes
+                                                                    </Text>
+                                                                </HStack>
+                                                            </VStack>
+                                                        </CardBody>
+                                                    </Card>
+
+                                                    <Card
+                                                        bg="rgba(0, 0, 0, 0.4)"
+                                                        borderColor="rgba(255, 215, 0, 0.3)"
+                                                        borderWidth="2px"
+                                                        borderRadius="2xl"
+                                                        overflow="hidden"
+                                                    >
+                                                        <CardBody p={6}>
+                                                            <VStack align="start" spacing={3}>
+                                                                <HStack>
+                                                                    <Box
+                                                                        p={2}
+                                                                        bg="rgba(255, 215, 0, 0.2)"
+                                                                        borderRadius="lg"
+                                                                    >
+                                                                        <Activity size={20} color="#FFD700" />
+                                                                    </Box>
+                                                                    <Text color="gray.400" fontSize="sm">Actividad</Text>
+                                                                </HStack>
+                                                                <HStack>
+                                                                    <Text color="white" fontSize="lg" fontWeight="medium">
+                                                                        {
+                                                                            transactions.reduce(
+                                                                                (acc, t) =>
+                                                                                    t.accountId.userId.name === selectedAccount.userId.name ? acc + 1 : acc,
+                                                                                0
+                                                                            )
+                                                                        }
+                                                                    </Text>
+                                                                    <Text color="white" fontSize="lg" fontWeight="medium">Transaccion(es)</Text>
+
+                                                                    <Activity size={16} color="#FFD700" />
+                                                                </HStack>
+                                                                <Text color="gray.500" fontSize="sm">
+                                                                    Último acceso: {selectedAccount.lastActivity}
+                                                                </Text>
+                                                            </VStack>
+                                                        </CardBody>
+                                                    </Card>
+                                                </Grid>
+
+                                                {/* Credit Score */}
+                                                <Card
+                                                    bg="rgba(0, 0, 0, 0.4)"
+                                                    borderColor="rgba(255, 215, 0, 0.3)"
+                                                    borderWidth="2px"
+                                                    borderRadius="2xl"
+                                                >
+                                                    <CardBody p={6}>
+                                                        <VStack align="start" spacing={4}>
+                                                            <HStack>
+                                                                <Box
+                                                                    p={2}
+                                                                    bg="rgba(255, 215, 0, 0.2)"
+                                                                    borderRadius="lg"
+                                                                >
+                                                                    <Star size={20} color="#FFD700" />
+                                                                </Box>
+                                                                <Text color="gray.400" fontSize="sm">Score Crediticio</Text>
+                                                            </HStack>
+                                                            <HStack w="full" justify="space-between">
+                                                                <Text color="white" fontSize="3xl" fontWeight="bold">
+                                                                    PREMIUM
+                                                                </Text>
+                                                                <Text color="gray.500" fontSize="sm">
+                                                                    {900 >= 800 ? 'Excelente' :
+                                                                        700 >= 700 ? 'Muy Bueno' :
+                                                                            600 >= 600 ? 'Bueno' : 'Regular'}
+                                                                </Text>
+                                                            </HStack>
+                                                            <Progress
+                                                                value={selectedAccount.creditScore / 10}
+                                                                bg="rgba(255, 215, 0, 0.1)"
+                                                                sx={{
+                                                                    '& > div': {
+                                                                        bg: 800 >= 800 ? 'linear-gradient(90deg, #00FF80, #40FF90)' :
+                                                                            selectedAccount.creditScore >= 700 ? 'linear-gradient(90deg, #FFD700, #FFA500)' :
+                                                                                selectedAccount.creditScore >= 600 ? 'linear-gradient(90deg, #FFA500, #FF8C00)' :
+                                                                                    'linear-gradient(90deg, #FF4444, #FF6666)'
+                                                                    }
+                                                                }}
+                                                                borderRadius="full"
+                                                                h="8px"
+                                                                w="full"
+                                                            />
+                                                        </VStack>
+                                                    </CardBody>
+                                                </Card>
+                                            </VStack>
+
+
+
+
+
+                                            <ModalFooter p={8} pt={0}>
+                                                <HStack spacing={4} w="full">
+                                                    <Button
+                                                        bg="rgba(255, 215, 0, 0.1)"
+                                                        color="gold"
+                                                        borderColor="rgba(255, 215, 0, 0.3)"
+                                                        borderWidth="2px"
+                                                        _hover={{
+                                                            bg: 'rgba(255, 215, 0, 0.2)',
+                                                            transform: 'scale(1.05)',
+                                                            boxShadow: '0 10px 30px rgba(255, 215, 0, 0.3)'
+                                                        }}
+                                                        size="lg"
+                                                        fontWeight="bold"
+                                                        leftIcon={<Activity size={18} />}
+                                                        flex={1}
+                                                        borderRadius="xl"
+                                                        h="56px"
+                                                        as='a'
+                                                        href={`/historyTrasactions/${selectedAccount.userId._id}`}
+                                                    >
+                                                        Ver Transacciones
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        color="gray.400"
+                                                        _hover={{
+                                                            bg: 'rgba(255, 255, 255, 0.1)',
+                                                            color: 'white',
+                                                            transform: 'scale(1.05)'
+                                                        }}
+                                                        size="lg"
+                                                        onClick={onClose}
+                                                        leftIcon={<ChevronRight size={18} />}
+                                                        borderRadius="xl"
+                                                        h="56px"
+                                                        px={8}
+                                                    >
+                                                        Cerrar
+                                                    </Button>
+                                                </HStack>
+                                            </ModalFooter>
+                                        </>
                                     )}
                                 </ModalBody>
 
-                                <ModalFooter p={8} pt={0}>
-                                    <HStack spacing={4} w="full">
-                                        <Button
-                                            onClick={handleViewTransactions}
-                                            isDisabled={!selectedAccount}
-                                            bg="rgba(255, 215, 0, 0.1)"
-                                            color="gold"
-                                            borderColor="rgba(255, 215, 0, 0.3)"
-                                            borderWidth="2px"
-                                            _hover={{
-                                                bg: 'rgba(255, 215, 0, 0.2)',
-                                                transform: 'scale(1.05)',
-                                                boxShadow: '0 10px 30px rgba(255, 215, 0, 0.3)'
-                                            }}
-                                            size="lg"
-                                            fontWeight="bold"
-                                            leftIcon={<Activity size={18} />}
-                                            flex={1}
-                                            borderRadius="xl"
-                                            h="56px"
-                                        >
-                                            Ver Transacciones
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            color="gray.400"
-                                            _hover={{
-                                                bg: 'rgba(255, 255, 255, 0.1)',
-                                                color: 'white',
-                                                transform: 'scale(1.05)'
-                                            }}
-                                            size="lg"
-                                            onClick={onClose}
-                                            leftIcon={<ChevronRight size={18} />}
-                                            borderRadius="xl"
-                                            h="56px"
-                                            px={8}
-                                        >
-                                            Cerrar
-                                        </Button>
-                                    </HStack>
-                                </ModalFooter>
                             </ModalContent>
                         </Modal>
                     </VStack>

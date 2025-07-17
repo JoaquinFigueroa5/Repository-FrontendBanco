@@ -89,7 +89,7 @@ const routes = [
         ]
     },
     {
-        path: '/historyTrasactions/:userId',
+        path: '/historyTrasactions/:userId/*',
         element: <PrivateRoute allowedRoles={['ADMIN_ROLE']} />,
         children: [
             { path: '', element: <GetUserAccount /> }
