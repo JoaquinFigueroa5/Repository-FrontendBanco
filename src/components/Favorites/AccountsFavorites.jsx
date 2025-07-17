@@ -56,7 +56,6 @@ const AccountsFavorites = () => {
 
                 const results = accountsGen
                     ?.filter(acc => {
-                        // si userId no existe, todas las variables quedan como ''
                         const nombre = acc.userId?.name?.toLowerCase() || '';
                         const correo = acc.userId?.email?.toLowerCase() || '';
                         const numero = acc.accountNumber || '';

@@ -125,7 +125,7 @@ export const getUserAccount = async () => {
     }
 };
 
-export const getAccounts = async() => {
+export const getAccounts = async () => {
     try {
         return await apiClient.get('/accounts')
     } catch (e) {
@@ -324,7 +324,7 @@ export const removeFavorite = async (id) => {
     }
 }
 
-export const getAccountFavorite = async() => {
+export const getAccountFavorite = async () => {
     try {
         return await apiClient.get('/user/getFavorites')
     } catch (error) {
@@ -338,7 +338,7 @@ export const getAccountFavorite = async() => {
 }
 
 
-export const getUser = async() => {
+export const getUser = async () => {
     try {
         return await apiClient.get('/user')
     } catch (error) {
@@ -352,23 +352,24 @@ export const getUser = async() => {
 }
 
 export const buyProduct = async ({ productId, quantity }) => {
-  try {
-    const res = await apiClient.post('/product/buyProduct', {
-      productId,
-      quantity,
-    });
+    try {
+        const res = await apiClient.post('/product/buyProduct', {
+            productId,
+            quantity,
+        });
 
-    return {
-      success: true,
-      status: res.status,
-      data: res.data,
-    };
-  } catch (e) {
-    const msg = e.response?.data?.msg || 'Error al comprar el producto';
-    return {
-      error: true,
-      msg,
-      e,
-    };
-  }
+        return {
+            success: true,
+            status: res.status,
+            data: res.data,
+        };
+    } catch (e) {
+        const msg = e.response?.data?.msg || 'Error al comprar el producto';
+        return {
+            error: true,
+            msg,
+            e,
+        };
+    }
 };
+

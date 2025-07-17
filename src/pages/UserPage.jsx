@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
     Box,
     Container,
@@ -361,49 +362,21 @@ const UserPage = () => {
                                 </InputGroup>
 
                                 <Menu>
-                                    <MenuButton
-                                        as={Button}
-                                        leftIcon={<FiFilter />}
-                                        bg="rgba(255, 255, 255, 0.05)"
-                                        color="white"
-                                        border="1px solid"
-                                        borderColor="rgba(255, 215, 0, 0.2)"
-                                        borderRadius="12px"
-                                        _hover={{
-                                            bg: "rgba(255, 215, 0, 0.1)",
-                                            borderColor: "gold"
-                                        }}
-                                    >
-                                        Filtros
-                                    </MenuButton>
-                                    <MenuList
-                                        bg="rgba(0, 0, 0, 0.9)"
-                                        border="1px solid"
-                                        borderColor="rgba(255, 215, 0, 0.2)"
-                                        borderRadius="12px"
-                                    >
-                                        <MenuItem
-                                            _hover={{ bg: "rgba(255, 215, 0, 0.1)" }}
+                                    <Link to='/accounts' >
+                                        <Button
+                                            bg="rgba(255, 255, 255, 0.05)"
                                             color="white"
-                                            onClick={() => setSelectedFilter('all')}
+                                            border="1px solid"
+                                            borderColor="rgba(255, 215, 0, 0.2)"
+                                            borderRadius="12px"
+                                            _hover={{
+                                                bg: "rgba(255, 215, 0, 0.1)",
+                                                borderColor: "gold"
+                                            }}
                                         >
-                                            Todos los usuarios
-                                        </MenuItem>
-                                        <MenuItem
-                                            _hover={{ bg: "rgba(255, 215, 0, 0.1)" }}
-                                            color="white"
-                                            onClick={() => setSelectedFilter('admin')}
-                                        >
-                                            Solo administradores
-                                        </MenuItem>
-                                        <MenuItem
-                                            _hover={{ bg: "rgba(255, 215, 0, 0.1)" }}
-                                            color="white"
-                                            onClick={() => setSelectedFilter('active')}
-                                        >
-                                            Solo activos
-                                        </MenuItem>
-                                    </MenuList>
+                                            Total de cuentas
+                                        </Button>
+                                    </Link>
                                 </Menu>
                             </HStack>
                         </Box>

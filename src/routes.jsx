@@ -12,6 +12,8 @@ const User = lazy(() => import("./pages/UserPage.jsx"));
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage.jsx'));
 const PrivateRoute = lazy(() => import("./components/PrivateRoute.jsx"));
 const UnauthorizedModal = lazy(() => import("./components/UnauthorizedModal.jsx"));
+const GetAccounts = lazy(() => import("./components/Accounts/GetAccounts.jsx"));
+const GetUserAccount = lazy(() => import("./components/Accounts/GetUserAccount.jsx"));
 
 const routes = [
     { path: '/', element: <Login /> },
@@ -74,9 +76,23 @@ const routes = [
     },
     {
         path: '/users/*',
-        element: <PrivateRoute allowedRoles={['ADMIN_ROLE', 'USER_ROLE']} />,
+        element: <PrivateRoute allowedRoles={['ADMIN_ROLE']} />,
         children: [
             { path: '', element: <User /> }
+        ]
+    },
+    {
+        path: '/accounts/*',
+        element: <PrivateRoute allowedRoles={['ADMIN_ROLE']} />,
+        children: [
+            { path: '', element: <GetAccounts /> }
+        ]
+    },
+    {
+        path: '/historyTrasactions/*',
+        element: <PrivateRoute allowedRoles={['ADMIN_ROLE']} />,
+        children: [
+            { path: '', element: <GetUserAccount /> }
         ]
     },
     {

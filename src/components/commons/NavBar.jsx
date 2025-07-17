@@ -344,10 +344,11 @@ const NavBar = () => {
     const navItems = [
         { name: 'Inicio', href: '/dashboard' },
         { name: 'Productos', href: '/productos' },
-        ...(user?.role === 'USER_ROLE' ? [{ name: 'Contacto', href: 'https://mail.google.com/mail/?view=cm&fs=1&to=figueroaalvarez594@gmail.com&su=Consulta&body=Hola,%20tengo%20una%20pregunta%20sobre...' }] : []),
+        ...(user?.role === 'USER_ROLE' ? [{ name: 'Contacto', href: 'mailto:figueroaalvarez594@gmail.com' }] : []),
         ...(user?.role === 'USER_ROLE' ? [{ name: 'Transferencias', href: '/transactions' }] : []),
         ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Registrar Usuario', href: '/register' }] : []),
         ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Usuarios', href: '/users' }] : []),
+        ...(user?.role === 'ADMIN_ROLE' ? [{ name: 'Cuentas', href: '/accounts' }] : []),
         ...(user?.role === 'USER_ROLE' ? [{ name: 'Favoritos', href: '/favorites' }] : []),
 
     ];
