@@ -77,13 +77,7 @@ export const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
       };
 
       await addProduct(productData);
-      toast({
-        title: 'Éxito',
-        description: 'Producto creado correctamente',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+
       onProductAdded();
       onClose();
       setFormData({

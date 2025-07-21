@@ -340,7 +340,7 @@ const RecentTransactions = () => {
                                     textShadow={`0 0 10px ${config.shadowColor}`}
                                     letterSpacing="-0.02em"
                                   >
-                                    {config.prefix}$
+                                    {config.prefix}Q
                                     {Number(transaction.amount.$numberDecimal).toLocaleString('es-ES', {
                                       minimumFractionDigits: 2,
                                       maximumFractionDigits: 2

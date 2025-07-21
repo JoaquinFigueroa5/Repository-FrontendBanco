@@ -20,9 +20,17 @@ import {
     Grid,
     GridItem,
     Divider,
-    Center
+    Center,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    ModalFooter,
+    useDisclosure
 } from '@chakra-ui/react';
-import { SearchIcon, StarIcon, AddIcon, DeleteIcon, ViewIcon } from '@chakra-ui/icons';
+import { SearchIcon, StarIcon, AddIcon, DeleteIcon, ViewIcon, EditIcon } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUsers } from '../../shared/hooks/useUsers';
 import { useAccount } from '../../shared/hooks/useAccount';
@@ -35,8 +43,12 @@ const AccountsFavorites = () => {
     const [favorites, setFavorites] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
+    const [accountsWithAlias, setAccountsWithAlias] = useState([]);
+    const [selectedAccount, setSelectedAccount] = useState(null);
+    const [aliasInput, setAliasInput] = useState('');
     const { accounts, getAccountFavorite } = useUsers();
     const { accountsGen, getAccounts, addFavorite, removeFavorite } = useAccount();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
 
     useEffect(() => {
@@ -110,6 +122,71 @@ const AccountsFavorites = () => {
             isClosable: true,
         });
 
+    };
+
+    useEffect(() => {
+        const savedAliases = localStorage.getItem('accountAliases');
+        const aliasMap = savedAliases ? JSON.parse(savedAliases) : {};
+
+        const accountsWithAliasData = accounts.map(account => ({
+            ...account,
+            alias: aliasMap[account._id] || null
+        }));
+
+        setAccountsWithAlias(accountsWithAliasData);
+    }, [accounts]);
+
+    const saveAlias = (accountId, alias) => {
+        const savedAliases = localStorage.getItem('accountAliases');
+        const aliasMap = savedAliases ? JSON.parse(savedAliases) : {};
+
+        if (alias.trim()) {
+            aliasMap[accountId] = alias.trim();
+        } else {
+            delete aliasMap[accountId];
+        }
+
+        localStorage.setItem('accountAliases', JSON.stringify(aliasMap));
+
+        setAccountsWithAlias(prev =>
+            prev.map(account =>
+                account._id === accountId
+                    ? { ...account, alias: alias.trim() || null }
+                    : account
+            )
+        );
+    };
+
+    const handleEditAlias = (account) => {
+        setSelectedAccount(account);
+        setAliasInput(account.alias || '');
+        onOpen();
+    };
+
+    const handleSaveAlias = () => {
+        if (selectedAccount) {
+            saveAlias(selectedAccount._id, aliasInput);
+            toast({
+                title: aliasInput.trim() ? 'Alias actualizado' : 'Alias eliminado',
+                status: 'success',
+                duration: 2000,
+                isClosable: true,
+            });
+        }
+        onClose();
+        setSelectedAccount(null);
+        setAliasInput('');
+    };
+
+    const handleRemoveFromFavorites = (accountId) => {
+        const savedAliases = localStorage.getItem('accountAliases');
+        if (savedAliases) {
+            const aliasMap = JSON.parse(savedAliases);
+            delete aliasMap[accountId];
+            localStorage.setItem('accountAliases', JSON.stringify(aliasMap));
+        }
+
+        removeFromFavorites(accountId);
     };
 
     const EmptyFavoritesView = () => (
@@ -200,7 +277,6 @@ const AccountsFavorites = () => {
                             />
                         </InputGroup>
                     </MotionBox>
-                    {/* {console.log('Favs', accountsGen)} */}
                     {accounts.length > 0 && (
                         <>
                             {/* Favorites Grid */}
@@ -211,12 +287,12 @@ const AccountsFavorites = () => {
                             >
                                 <VStack align="start" spacing={4}>
                                     <Heading size="md" color="gold">
-                                        Mis Favoritos ({accounts.length})
+                                        Mis Favoritos ({accountsWithAlias.length})
                                     </Heading>
                                     <Grid templateColumns="repeat(auto-fill, minmax(350px, 1fr))" gap={4} w="full">
                                         <AnimatePresence>
-                                            {accounts.map((account, index) => (
-                                                <GridItem key={index}>
+                                            {accountsWithAlias.map((account, index) => (
+                                                <GridItem key={account._id}>
                                                     <MotionCard
                                                         initial={{ opacity: 0, scale: 0.9 }}
                                                         animate={{ opacity: 1, scale: 1 }}
@@ -242,15 +318,20 @@ const AccountsFavorites = () => {
                                                                         color="black"
                                                                     />
                                                                     <VStack align="start" spacing={1}>
+                                                                        {/* Mostrar alias si existe, sino mostrar nombre original */}
                                                                         <Text fontWeight="bold" color="white">
-                                                                            {account.userId.name}
+                                                                            {account.alias || account.userId.name}
                                                                         </Text>
+                                                                        {/* Si hay alias, mostrar el nombre original como subtítulo */}
+                                                                        {account.alias && (
+                                                                            <Text fontSize="xs" color="gray.500">
+                                                                                {account.userId.name}
+                                                                            </Text>
+                                                                        )}
                                                                         <Text fontSize="sm" color="gray.400">
                                                                             {account.userId.email}
                                                                         </Text>
-                                                                        <Badge
-                                                                            size="sm"
-                                                                        >
+                                                                        <Badge size="sm">
                                                                             {account.accountNumber}
                                                                         </Badge>
                                                                     </VStack>
@@ -265,12 +346,21 @@ const AccountsFavorites = () => {
                                                                         _hover={{ bg: 'rgba(255, 215, 0, 0.1)' }}
                                                                     />
                                                                     <IconButton
+                                                                        icon={<EditIcon />}
+                                                                        size="sm"
+                                                                        colorScheme="blue"
+                                                                        variant="ghost"
+                                                                        aria-label="Editar alias"
+                                                                        onClick={() => handleEditAlias(account)}
+                                                                        _hover={{ bg: 'rgba(66, 153, 225, 0.1)' }}
+                                                                    />
+                                                                    <IconButton
                                                                         icon={<DeleteIcon />}
                                                                         size="sm"
                                                                         colorScheme="red"
                                                                         variant="ghost"
                                                                         aria-label="Eliminar de favoritos"
-                                                                        onClick={() => removeFromFavorites(account._id)}
+                                                                        onClick={() => handleRemoveFromFavorites(account._id)}
                                                                     />
                                                                 </VStack>
                                                             </HStack>
@@ -282,6 +372,64 @@ const AccountsFavorites = () => {
                                     </Grid>
                                 </VStack>
                             </MotionBox>
+
+                            {/* Modal para editar alias */}
+                            <Modal isOpen={isOpen} onClose={onClose} isCentered>
+                                <ModalOverlay bg="blackAlpha.700" />
+                                <ModalContent bg="gray.800" border="1px solid" borderColor="gray.600">
+                                    <ModalHeader color="white">
+                                        Editar Alias
+                                    </ModalHeader>
+                                    <ModalCloseButton color="white" />
+                                    <ModalBody>
+                                        <VStack spacing={4} align="start">
+                                            <Text color="gray.300">
+                                                Cuenta: <Text as="span" fontWeight="bold" color="white">
+                                                    {selectedAccount?.userId.name}
+                                                </Text>
+                                            </Text>
+                                            <VStack align="start" spacing={2} w="full">
+                                                <Text color="gray.300" fontSize="sm">
+                                                    Alias personalizado:
+                                                </Text>
+                                                <Input
+                                                    value={aliasInput}
+                                                    onChange={(e) => setAliasInput(e.target.value)}
+                                                    placeholder="Ingresa un alias (opcional)"
+                                                    bg="gray.700"
+                                                    border="1px solid"
+                                                    borderColor="gray.600"
+                                                    color="white"
+                                                    _hover={{ borderColor: 'gray.500' }}
+                                                    _focus={{ borderColor: 'gold', boxShadow: '0 0 0 1px gold' }}
+                                                />
+                                                <Text fontSize="xs" color="gray.500">
+                                                    Deja vacío para usar el nombre original
+                                                </Text>
+                                            </VStack>
+                                        </VStack>
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button
+                                            colorScheme="gray"
+                                            mr={3}
+                                            onClick={onClose}
+                                            variant="ghost"
+                                        >
+                                            Cancelar
+                                        </Button>
+                                        <Button
+                                            colorScheme="yellow"
+                                            onClick={handleSaveAlias}
+                                            bg="gold"
+                                            color="black"
+                                            _hover={{ bg: 'yellow.400' }}
+                                        >
+                                            Guardar
+                                        </Button>
+                                    </ModalFooter>
+                                </ModalContent>
+                            </Modal>
                         </>
                     )}
 

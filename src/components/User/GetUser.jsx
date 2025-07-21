@@ -234,8 +234,6 @@ const GetUser = () => {
         );
     }
 
-    console.log(users);
-
     return (
         <Container maxW="7xl" py={8}>
             <MotionBox
@@ -476,21 +474,25 @@ const GetUser = () => {
                                                         onClick={() => handleEdit(user)}
                                                         aria-label="Editar usuario"
                                                     />
-                                                    <IconButton
-                                                        icon={<DeleteIcon />}
-                                                        size="sm"
-                                                        bg="black"
-                                                        color="white"
-                                                        borderRadius="full"
-                                                        _hover={{
-                                                            bg: "red.600",
-                                                            transform: "scale(1.15)",
-                                                            shadow: "lg"
-                                                        }}
-                                                        transition="all 0.2s"
-                                                        onClick={() => handleDelete(user)}
-                                                        aria-label="Eliminar usuario"
-                                                    />
+                                                    {user.role !== 'ADMIN_ROLE' ? (
+                                                        <IconButton
+                                                            icon={<DeleteIcon />}
+                                                            size="sm"
+                                                            bg="black"
+                                                            color="white"
+                                                            borderRadius="full"
+                                                            _hover={{
+                                                                bg: "red.600",
+                                                                transform: "scale(1.15)",
+                                                                shadow: "lg"
+                                                            }}
+                                                            transition="all 0.2s"
+                                                            onClick={() => handleDelete(user)}
+                                                            aria-label="Eliminar usuario"
+                                                        />
+                                                    ) : (
+                                                        ''
+                                                    )}
                                                 </HStack>
                                             </Td>
                                         </MotionTr>
@@ -905,22 +907,26 @@ const GetUser = () => {
                             >
                                 Cancelar
                             </Button>
-                            <Button
-                                onClick={handleConfirmDelete}
-                                bg="black"
-                                color="white"
-                                fontWeight="bold"
-                                px={8}
-                                borderRadius="full"
-                                _hover={{
-                                    bg: "red.600",
-                                    transform: "translateY(-2px)",
-                                    shadow: "lg"
-                                }}
-                                transition="all 0.2s"
-                            >
-                                🗑️ Eliminar Usuario
-                            </Button>
+                            {selectedUser?.role !== 'ADMIN_ROLE' ? (
+                                <Button
+                                    onClick={handleConfirmDelete}
+                                    bg="black"
+                                    color="white"
+                                    fontWeight="bold"
+                                    px={8}
+                                    borderRadius="full"
+                                    _hover={{
+                                        bg: "red.600",
+                                        transform: "translateY(-2px)",
+                                        shadow: "lg"
+                                    }}
+                                    transition="all 0.2s"
+                                >
+                                    🗑️ Eliminar Usuario
+                                </Button>
+                            ) : (
+                                ''
+                            )}
                         </HStack>
                     </ModalFooter>
                 </ModalContent>

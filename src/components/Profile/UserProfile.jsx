@@ -14,9 +14,7 @@ const MotionText = motion(Text);
 
 export default function UserProfile({ user, onUpdate, onDelete }) {
   const [form, setForm] = useState({
-    ...user,
-    currentPassword: "",
-    newPassword: ""
+    ...user
   });
   const [editing, setEditing] = useState(false);
   const toast = useToast();
@@ -29,16 +27,14 @@ export default function UserProfile({ user, onUpdate, onDelete }) {
   };
 
   const handleUpdate = async () => {
-    const { newPassword, currentPassword, ...rest } = form;
+    const { password, ...rest } = form;
+
+    console.log(rest);
 
     const updateData = { ...rest };
-    if (newPassword.trim() !== "") {
-      updateData.password = newPassword;
-    }
 
     await onUpdate(updateData);
     setEditing(false);
-    setForm(f => ({ ...f, currentPassword: "", newPassword: "" }));
 
     toast({
       title: "Perfil actualizado.",
@@ -48,6 +44,7 @@ export default function UserProfile({ user, onUpdate, onDelete }) {
       position: "top"
     });
   };
+
 
   const handleDelete = () => {
     onDelete();
@@ -370,45 +367,6 @@ export default function UserProfile({ user, onUpdate, onDelete }) {
                   />
                 </MotionBox>
               ))}
-
-              {/* Password Field */}
-              {editing && (
-                <MotionBox
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <Divider borderColor="rgba(218, 165, 32, 0.3)" my={6} />
-                  <Text fontWeight="600" mb={3} color="gold.300" fontSize="sm" letterSpacing="wider" textTransform="uppercase">
-                    Nueva Contraseña
-                  </Text>
-                  <Input
-                    name="newPassword"
-                    type="password"
-                    value={form.newPassword}
-                    onChange={handleChange}
-                    placeholder="Ingresa tu nueva contraseña"
-                    bg="rgba(13, 13, 13, 0.8)"
-                    border="2px solid transparent"
-                    color="white"
-                    borderRadius="xl"
-                    h="56px"
-                    px={6}
-                    fontSize="md"
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{
-                      borderColor: "gold.400",
-                      boxShadow: "0 0 0 4px rgba(218, 165, 32, 0.1), 0 8px 25px rgba(218, 165, 32, 0.2)",
-                      bg: "rgba(13, 13, 13, 0.9)"
-                    }}
-                    _hover={{
-                      borderColor: "rgba(218, 165, 32, 0.5)"
-                    }}
-                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-                  />
-                </MotionBox>
-              )}
 
               {/* Action Buttons */}
               <Stack direction="row" justify="center" pt={8} spacing={6}>

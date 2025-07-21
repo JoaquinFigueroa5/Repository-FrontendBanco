@@ -47,14 +47,10 @@ import NavBar from '../commons/NavBar';
 import { useGetTransactionsByUserId } from '../../shared/hooks/useGetTransactionsByUserId ';
 
 const GetUserAccount = () => {
-  const { userId } = useParams(); // <-- ¡Aquí se obtiene el userId de la URL!
+  const { userId } = useParams();
 
   const { transactions, loading, error } = useGetTransactionsByUserId(userId);
-  // ... el resto de tu estado y lógica
 
-  // console.log para depuración, puedes quitarlo después de verificar
-  console.log("UserID en GetUserAccount (obtenido de useParams):", userId);
-  console.log("Error de transacciones (después de hook):", error);
   const [showBalance, setShowBalance] = useState(true);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -65,7 +61,7 @@ const GetUserAccount = () => {
       accountNumber: "**** **** **** 1234",
       accountType: "Cuenta Corriente",
       balance: 25847.50,
-      currency: "USD",
+      currency: "GTQ",
       bank: "Banco Premium",
       color: "linear-gradient(135deg, #FFD700, #FFA500)",
       icon: FaUniversity,
@@ -77,7 +73,7 @@ const GetUserAccount = () => {
       accountNumber: "**** **** **** 5678",
       accountType: "Cuenta de Ahorros",
       balance: 15420.75,
-      currency: "USD",
+      currency: "GTQ",
       bank: "Banco Elite",
       color: "linear-gradient(135deg, #2C1810, #8B4513)",
       icon: FaPiggyBank,
@@ -89,7 +85,7 @@ const GetUserAccount = () => {
       accountNumber: "**** **** **** 9012",
       accountType: "Cuenta de Inversión",
       balance: 89234.20,
-      currency: "USD",
+      currency: "GTQ",
       bank: "Banco Gold",
       color: "linear-gradient(135deg, #DAA520, #B8860B)",
       icon: FaChartLine,
@@ -245,7 +241,7 @@ const GetUserAccount = () => {
               </Text>
               <HStack>
                 <Text color="white" fontSize="2xl" fontWeight="bold">
-                  {showBalance ? `$${account.balance.toLocaleString()}` : "••••••"}
+                  {showBalance ? `Q${account.balance.toLocaleString()}` : "••••••"}
                 </Text>
                 <Text color="gold" fontSize="lg">
                   {account.currency}
@@ -300,38 +296,12 @@ const GetUserAccount = () => {
               <HStack justify="space-between" align="center" mb={6}>
                 <VStack align="start" spacing={2}>
                   <Text color="white" fontSize="3xl" fontWeight="bold">
-                    Mis Cuentas
+                    Transacciones
                   </Text>
                   <Text color="gray.400" fontSize="lg">
-                    Gestiona tus finanzas de manera inteligente
+                    Gestion de finanzas inteligentes.
                   </Text>
                 </VStack>
-
-                <HStack spacing={4}>
-                  <Button
-                    leftIcon={<Icon as={showBalance ? FaEyeSlash : FaEye} />}
-                    variant="outline"
-                    borderColor="gold"
-                    color="gold"
-                    _hover={{ bg: "rgba(255, 215, 0, 0.1)" }}
-                    onClick={() => setShowBalance(!showBalance)}
-                  >
-                    {showBalance ? 'Ocultar' : 'Mostrar'} saldos
-                  </Button>
-
-                  <Button
-                    leftIcon={<Icon as={FaPlus} />}
-                    bg="linear-gradient(135deg, #FFD700, #FFA500)"
-                    color="black"
-                    _hover={{
-                      bg: "linear-gradient(135deg, #FFA500, #FFD700)",
-                      transform: "translateY(-2px)"
-                    }}
-                    transition="all 0.3s ease"
-                  >
-                    Agregar cuenta
-                  </Button>
-                </HStack>
               </HStack>
 
               {/* Total Balance Card */}
@@ -343,35 +313,9 @@ const GetUserAccount = () => {
                 backdropFilter="blur(10px)"
                 mb={8}
               >
-                <HStack justify="space-between">
-                  <VStack align="start" spacing={2}>
-                    <Text color="gold" fontSize="sm" fontWeight="medium">
-                      BALANCE TOTAL
-                    </Text>
-                    <Text color="white" fontSize="4xl" fontWeight="bold">
-                      {showBalance ? `$${totalBalance.toLocaleString()}` : "••••••••"}
-                    </Text>
-                    <Text color="gray.400" fontSize="md">
-                      USD • {accounts.length} cuentas activas
-                    </Text>
-                  </VStack>
-
-                  <Box p={4} borderRadius="full" bg="rgba(255, 215, 0, 0.2)">
-                    <Icon as={FaWallet} color="gold" boxSize={8} />
-                  </Box>
-                </HStack>
               </Box>
             </Box>
           </motion.div>
-
-          {/* Accounts Grid */}
-          <Grid templateColumns="repeat(auto-fit, minmax(350px, 1fr))" gap={6} mb={8}>
-            {accounts.map((account, index) => (
-              <GridItem key={account.id}>
-                <AccountCard account={account} index={index} />
-              </GridItem>
-            ))}
-          </Grid>
 
           {/* Recent Transactions */}
           <motion.div variants={cardVariants}>
@@ -455,7 +399,7 @@ const GetUserAccount = () => {
                             fontSize="lg"
                             fontWeight="bold"
                           >
-                            {transaction.type === 'received' ? '+' : '-'}${amount.toFixed(2)}
+                            {transaction.type === 'received' ? '+' : '-'}Q{amount.toFixed(2)}
                           </Text>
                         </HStack>
                       </motion.div>

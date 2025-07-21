@@ -325,7 +325,7 @@ const DashboardUsers = () => {
                     color="white"
                     letterSpacing="tight"
                   >
-                    ${savingsBalance.toLocaleString()}
+                    Q{savingsBalance.toLocaleString()}
                   </Text>
                   <HStack spacing={3}>
                     <HStack spacing={1}>
@@ -378,7 +378,7 @@ const DashboardUsers = () => {
                     color="white"
                     letterSpacing="tight"
                   >
-                    ${(creditLimit - creditUsed).toLocaleString()}
+                    Q{(creditLimit - creditUsed).toLocaleString()}
                   </Text>
 
                   <Box width="100%">
@@ -395,10 +395,10 @@ const DashboardUsers = () => {
                     />
                     <HStack justify="space-between" mt={2}>
                       <Text fontSize="sm" color="gray.400">
-                        Usado: ${creditUsed.toLocaleString()}
+                        Usado: Q{creditUsed.toLocaleString()}
                       </Text>
                       <Text fontSize="sm" color="gray.400">
-                        Límite: ${creditLimit.toLocaleString()}
+                        Límite: Q{creditLimit.toLocaleString()}
                       </Text>
                     </HStack>
                   </Box>
@@ -627,7 +627,7 @@ const DashboardUsers = () => {
                             }}
                             transition="all 0.3s ease"
                             onClick={() => {
-                              setSelectedFavorite(account.accountNumber);
+                              setSelectedFavorite(account);
                               onQuickPayOpen();
                             }}
                           >
@@ -668,7 +668,6 @@ const DashboardUsers = () => {
                       color="white"
                       _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
                       _focus={{ border: '2px solid #FFD700', boxShadow: '0 0 0 3px rgba(255, 215, 0, 0.1)' }}
-                      p={4}
                       sx={{
                         '& option': {
                           bg: '#2d2d2d',
@@ -677,7 +676,7 @@ const DashboardUsers = () => {
                       }}
                     >
                       {accounts.map((account) => (
-                        <option key={account._id} value={account._id}>
+                        <option key={account._id} value={account.accountNumber}>
                           {account.userId.name} - {account.accountNumber}
                         </option>
                       ))}

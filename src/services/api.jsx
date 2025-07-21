@@ -140,7 +140,7 @@ export const getAccounts = async () => {
 
 export const createTransaction = async (data) => {
     try {
-        // console.log(data); 
+        console.log(data); 
         const res = await apiClient.post('/transactions', data);
         return {
             success: true,
