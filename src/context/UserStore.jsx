@@ -16,7 +16,7 @@ const useUserStore = create((set) => ({
             return;
         }
 
-        axios.get('http://127.0.0.1:3000/BancaOnline/v1/user/profile', {
+        axios.get('https://repository-backendbanco-production.up.railway.app/BancaOnline/v1/user/profile', {
             headers: { 'x-token': token }
         }).then((res) => {
             set({ user: res.data.user });
