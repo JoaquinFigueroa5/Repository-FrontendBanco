@@ -208,6 +208,19 @@ export const revertDeposit = async (depositId) => {
     }
 };
 
+export const getDepositsHistory = async () => {
+    try {
+        return await apiClient.get('/deposit/history')
+    } catch (error) {
+        const msg = error.response?.data?.msg || 'Error al traer el historial de depósitos'
+        return {
+            error: true,
+            msg,
+            e: error
+        }
+    }
+}
+
 export const getProducts = async () => {
     try {
         const { data } = await apiClient.get('/product/');

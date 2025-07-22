@@ -4,7 +4,8 @@ import {
   createDeposit as createDepositRequest, 
   getMyDeposits as getMyDepositsRequest,
   revertDeposit as revertDepositRequest,
-  getDeposits as getDepositRequest
+  getDeposits as getDepositRequest,
+  getDepositsHistory as getDepositsHistoryRequest
 } from '../../services'
 
 export const useDeposits = () => {
@@ -104,6 +105,30 @@ export const useDeposits = () => {
     
   }
 
+  const getDepositsHistory = async () => {
+    setIsFetching(true)
+    setError(null)
+    try {
+      const response = await getDepositsHistoryRequest()
+      setIsFetching(false)
+
+      if (response?.error) {
+        setError(response.msg || 'No se pudo obtener el historial de depósitos')
+        toast.error(response.msg || 'No se pudo obtener el historial de depósitos')
+        return []
+      }
+
+      setDeposits(response?.data?.deposits || [])
+      return response?.data?.deposits || []
+    } catch (error) {
+      setIsFetching(false)
+      setError('Error inesperado al obtener el historial de depósitos')
+      toast.error('Error inesperado al obtener el historial de depósitos')
+      return []
+    }
+  }
+
+
   useEffect(() => {
     fetchDeposits();
   }, [])
@@ -115,6 +140,7 @@ export const useDeposits = () => {
     createDeposit,
     getMyDeposits,
     revertDeposit,
-    fetchDeposits
+    fetchDeposits,
+    getDepositsHistory
   }
 }

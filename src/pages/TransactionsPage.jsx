@@ -135,7 +135,7 @@ const TransactionsPage = () => {
                             bg: "rgba(255, 215, 0, 0.05)"
                           }}
                         >
-                          Análisis Financiero
+                          Historial de depósitos
                         </Tab>
                       </TabList>
                       <TabPanels>
